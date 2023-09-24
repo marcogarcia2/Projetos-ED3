@@ -1,0 +1,8 @@
+Principais dúvidas que surgiram com o desenvolvimento do projeto
+
+Tem que ter comentários no Makefile???
+
+Como indicar o tamanho dos campos variáveis??? int???
+
+Excluir antes da entrega final
+
