@@ -85,17 +85,31 @@ void criaTabela(char *nomeArquivoCSV, char *nomeArquivoBIN){
     }
 
     //Cabecalho *cabecalho = criaCabecalho();
-    //char a[20];
-    // A primeira linha do arquivo CSV deve ser descartada (aparentemente dá certo)
+
+    // Descartando a primeira linha do arquivo 
     fscanf(arquivoCSV, "%*[^\n]\n");
     
     Registro *r = criaRegistro();
+    r->removido = '0';
+    
+    char str1[30], str2[30];
 
     // A lógica é criar um loop que irá ler cada linha do arquivo CSV
-    while (fscanf(arquivoCSV, "%[^,],%d,%d,%[^,],%d\n", r->tecnologiaOrigem.string, &r->grupo, &r->popularidade, r->tecnologiaDestino.string, &r->peso) == 5) {
-
+    while (fscanf(arquivoCSV, "%[^,],%d,%d,%[^,],%d\n", str1, &r->grupo, &r->popularidade, str2, &r->peso) != EOF) {    
         // Está dando erro ao ler e alocar diretamente as strings acima.
-        // Sugestão: criar variáveis auxiliares e tratar adequadamente a alocação.
+        // Sugestão: criar variáveis auxiliares str1 e str2 e tratar individualmente
+        
+        r->tecnologiaOrigem.string = str1;
+        r->tecnologiaOrigem.tamanho = strlen(str1);
+        r->tecnologiaDestino.string = str2;
+        r->tecnologiaDestino.tamanho = strlen(str2);
+
+
+        printf("r->tecnologiaOrigem.string = %s\n", r->tecnologiaOrigem.string);
+        printf("r->tecnologiaOrigem.tamanho = %d\n\n", r->tecnologiaOrigem.tamanho);
+        printf("r->tecnologiaDestino.string = %s\n", r->tecnologiaDestino.string);
+        printf("r->tecnologiaDestino.tamanho = %d\n\n", r->tecnologiaDestino.tamanho);
+
         
         // r->tecnologiaOrigem.tamanho = (int) strlen(r->tecnologiaOrigem.string);
         // r->tecnologiaDestino.tamanho = (int) strlen(r->tecnologiaDestino.string);
@@ -111,7 +125,6 @@ void criaTabela(char *nomeArquivoCSV, char *nomeArquivoBIN){
     }
 
     //gravaCabecalho(nomeArquivoCSV, nomeArquivoBIN);
-    
     free(r);
 
     fclose(arquivoCSV);
