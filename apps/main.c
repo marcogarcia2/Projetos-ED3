@@ -18,7 +18,7 @@ typedef struct{ // tamanho fixo de 13 bytes - Cabecalho
 
 typedef struct{
     int tamanho;
-    char* string;
+    char *string;
 } StringVariavel;
 
 typedef struct{
@@ -35,7 +35,7 @@ typedef struct{
 
 // comando linux para comparar binario cmp bin1.bin bin2.bin
 
-Cabecalho *criaCabecalho(){ // Inicializa o cabecalho
+Cabecalho *criaCabecalho(void){ // Inicializa o cabecalho
     
     Cabecalho *c = (Cabecalho *) malloc(sizeof(Cabecalho));
     c->status = '0';
@@ -50,7 +50,7 @@ Cabecalho *criaCabecalho(){ // Inicializa o cabecalho
     // só é executada no final
 // }
 
-Registro *criaRegistro(){ // Aloca-se memória para um registro
+Registro *criaRegistro(void){ // Aloca-se memória para um registro
     Registro *r = (Registro *) malloc(sizeof(Registro));
     
     return r;
@@ -67,50 +67,63 @@ void gravaRegistro(Registro *r, FILE *arqBIN){ // grava o Registro criado no arq
     fwrite(r->tecnologiaDestino.string, sizeof(char), r->tecnologiaDestino.tamanho, arqBIN);
 }
 
+// Funcionalidade 1
+void criaTabela(char *nomeArquivoCSV, char *nomeArquivoBIN){ 
 
-void criaTabela(char *nomeArquivoCSV, char *nomeArquivoBIN){ // Funcionalidade 1
-
+    // Abrindo o arquivo CSV
     FILE *arquivoCSV = fopen(nomeArquivoCSV, "r");
-
     if(arquivoCSV == NULL){
         printf("Falha no carregamento do Arquivo CSV.\n");
         return;
     }
 
+    // Criando um arquivo binário
     FILE *arquivoBIN = fopen(nomeArquivoBIN, "wb");
-
     if(arquivoBIN == NULL){
         printf("Falha no carregamento do Arquivo Binário.\n");
         return;
     }
 
     //Cabecalho *cabecalho = criaCabecalho();
-
+    //char a[20];
+    // A primeira linha do arquivo CSV deve ser descartada (aparentemente dá certo)
+    fscanf(arquivoCSV, "%*[^\n]\n");
+    
     Registro *r = criaRegistro();
 
-    // A lógica é criar um loop que irá ler cada linha do arquivo csv
-    while (fscanf(arquivoCSV, "%[^,],%d,%d,%[^,],%d\n", r->tecnologiaOrigem.string, &r->grupo, &r->popularidade, r->tecnologiaDestino.string, &r->peso) != EOF) {
+    // A lógica é criar um loop que irá ler cada linha do arquivo CSV
+    while (fscanf(arquivoCSV, "%[^,],%d,%d,%[^,],%d\n", r->tecnologiaOrigem.string, &r->grupo, &r->popularidade, r->tecnologiaDestino.string, &r->peso) == 5) {
 
-        r->tecnologiaOrigem.tamanho = (int) strlen(r->tecnologiaOrigem.string);
-        r->tecnologiaDestino.tamanho = (int) strlen(r->tecnologiaDestino.string);
-        printf("%d\n", r->tecnologiaOrigem.tamanho);
-        printf("%d\n", r->tecnologiaDestino.tamanho);
+        // Está dando erro ao ler e alocar diretamente as strings acima.
+        // Sugestão: criar variáveis auxiliares e tratar adequadamente a alocação.
+        
+        // r->tecnologiaOrigem.tamanho = (int) strlen(r->tecnologiaOrigem.string);
+        // r->tecnologiaDestino.tamanho = (int) strlen(r->tecnologiaDestino.string);
+        // printf("%d\n", r->grupo);
+        // printf("%d\n", r->popularidade);
+        // printf("%d\n", r->peso);
 
         // Coloca os valores lidos no arquivo binário
         gravaRegistro(r, arquivoBIN);
+        
+        // Debugando o código
+        //printf("Tecnologia Origem: %s\nGrupo: %d\nPopularidade: %d\nTecnologia Destino: %s\nPeso: %d", r->tecnologiaOrigem.string,  r->grupo, r->popularidade, r->tecnologiaDestino.string, r->peso);
     }
 
     //gravaCabecalho(nomeArquivoCSV, nomeArquivoBIN);
     
+    free(r);
+
     fclose(arquivoCSV);
     fclose(arquivoBIN);
 
 }
 
-int main (){
+int main (int argc, char *argv[]){
    
-// primeira funcao, criar tabela
-    criaTabela("tecnologia.csv","tecnologia.bin");
+    // primeira funcao, criar tabela
+    criaTabela("arquivos/dados1.csv","tecnologia.bin");
+
 
     return 0;
 }
