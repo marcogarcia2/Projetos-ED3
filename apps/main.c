@@ -122,8 +122,41 @@ void criaTabela(const char *nomeArquivoCSV, const char *nomeArquivoBIN){
     char str1[30], str2[30];
 
     // A lógica é criar um loop que irá ler cada linha do arquivo CSV
-    while (fscanf(arquivoCSV, "%[^,],%d,%d,%[^,],%d\n", str1, &r->grupo, &r->popularidade, str2, &r->peso) != EOF) {    
-        //cabecalho->proxRRN++;
+    while (1) {   
+        //cabecalho->proxRRN++; 
+        int resultado = fscanf(arquivoCSV, "%[^,],%d,%d,%[^,],%d\n", str1, &r->grupo, &r->popularidade, str2, &r->peso);
+
+        if (resultado == EOF) // Chegou ao fim do arquivo
+            break;
+
+        else if (resultado != 5) { // Significa que algum dos campos não foi lido
+            if (resultado == 1) {
+            // Erro no campo str1
+
+            // Faça algo para tratar esse erro, como definir o campo como nulo.
+
+            } else if (resultado == 2) {
+            // Erro no campo r->grupo (int)
+
+            // Faça algo para tratar esse erro, como definir o campo como nulo.
+
+            } else if (resultado == 3) {
+            // Erro no campo r->popularidade (int)
+            // Faça algo para tratar esse erro, como definir o campo como nulo.
+
+            } else if (resultado == 4) {
+            // Erro no campo str2
+            // Faça algo para tratar esse erro, como definir o campo como nulo.
+
+            } else if (resultado == 0) { // Sugerido pelo GPT, mas não sei se acontece de fato
+            // Erro em algum lugar, não foi possível atribuir nenhum campo.
+
+            }
+            else{ // Erro no campo r->peso (int)
+
+            }
+        }
+        else{ // Leitura bem-sucedida
 
         r->tecnologiaOrigem.string = str1;
         r->tecnologiaOrigem.tamanho = strlen(str1);
@@ -142,6 +175,8 @@ void criaTabela(const char *nomeArquivoCSV, const char *nomeArquivoBIN){
         // Escreve os valores lidos no arquivo binário
         gravaRegistro(r, arquivoBIN);
         r = resetaRegistro(r);
+        }
+
     }
 
 
