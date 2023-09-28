@@ -46,13 +46,38 @@ Cabecalho *criaCabecalho(void){ // Inicializa o cabecalho
     return c;
 }
 
-//void gravaCabecalho(char *nomeArquivoCSV, char *nomeArquivoBIN){
-    // só é executada no final
-// }
+void gravaCabecalho(Cabecalho *c, FILE *arqBIN){
+    fwrite(c, sizeof(Cabecalho), 1, arqBIN);
+}
 
 Registro *criaRegistro(void){ // Aloca-se memória para um registro
     Registro *r = (Registro *) malloc(sizeof(Registro));
+
+    r->removido = '0';
+    r->grupo = -1;
+    r->popularidade = -1;
+    r->peso = -1;
+
+    r->tecnologiaOrigem.string = NULL;
+    r->tecnologiaOrigem.tamanho = 0; 
+
+    r->tecnologiaDestino.string = NULL;
+    r->tecnologiaDestino.tamanho = 0; 
     
+    return r;
+}
+
+Registro *resetaRegistro(Registro *r){ // Será chamada para resetar os parâmetros do registro
+    r->grupo = -1;
+    r->popularidade = -1;
+    r->peso = -1;
+
+    r->tecnologiaOrigem.string = NULL;
+    r->tecnologiaOrigem.tamanho = 0; 
+
+    r->tecnologiaDestino.string = NULL;
+    r->tecnologiaDestino.tamanho = 0;
+
     return r;
 }
 
@@ -84,13 +109,17 @@ void criaTabela(char *nomeArquivoCSV, char *nomeArquivoBIN){
         return;
     }
 
-    //Cabecalho *cabecalho = criaCabecalho();
+    Cabecalho *cabecalho = criaCabecalho();
+    // printf("Status: %c\n", cabecalho->status);
+    // printf("proxRRN: %d\n", cabecalho->proxRRN);
+    // printf("nroTecnologias: %d\n", cabecalho->nroTecnologias);
+    // printf("nroParesTecnologias: %d\n", cabecalho->nroParesTecnologias);
+    gravaCabecalho(cabecalho, arquivoBIN);
 
     // Descartando a primeira linha do arquivo 
     fscanf(arquivoCSV, "%*[^\n]\n");
     
     Registro *r = criaRegistro();
-    r->removido = '0';
 
     char str1[30], str2[30];
 
@@ -101,22 +130,24 @@ void criaTabela(char *nomeArquivoCSV, char *nomeArquivoBIN){
         r->tecnologiaOrigem.tamanho = strlen(str1);
         r->tecnologiaDestino.string = str2;
         r->tecnologiaDestino.tamanho = strlen(str2);
-
-        /*
+        
         printf("r->tecnologiaOrigem.string = %s\n", r->tecnologiaOrigem.string);
         printf("r->tecnologiaOrigem.tamanho = %d\n\n", r->tecnologiaOrigem.tamanho);
         printf("r->tecnologiaDestino.string = %s\n", r->tecnologiaDestino.string);
         printf("r->tecnologiaDestino.tamanho = %d\n\n", r->tecnologiaDestino.tamanho);
-        */
+        printf("r->peso = %d\n", r->peso);
+        
 
         // Escreve os valores lidos no arquivo binário
         gravaRegistro(r, arquivoBIN);
+        r = resetaRegistro(r);
     }
 
     //gravaCabecalho(nomeArquivoCSV, nomeArquivoBIN);
 
     
     free(r);
+    free(cabecalho);
 
     fclose(arquivoCSV);
     fclose(arquivoBIN);
@@ -127,6 +158,7 @@ int main (int argc, char *argv[]){
    
     // primeira funcao, criar tabela
     criaTabela("arquivos/dados1.csv","tecnologia.bin");
+    // criaTabela("arquivos/testecamposnulos.csv","tecnologia.bin"); // Teste para campos nulos
 
 
     return 0;
