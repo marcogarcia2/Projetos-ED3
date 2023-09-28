@@ -15,8 +15,13 @@ myapps:
 run:
 	$(BIN)/main
 
+test:
+	gcc -Wall -Werror -Wpedantic -O3 -march=native $(APPS)/teste.c -o $(BIN)/teste
+	$(BIN)/teste
+	rm $(BIN)/teste
+
 clear:
 	del /q obj\* bin\*
-
+	
 # gcc -Wall -Werror -Wpedantic -fsanitize=address -O3 -march=native $(APPS)/main.c -o $(BIN)/main
 # rm $(BIN)/* $(OBJ)/*

@@ -123,58 +123,38 @@ void criaTabela(const char *nomeArquivoCSV, const char *nomeArquivoBIN){
 
     // A lógica é criar um loop que irá ler cada linha do arquivo CSV
     while (1) {   
-        //cabecalho->proxRRN++; 
         int resultado = fscanf(arquivoCSV, "%[^,],%d,%d,%[^,],%d\n", str1, &r->grupo, &r->popularidade, str2, &r->peso);
+        cabecalho->proxRRN++; 
 
-        if (resultado == EOF) // Chegou ao fim do arquivo
+        if (resultado == EOF){ // Chegou ao fim do arquivo
             break;
+        }
+        
 
         else if (resultado != 5) { // Significa que algum dos campos não foi lido
-            if (resultado == 1) {
-            // Erro no campo str1
-
-            // Faça algo para tratar esse erro, como definir o campo como nulo.
-
-            } else if (resultado == 2) {
-            // Erro no campo r->grupo (int)
-
-            // Faça algo para tratar esse erro, como definir o campo como nulo.
-
-            } else if (resultado == 3) {
-            // Erro no campo r->popularidade (int)
-            // Faça algo para tratar esse erro, como definir o campo como nulo.
-
-            } else if (resultado == 4) {
-            // Erro no campo str2
-            // Faça algo para tratar esse erro, como definir o campo como nulo.
-
-            } else if (resultado == 0) { // Sugerido pelo GPT, mas não sei se acontece de fato
-            // Erro em algum lugar, não foi possível atribuir nenhum campo.
-
-            }
-            else{ // Erro no campo r->peso (int)
-
-            }
+            // TRATAR CAMPOS NULOS
+            printf("A\n");
         }
+
         else{ // Leitura bem-sucedida
 
-        r->tecnologiaOrigem.string = str1;
-        r->tecnologiaOrigem.tamanho = strlen(str1);
-        // buscar str1 em tecnologias, caabecalho->nroTecnologias++;
+            r->tecnologiaOrigem.string = str1;
+            r->tecnologiaOrigem.tamanho = strlen(str1);
+            // buscar str1 em tecnologias, caabecalho->nroTecnologias++;
 
-        r->tecnologiaDestino.string = str2;
-        r->tecnologiaDestino.tamanho = strlen(str2);
-        
-        /*
-        printf("r->tecnologiaOrigem.string = %s\n", r->tecnologiaOrigem.string);
-        printf("r->tecnologiaOrigem.tamanho = %d\n\n", r->tecnologiaOrigem.tamanho);
-        printf("r->tecnologiaDestino.string = %s\n", r->tecnologiaDestino.string);
-        printf("r->tecnologiaDestino.tamanho = %d\n\n", r->tecnologiaDestino.tamanho);
-        */
+            r->tecnologiaDestino.string = str2;
+            r->tecnologiaDestino.tamanho = strlen(str2);
+            
+            /*
+            printf("r->tecnologiaOrigem.string = %s\n", r->tecnologiaOrigem.string);
+            printf("r->tecnologiaOrigem.tamanho = %d\n\n", r->tecnologiaOrigem.tamanho);
+            printf("r->tecnologiaDestino.string = %s\n", r->tecnologiaDestino.string);
+            printf("r->tecnologiaDestino.tamanho = %d\n\n", r->tecnologiaDestino.tamanho);
+            */
 
-        // Escreve os valores lidos no arquivo binário
-        gravaRegistro(r, arquivoBIN);
-        r = resetaRegistro(r);
+            // Escreve os valores lidos no arquivo binário
+            gravaRegistro(r, arquivoBIN);
+            r = resetaRegistro(r);
         }
 
     }
@@ -250,11 +230,11 @@ void recuperaDados(const char* nomeArquivoBIN){
         // para ler as strings, é necessário alocar memória 
 
         fread(&r->tecnologiaOrigem.tamanho, sizeof(int), 1, arquivoBIN);
-        r->tecnologiaOrigem.string = (char *)malloc(r->tecnologiaOrigem.tamanho);
+        r->tecnologiaOrigem.string = (char *)malloc(r->tecnologiaOrigem.tamanho+1);
         fread(r->tecnologiaOrigem.string, r->tecnologiaOrigem.tamanho, 1, arquivoBIN);
 
         fread(&r->tecnologiaDestino.tamanho, sizeof(int), 1, arquivoBIN);
-        r->tecnologiaDestino.string = (char *)malloc(r->tecnologiaDestino.tamanho);
+        r->tecnologiaDestino.string = (char *)malloc(r->tecnologiaDestino.tamanho+1);
         fread(r->tecnologiaDestino.string, r->tecnologiaDestino.tamanho, 1, arquivoBIN);
 
         printf("%s, %d, %d, %s, %d\n", r->tecnologiaOrigem.string, r->grupo, r->popularidade, r->tecnologiaDestino.string, r->peso);
