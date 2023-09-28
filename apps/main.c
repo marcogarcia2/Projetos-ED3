@@ -90,6 +90,20 @@ void gravaRegistro(Registro *r, FILE *arqBIN){ // grava o Registro criado no arq
     fwrite(r->tecnologiaOrigem.string, sizeof(char), r->tecnologiaOrigem.tamanho, arqBIN);
     fwrite(&r->tecnologiaDestino.tamanho, sizeof(int), 1, arqBIN);
     fwrite(r->tecnologiaDestino.string, sizeof(char), r->tecnologiaDestino.tamanho, arqBIN);
+
+    // Agora falta tratar o lixo, isto é, preencher com '$' os bytes restantes
+    // tamLixo = 76 - (1 + 3 * 4 + 2 * 4 + r->tecnologiaOrigem.tamanho + r->tecnologiaDestino.tamanho)
+    // size_t tamLixo = TAM_REGISTRO_FIXO - (sizeof(char) + 3*sizeof(int) + 2*sizeof(int) + r->tecnologiaOrigem.tamanho + r->tecnologiaDestino.tamanho);
+    
+    // for(size_t i = 0; i < tamLixo; i++){
+    //     fputc(LIXO, arqBIN);
+    // }
+
+
+    // const char *lixo;
+    // for(size_t i = 0; i < tamLixo; i++){
+    //     fputc(LIXO, arqBIN);
+    // }
 }
 
 // Funcionalidade 1
@@ -135,7 +149,6 @@ void criaTabela(char *nomeArquivoCSV, char *nomeArquivoBIN){
         printf("r->tecnologiaOrigem.tamanho = %d\n\n", r->tecnologiaOrigem.tamanho);
         printf("r->tecnologiaDestino.string = %s\n", r->tecnologiaDestino.string);
         printf("r->tecnologiaDestino.tamanho = %d\n\n", r->tecnologiaDestino.tamanho);
-        printf("r->peso = %d\n", r->peso);
         
 
         // Escreve os valores lidos no arquivo binário
