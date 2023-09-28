@@ -46,8 +46,12 @@ Cabecalho *criaCabecalho(void){ // Inicializa o cabecalho
     return c;
 }
 
-void gravaCabecalho(Cabecalho *c, FILE *arqBIN){
-    fwrite(c, sizeof(Cabecalho), 1, arqBIN);
+// Gravando o cabecalho em 13 bytes
+void gravaCabecalho(Cabecalho *c, FILE *arquivoBIN){
+    fwrite(&c->status, sizeof(char), 1, arquivoBIN);
+    fwrite(&c->proxRRN, sizeof(int), 1, arquivoBIN);
+    fwrite(&c->nroTecnologias, sizeof(int), 1, arquivoBIN);
+    fwrite(&c->nroParesTecnologias, sizeof(int), 1, arquivoBIN);
 }
 
 Registro *criaRegistro(void){ // Aloca-se memória para um registro
@@ -81,28 +85,27 @@ Registro *resetaRegistro(Registro *r){ // Será chamada para resetar os parâmet
     return r;
 }
 
-void gravaRegistro(Registro *r, FILE *arqBIN){ // grava o Registro criado no arquivo binário
-    fwrite(&r->removido, sizeof(char), 1, arqBIN);
-    fwrite(&r->grupo, sizeof(int), 1, arqBIN);
-    fwrite(&r->popularidade, sizeof(int), 1, arqBIN);
-    fwrite(&r->peso, sizeof(int), 1, arqBIN);
-    fwrite(&r->tecnologiaOrigem.tamanho, sizeof(int), 1, arqBIN);
-    fwrite(r->tecnologiaOrigem.string, sizeof(char), r->tecnologiaOrigem.tamanho, arqBIN);
-    fwrite(&r->tecnologiaDestino.tamanho, sizeof(int), 1, arqBIN);
-    fwrite(r->tecnologiaDestino.string, sizeof(char), r->tecnologiaDestino.tamanho, arqBIN);
+void gravaRegistro(Registro *r, FILE *arquivoBIN){ // grava o Registro criado no arquivo binário
+    fwrite(&r->removido, sizeof(char), 1, arquivoBIN);
+    fwrite(&r->grupo, sizeof(int), 1, arquivoBIN);
+    fwrite(&r->popularidade, sizeof(int), 1, arquivoBIN);
+    fwrite(&r->peso, sizeof(int), 1, arquivoBIN);
+    fwrite(&r->tecnologiaOrigem.tamanho, sizeof(int), 1, arquivoBIN);
+    fwrite(r->tecnologiaOrigem.string, r->tecnologiaOrigem.tamanho, 1, arquivoBIN);
+    fwrite(&r->tecnologiaDestino.tamanho, sizeof(int), 1, arquivoBIN);
+    fwrite(r->tecnologiaDestino.string, r->tecnologiaDestino.tamanho, 1, arquivoBIN);
 
-    // Agora falta tratar o lixo, isto é, preencher com '$' os bytes restantes
+    // Colocando o lixo nos caracteres restantes
     char *lixo = (char*)'$';
     int restante = TAM_REGISTRO - (TAM_REGISTRO_FIXO + r->tecnologiaOrigem.tamanho + r->tecnologiaDestino.tamanho);
-    printf("Restante = %d\n", restante);
     while (restante > 0){
-        fwrite(&lixo, sizeof(char), 1, arqBIN);
+        fwrite(&lixo, sizeof(char), 1, arquivoBIN);
         restante--;
     }
 }
 
 // Funcionalidade 1
-void criaTabela(char *nomeArquivoCSV, char *nomeArquivoBIN){ 
+void criaTabela(const char *nomeArquivoCSV, const char *nomeArquivoBIN){ 
 
     // Abrindo o arquivo CSV
     FILE *arquivoCSV = fopen(nomeArquivoCSV, "r");
@@ -123,6 +126,7 @@ void criaTabela(char *nomeArquivoCSV, char *nomeArquivoBIN){
     // printf("proxRRN: %d\n", cabecalho->proxRRN);
     // printf("nroTecnologias: %d\n", cabecalho->nroTecnologias);
     // printf("nroParesTecnologias: %d\n", cabecalho->nroParesTecnologias);
+    // Reservando os 13 primeiros bytes do arquivo para o cabecalho
     gravaCabecalho(cabecalho, arquivoBIN);
 
     // Descartando a primeira linha do arquivo 
@@ -134,24 +138,29 @@ void criaTabela(char *nomeArquivoCSV, char *nomeArquivoBIN){
 
     // A lógica é criar um loop que irá ler cada linha do arquivo CSV
     while (fscanf(arquivoCSV, "%[^,],%d,%d,%[^,],%d\n", str1, &r->grupo, &r->popularidade, str2, &r->peso) != EOF) {    
-        
+        //cabecalho->proxRRN++;
+
         r->tecnologiaOrigem.string = str1;
         r->tecnologiaOrigem.tamanho = strlen(str1);
+        // buscar str1 em tecnologias, caabecalho->nroTecnologias++;
+
         r->tecnologiaDestino.string = str2;
         r->tecnologiaDestino.tamanho = strlen(str2);
         
+        /*
         printf("r->tecnologiaOrigem.string = %s\n", r->tecnologiaOrigem.string);
         printf("r->tecnologiaOrigem.tamanho = %d\n\n", r->tecnologiaOrigem.tamanho);
         printf("r->tecnologiaDestino.string = %s\n", r->tecnologiaDestino.string);
         printf("r->tecnologiaDestino.tamanho = %d\n\n", r->tecnologiaDestino.tamanho);
-        
+        */
 
         // Escreve os valores lidos no arquivo binário
         gravaRegistro(r, arquivoBIN);
         r = resetaRegistro(r);
     }
 
-    //gravaCabecalho(nomeArquivoCSV, nomeArquivoBIN);
+    // fseek para voltar ao inicio e gravar o cabecalho
+    // gravaCabecalho(cabecalho, arquivoBIN);
 
     
     free(r);
@@ -160,13 +169,118 @@ void criaTabela(char *nomeArquivoCSV, char *nomeArquivoBIN){
     fclose(arquivoCSV);
     fclose(arquivoBIN);
 
+    //binarionatela()
+
+}
+
+// Funcionalidade 2: imprimir todo o arquivo binário na tela
+void recuperaDados(const char* nomeArquivoBIN){
+
+    FILE *arquivoBIN = fopen(nomeArquivoBIN, "rb");
+    if (arquivoBIN == NULL) {
+        printf("Falha no carregamento do Arquivo Binário.");
+        return;
+    }
+
+    // Pular os bytes do cabecalho
+    char aux[13];
+    fread(aux, 1, 13, arquivoBIN);
+
+    /*
+    preciso printar nessa ordem:
+    nomeTecnologiaOrigem,grupo,popularidade,nomeTecnologiaDestino,peso
+
+    ordem do registro:
+    removido: 1
+    grupo: 4
+    popularidade: 4
+    peso: 4
+    tecnologiaOrigem.tamanho: 4
+    tecnologiaOrigem.string: tecnologiaOrigem.tamanho
+    tecnologiaDestino.tamanho:4
+    tecnologiaDestino.string: tecnologiaDestino.tamanho
+    */
+
+    // Lendo os campos do registro para recuperá-lo
+    while(1){
+        Registro *r = criaRegistro();
+        
+        // o byte do campo removido é o primeiro a ser lido, servirá de flag para saber se chegou ao fim do arquivo
+        int byte = fread(&r->removido, sizeof(char), 1, arquivoBIN);
+
+        if(byte == 0){
+            free(r);
+            break;
+        }
+
+        // se este não é o fim do arquivo, leremos todos os campos
+
+        fread(&r->grupo, sizeof(int), 1, arquivoBIN);
+        fread(&r->popularidade, sizeof(int), 1, arquivoBIN);
+        fread(&r->peso, sizeof(int), 1, arquivoBIN);
+
+        // para ler as strings, é necessário alocar memória 
+
+        fread(&r->tecnologiaOrigem.tamanho, sizeof(int), 1, arquivoBIN);
+        r->tecnologiaOrigem.string = (char *)malloc(r->tecnologiaOrigem.tamanho);
+        fread(r->tecnologiaOrigem.string, r->tecnologiaOrigem.tamanho, 1, arquivoBIN);
+
+        fread(&r->tecnologiaDestino.tamanho, sizeof(int), 1, arquivoBIN);
+        r->tecnologiaDestino.string = (char *)malloc(r->tecnologiaDestino.tamanho);
+        fread(r->tecnologiaDestino.string, r->tecnologiaDestino.tamanho, 1, arquivoBIN);
+
+        printf("%s, %d, %d, %s, %d\n", r->tecnologiaOrigem.string, r->grupo, r->popularidade, r->tecnologiaDestino.string, r->peso);
+        
+        // Precisamos saltar até o próximo registro, calculando o quanto de lixo ainda resta
+        int restante = TAM_REGISTRO - (TAM_REGISTRO_FIXO + r->tecnologiaOrigem.tamanho + r->tecnologiaDestino.tamanho);
+        char lixos[restante];
+        fread(lixos, 1, restante, arquivoBIN);
+    
+        free(r->tecnologiaOrigem.string);
+        free(r->tecnologiaDestino.string);
+        free(r);
+    }
+
+    fclose(arquivoBIN);
 }
 
 int main (int argc, char *argv[]){
-   
-    // primeira funcao, criar tabela
-    criaTabela("arquivos/dados1.csv","tecnologia.bin");
-    // criaTabela("arquivos/testecamposnulos.csv","tecnologia.bin"); // Teste para campos nulos
+    
+    int f;
+    char nomeArquivoCSV[30], nomeArquivoBIN[30];
+    scanf("%d ", &f);
+
+    switch (f){
+
+    case 1:
+        scanf("%s %s", nomeArquivoCSV, nomeArquivoBIN);
+        criaTabela(nomeArquivoCSV, nomeArquivoBIN);
+        break;
+    
+    case 2:
+        scanf("%s", nomeArquivoBIN);
+        //printf("Arquivo BIN: %s\n", nomeArquivoBIN); 
+        //if (strcmp("binario3.bin", nomeArquivoBIN) == 0) printf("Sucesso\n");
+        //else printf("NÃO\n");
+        recuperaDados(nomeArquivoBIN);
+        break;
+
+    case 3:
+
+
+        break;
+
+
+    case 4:
+
+        break;
+
+
+    default:
+        break;
+    }
+    
+
 
 
     return 0;
