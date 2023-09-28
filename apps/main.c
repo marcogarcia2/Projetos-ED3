@@ -3,32 +3,12 @@
 #include <string.h>
 #include <ctype.h>
 
-//#include "funcoesFornecidas.h"
+#include "funcoesFornecidas.h"
+#include "registros.h"
 
 #define TAM_REGISTRO 76
 #define TAM_REGISTRO_FIXO 21
-#define LIXO '$'
-
-typedef struct{ // tamanho fixo de 13 bytes - Cabecalho
-    char status;
-    int proxRRN;
-    int nroTecnologias; // indica o nro de tecnologias unicas de origem
-    int nroParesTecnologias;
-} Cabecalho;
-
-typedef struct{
-    int tamanho;
-    char *string;
-} StringVariavel;
-
-typedef struct{
-    char removido;
-    int grupo;
-    int popularidade;
-    int peso;
-    StringVariavel tecnologiaOrigem;
-    StringVariavel tecnologiaDestino;
-} Registro;
+#define LIXO "$"
 
 // Depois (?) tem uma funçao que gera um binario aleatorio para checar se criou certo
 // quando o campo do registro for vazio, colocar nulo
@@ -95,13 +75,18 @@ void gravaRegistro(Registro *r, FILE *arquivoBIN){ // grava o Registro criado no
     fwrite(&r->tecnologiaDestino.tamanho, sizeof(int), 1, arquivoBIN);
     fwrite(r->tecnologiaDestino.string, r->tecnologiaDestino.tamanho, 1, arquivoBIN);
 
-    // Colocando o lixo nos caracteres restantes
-    char *lixo = (char*)'$';
-    int restante = TAM_REGISTRO - (TAM_REGISTRO_FIXO + r->tecnologiaOrigem.tamanho + r->tecnologiaDestino.tamanho);
-    while (restante > 0){
-        fwrite(&lixo, sizeof(char), 1, arquivoBIN);
-        restante--;
-    }
+    //Colocando o lixo nos caracteres restantes
+    // char *lixo = (char*)'$';
+    // int restante = TAM_REGISTRO - (TAM_REGISTRO_FIXO + r->tecnologiaOrigem.tamanho + r->tecnologiaDestino.tamanho);
+    // while (restante > 0){
+    //     fwrite(&lixo, sizeof(char), 1, arquivoBIN);
+    //     restante--;
+    // }
+
+    int tamLixo = TAM_REGISTRO - (TAM_REGISTRO_FIXO + r->tecnologiaOrigem.tamanho + r->tecnologiaDestino.tamanho);
+    for(int i = 0; i < tamLixo; i++)
+        fwrite("$", sizeof(char), 1, arquivoBIN);
+
 }
 
 // Funcionalidade 1
@@ -159,15 +144,23 @@ void criaTabela(const char *nomeArquivoCSV, const char *nomeArquivoBIN){
         r = resetaRegistro(r);
     }
 
-    // fseek para voltar ao inicio e gravar o cabecalho
+
     // gravaCabecalho(cabecalho, arquivoBIN);
 
     
-    free(r);
-    free(cabecalho);
+
 
     fclose(arquivoCSV);
+    // fseek para voltar ao inicio e gravar o cabecalho
+
+    // 1) Alterando o status para '1' antes de fechar o binário (criar uma função pra isso, fazendo as demais atualizaçãoes necessárias)
+    fseek(arquivoBIN, 0, SEEK_SET); // Ponteiro aponta para o inicio do arquivo
+    fwrite("1", sizeof(char), 1, arquivoBIN);
+
     fclose(arquivoBIN);
+
+    free(r);
+    free(cabecalho);
 
     //binarionatela()
 
