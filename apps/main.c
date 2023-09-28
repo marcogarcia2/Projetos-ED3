@@ -91,40 +91,31 @@ void criaTabela(char *nomeArquivoCSV, char *nomeArquivoBIN){
     
     Registro *r = criaRegistro();
     r->removido = '0';
-    
+
     char str1[30], str2[30];
 
     // A lógica é criar um loop que irá ler cada linha do arquivo CSV
     while (fscanf(arquivoCSV, "%[^,],%d,%d,%[^,],%d\n", str1, &r->grupo, &r->popularidade, str2, &r->peso) != EOF) {    
-        // Está dando erro ao ler e alocar diretamente as strings acima.
-        // Sugestão: criar variáveis auxiliares str1 e str2 e tratar individualmente
         
         r->tecnologiaOrigem.string = str1;
         r->tecnologiaOrigem.tamanho = strlen(str1);
         r->tecnologiaDestino.string = str2;
         r->tecnologiaDestino.tamanho = strlen(str2);
 
-
+        /*
         printf("r->tecnologiaOrigem.string = %s\n", r->tecnologiaOrigem.string);
         printf("r->tecnologiaOrigem.tamanho = %d\n\n", r->tecnologiaOrigem.tamanho);
         printf("r->tecnologiaDestino.string = %s\n", r->tecnologiaDestino.string);
         printf("r->tecnologiaDestino.tamanho = %d\n\n", r->tecnologiaDestino.tamanho);
+        */
 
-        
-        // r->tecnologiaOrigem.tamanho = (int) strlen(r->tecnologiaOrigem.string);
-        // r->tecnologiaDestino.tamanho = (int) strlen(r->tecnologiaDestino.string);
-        // printf("%d\n", r->grupo);
-        // printf("%d\n", r->popularidade);
-        // printf("%d\n", r->peso);
-
-        // Coloca os valores lidos no arquivo binário
+        // Escreve os valores lidos no arquivo binário
         gravaRegistro(r, arquivoBIN);
-        
-        // Debugando o código
-        //printf("Tecnologia Origem: %s\nGrupo: %d\nPopularidade: %d\nTecnologia Destino: %s\nPeso: %d", r->tecnologiaOrigem.string,  r->grupo, r->popularidade, r->tecnologiaDestino.string, r->peso);
     }
 
     //gravaCabecalho(nomeArquivoCSV, nomeArquivoBIN);
+
+    
     free(r);
 
     fclose(arquivoCSV);
