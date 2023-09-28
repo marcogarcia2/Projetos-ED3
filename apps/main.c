@@ -92,19 +92,13 @@ void gravaRegistro(Registro *r, FILE *arqBIN){ // grava o Registro criado no arq
     fwrite(r->tecnologiaDestino.string, sizeof(char), r->tecnologiaDestino.tamanho, arqBIN);
 
     // Agora falta tratar o lixo, isto é, preencher com '$' os bytes restantes
-    // tamLixo = 76 - (1 + 3 * 4 + 2 * 4 + r->tecnologiaOrigem.tamanho + r->tecnologiaDestino.tamanho)
-    size_t tamLixo = TAM_REGISTRO_FIXO - (sizeof(char) + 3*sizeof(int) + 2*sizeof(int) + r->tecnologiaOrigem.tamanho + r->tecnologiaDestino.tamanho);
-    
-    char *lixo = '$';
-    for(size_t i = 0; i < tamLixo; i++){
-        fwrite(lixo, sizeof(char), 1, arqBIN);
+    char *lixo = (char*)'$';
+    int restante = TAM_REGISTRO - (TAM_REGISTRO_FIXO + r->tecnologiaOrigem.tamanho + r->tecnologiaDestino.tamanho);
+    printf("Restante = %d\n", restante);
+    while (restante > 0){
+        fwrite(&lixo, sizeof(char), 1, arqBIN);
+        restante--;
     }
-
-
-    // const char *lixo;
-    // for(size_t i = 0; i < tamLixo; i++){
-    //     fputc(LIXO, arqBIN);
-    // }
 }
 
 // Funcionalidade 1
