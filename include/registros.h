@@ -1,6 +1,10 @@
 #ifndef REGISTROS_H
 #define REGISTROS_H
 
+#define TAM_REGISTRO 76
+#define TAM_REGISTRO_FIXO 21
+#define LIXO "$"
+
 typedef struct{ // tamanho fixo de 13 bytes - Cabecalho
     char status; // 0: arquivo inconsistente, 1: arquivo consistente
     int proxRRN; // indica o proximo RRN a ser inserido

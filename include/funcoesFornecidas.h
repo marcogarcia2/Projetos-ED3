@@ -1,5 +1,5 @@
-#ifndef FUNCOES_H
-#define FUNCOES_H
+#ifndef FUNCOES_FORNECIDAS_H
+#define FUNCOES_FORNECIDAS_H
 
 void readline(char* string);
 void binarioNaTela(char *nomeArquivoBinario);

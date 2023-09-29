@@ -1,8 +1,6 @@
 Principais dúvidas que surgiram com o desenvolvimento do projeto
 
-Tem que ter comentários no Makefile???
-
-Como indicar o tamanho dos campos variáveis??? int???
+O cabeçalho deve ser atualizado a cada novo registro, ou posso atualizá-lo ao final da função 1?
 
 Excluir antes da entrega final
 
