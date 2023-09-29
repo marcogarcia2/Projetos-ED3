@@ -20,6 +20,10 @@ test:
 	$(BIN)/teste
 	rm $(BIN)/teste
 
+test2:
+	gcc -Wall -Werror -Wpedantic -O3 -march=native $(APPS)/teste2.c -o $(BIN)/teste2
+	$(BIN)/teste2
+
 clear:
 	del /q obj\* bin\*
 	

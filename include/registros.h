@@ -1,4 +1,3 @@
-// include guards
 #ifndef REGISTROS_H
 #define REGISTROS_H
 
