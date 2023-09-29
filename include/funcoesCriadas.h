@@ -15,6 +15,8 @@ Registro *criaRegistro(void);
 
 Registro *resetaRegistro(Registro *r);
 
+void liberaRegistro(Registro *r);
+
 void gravaRegistro(Registro *r, FILE *arquivoBIN);
 
 

@@ -53,6 +53,15 @@ Registro *resetaRegistro(Registro *r){ // Será chamada para resetar os parâmet
     return r;
 }
 
+void liberaRegistro(Registro *r){ // Libera a memória alocada para o registro
+
+    free(r->tecnologiaOrigem.string);
+    free(r->tecnologiaDestino.string);
+    free(r);
+
+    return;
+}
+
 void gravaRegistro(Registro *r, FILE *arquivoBIN){ // grava o Registro criado no arquivo binário
     fwrite(&r->removido, sizeof(char), 1, arquivoBIN);
     fwrite(&r->grupo, sizeof(int), 1, arquivoBIN);

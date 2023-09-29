@@ -8,6 +8,7 @@
 #include "funcoesCriadas.h"
 #include "funcionalidade1.h"
 #include "funcionalidade2.h"
+#include "funcionalidade3.h"
 #include "funcionalidade4.h"
 
 // Depois (?) tem uma funçao que gera um binario aleatorio para checar se criou certo
@@ -17,7 +18,9 @@
 
 int main (int argc, char *argv[]){
     
-    int f, rrn;
+    int f; // Funcionalidade
+    int rrn; // RRN utilizado na funcionalidade 4
+    int n; // Número de vezes que será executada a funcionalidade 3
     char nomeArquivoCSV[30], nomeArquivoBIN[30];
     scanf("%d ", &f);
 
@@ -34,10 +37,9 @@ int main (int argc, char *argv[]){
         break;
 
     case 3:
-
-
+        scanf("%s %d", nomeArquivoBIN, &n); // Coloque n = 1 para testar sempre
+        buscaPorCampo(nomeArquivoBIN, n);
         break;
-
 
     case 4:
         scanf("%s %d", nomeArquivoBIN, &rrn);

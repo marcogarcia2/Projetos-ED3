@@ -11,6 +11,7 @@ libed:
 	gcc -Wall -Werror -Wpedantic -O3 -march=native -c $(SRC)/funcoesCriadas.c -I $(INCLUDE) -o $(OBJ)/funcoesCriadas.o
 	gcc -Wall -Werror -Wpedantic -O3 -march=native -c $(SRC)/funcionalidade1.c -I $(INCLUDE) -o $(OBJ)/funcionalidade1.o
 	gcc -Wall -Werror -Wpedantic -O3 -march=native -c $(SRC)/funcionalidade2.c -I $(INCLUDE) -o $(OBJ)/funcionalidade2.o
+	gcc -Wall -Werror -Wpedantic -O3 -march=native -c $(SRC)/funcionalidade3.c -I $(INCLUDE) -o $(OBJ)/funcionalidade3.o
 	gcc -Wall -Werror -Wpedantic -O3 -march=native -c $(SRC)/funcionalidade4.c -I $(INCLUDE) -o $(OBJ)/funcionalidade4.o
 
 myapps:

@@ -75,7 +75,7 @@ void criaTabela(char *nomeArquivoCSV, char *nomeArquivoBIN){
 
             r->tecnologiaOrigem.string = str1;
             r->tecnologiaOrigem.tamanho = strlen(str1);
-            // buscar str1 em tecnologias, caabecalho->nroTecnologias++;
+            // buscar str1 em tecnologias, cabecalho->nroTecnologias++;
 
             r->tecnologiaDestino.string = str2;
             r->tecnologiaDestino.tamanho = strlen(str2);
@@ -112,7 +112,7 @@ void criaTabela(char *nomeArquivoCSV, char *nomeArquivoBIN){
     fclose(arquivoCSV);
     fclose(arquivoBIN);
 
-    free(r);
+    //free(r); // Aqui não precisa dar free() pois o registro não foi alocado dinamicamente
     free(cabecalho);
 
     binarioNaTela(nomeArquivoBIN);
