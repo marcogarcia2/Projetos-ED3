@@ -50,6 +50,8 @@ void recuperaDados(const char* nomeArquivoBIN){
         fread(r->tecnologiaDestino.string, r->tecnologiaDestino.tamanho, 1, arquivoBIN);
         
         // Escrevendo na ordem correta e tratando os casos nulos
+        r->tecnologiaOrigem.string[r->tecnologiaOrigem.tamanho] = '\0';
+        r->tecnologiaDestino.string[r->tecnologiaDestino.tamanho] = '\0';
 
         // Campo 1: Tecnologia Origem (string)
         if (r->tecnologiaOrigem.tamanho != 0) printf("%s, ", r->tecnologiaOrigem.string);

@@ -28,7 +28,7 @@ void buscaPorRRN(char *nomeArquivoBIN, int rrn){ // Imprime um registro após um
         return;
     }
 
-    //printf("%d", ultimoRRN); // no tec.bin é pra dar 2 DEU!!
+    // printf("%d", ultimoRRN); // no tec.bin é pra dar 2 DEU!!
 
     int byteOffset = 13 + (rrn * TAM_REGISTRO); // Calculo o byte offset do registro que quero
     fseek(arquivoBIN, byteOffset, SEEK_SET); // Agora estou onde meu registro está
@@ -60,7 +60,17 @@ void buscaPorRRN(char *nomeArquivoBIN, int rrn){ // Imprime um registro após um
     r->tecnologiaOrigem.string[r->tecnologiaOrigem.tamanho] = '\0';
     r->tecnologiaDestino.string[r->tecnologiaDestino.tamanho] = '\0';
 
-    printf("%s, %d, %d, %s, %d", r->tecnologiaOrigem.string, r->grupo, r->popularidade, r->tecnologiaDestino.string, r->peso);
+    (r->tecnologiaOrigem.tamanho != 0) ? printf("%s, ", r->tecnologiaOrigem.string) : printf("NULO, ");
+
+    (r->grupo != -1) ? printf("%d, ", r->grupo) : printf("NULO, ");
+
+    (r->popularidade != -1) ? printf("%d, ", r->popularidade) : printf("NULO, ");
+
+    (r->tecnologiaDestino.tamanho != 0) ? printf("%s, ", r->tecnologiaDestino.string) : printf("NULO, ");
+
+    (r->peso != -1) ? printf("%d\n", r->peso) : printf("NULO\n");
+
+    //printf("%s, %d, %d, %s, %d", r->tecnologiaOrigem.string, r->grupo, r->popularidade, r->tecnologiaDestino.string, r->peso);
 
     free(r->tecnologiaOrigem.string);
     free(r->tecnologiaDestino.string);
