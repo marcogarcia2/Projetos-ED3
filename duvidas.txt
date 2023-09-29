@@ -32,3 +32,14 @@ run:
 	$(BIN)/main
 
 clear:
+
+# Ainda falta
+- Tratar campos nulos 
+- Atualizar o cabecalho
+	- nroTecnologias
+	- nroParesTecnologias
+	OBS.: Achar uma maneira de contabilizar isso
+
+- Implementar a funcionalidade [3]
+- Gravar o vídeo
+- Documentação Interna
