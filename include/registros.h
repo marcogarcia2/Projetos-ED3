@@ -1,3 +1,8 @@
+/*  
+*   Lucas Lima Romero - 13676325
+*   Marco Antonio Gaspar Garcia - 11833581
+*/
+
 #ifndef REGISTROS_H
 #define REGISTROS_H
 
