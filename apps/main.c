@@ -190,27 +190,13 @@ void recuperaDados(const char* nomeArquivoBIN){
         return;
     }
 
-    // Pular os bytes do cabecalho
+    // Pular os bytes do cabecalho // fseek????????
     char aux[13];
     fread(aux, 1, 13, arquivoBIN);
 
-    /*
-    preciso printar nessa ordem:
-    nomeTecnologiaOrigem,grupo,popularidade,nomeTecnologiaDestino,peso
-
-    ordem do registro:
-    removido: 1
-    grupo: 4
-    popularidade: 4
-    peso: 4
-    tecnologiaOrigem.tamanho: 4
-    tecnologiaOrigem.string: tecnologiaOrigem.tamanho
-    tecnologiaDestino.tamanho:4
-    tecnologiaDestino.string: tecnologiaDestino.tamanho
-    */
-
     // Lendo os campos do registro para recuperá-lo
     while(1){
+
         Registro *r = criaRegistro();
         
         // o byte do campo removido é o primeiro a ser lido, servirá de flag para saber se chegou ao fim do arquivo
@@ -221,13 +207,14 @@ void recuperaDados(const char* nomeArquivoBIN){
             break;
         }
 
-        // se este não é o fim do arquivo, leremos todos os campos
+        // se este não é o fim do arquivo, leremos todos os campos na ordem em que foram escritos
 
         fread(&r->grupo, sizeof(int), 1, arquivoBIN);
         fread(&r->popularidade, sizeof(int), 1, arquivoBIN);
         fread(&r->peso, sizeof(int), 1, arquivoBIN);
 
         // para ler as strings, é necessário alocar memória 
+
 
         fread(&r->tecnologiaOrigem.tamanho, sizeof(int), 1, arquivoBIN);
         r->tecnologiaOrigem.string = (char *)malloc(r->tecnologiaOrigem.tamanho+1);
@@ -236,8 +223,29 @@ void recuperaDados(const char* nomeArquivoBIN){
         fread(&r->tecnologiaDestino.tamanho, sizeof(int), 1, arquivoBIN);
         r->tecnologiaDestino.string = (char *)malloc(r->tecnologiaDestino.tamanho+1);
         fread(r->tecnologiaDestino.string, r->tecnologiaDestino.tamanho, 1, arquivoBIN);
+        
+        // Escrevendo na ordem correta e tratando os casos nulos
 
-        printf("%s, %d, %d, %s, %d\n", r->tecnologiaOrigem.string, r->grupo, r->popularidade, r->tecnologiaDestino.string, r->peso);
+        // Campo 1: Tecnologia Origem (string)
+        if (r->tecnologiaOrigem.tamanho != 0) printf("%s, ", r->tecnologiaOrigem.string);
+        else printf("NULO, ");
+
+        // Campo 2: Grupo (int)
+        if(r->grupo != -1) printf("%d, ", r->grupo);
+        else printf("NULO, ");
+
+        // Campo 3: Popularidade (int)
+        if(r->popularidade != -1) printf("%d, ", r->popularidade);
+        else printf("NULO, ");
+
+        // Campo 4: Tecnologia Destino (string)
+        if (r->tecnologiaDestino.tamanho != 0) printf("%s, ", r->tecnologiaDestino.string);
+        else printf("NULO, ");
+
+        // Campo 5: Peso (int)
+        if(r->peso != -1) printf("%d\n", r->peso);
+        else printf("NULO\n");
+
         
         // Precisamos saltar até o próximo registro, calculando o quanto de lixo ainda resta
         int restante = TAM_REGISTRO - (TAM_REGISTRO_FIXO + r->tecnologiaOrigem.tamanho + r->tecnologiaDestino.tamanho);
@@ -267,9 +275,6 @@ int main (int argc, char *argv[]){
     
     case 2:
         scanf("%s", nomeArquivoBIN);
-        //printf("Arquivo BIN: %s\n", nomeArquivoBIN); 
-        //if (strcmp("binario3.bin", nomeArquivoBIN) == 0) printf("Sucesso\n");
-        //else printf("NÃO\n");
         recuperaDados(nomeArquivoBIN);
         break;
 
