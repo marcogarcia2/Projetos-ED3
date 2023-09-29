@@ -41,7 +41,7 @@ void criaTabela(const char *nomeArquivoCSV, const char *nomeArquivoBIN){
     // A lógica é criar um loop que irá ler cada linha do arquivo CSV
     while (1) {   
         int resultado = fscanf(arquivoCSV, "%[^,],%d,%d,%[^,],%d\n", str1, &r->grupo, &r->popularidade, str2, &r->peso); // Talvez nao de certo trabalhar com fscanf
-        cabecalho->proxRRN++; 
+        
 
         if (resultado == EOF){ // Chegou ao fim do arquivo
             break;
@@ -89,6 +89,7 @@ void criaTabela(const char *nomeArquivoCSV, const char *nomeArquivoBIN){
             // Escreve os valores lidos no arquivo binário
             gravaRegistro(r, arquivoBIN);
             r = resetaRegistro(r);
+            cabecalho->proxRRN++; 
         }
 
     }
@@ -103,8 +104,9 @@ void criaTabela(const char *nomeArquivoCSV, const char *nomeArquivoBIN){
     // 1) Alterando o status para '1' antes de fechar o binário (criar uma função pra isso, fazendo as demais atualizaçãoes necessárias)
     fseek(arquivoBIN, 0, SEEK_SET); // Ponteiro aponta para o inicio do arquivo
     //fwrite("1", sizeof(char), 1, arquivoBIN);
-    fputc('1', arquivoBIN);
-    //gravaCabecalho(cabecalho, arquivoBIN);
+    cabecalho->status = '1';
+    fputc(cabecalho->status, arquivoBIN);
+    fwrite(&cabecalho->proxRRN, sizeof(int), 1, arquivoBIN);
     
     fclose(arquivoCSV);
     fclose(arquivoBIN);

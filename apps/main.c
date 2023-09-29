@@ -8,6 +8,7 @@
 #include "funcoesCriadas.h"
 #include "funcionalidade1.h"
 #include "funcionalidade2.h"
+#include "funcionalidade4.h"
 
 // Depois (?) tem uma funçao que gera um binario aleatorio para checar se criou certo
 // quando o campo do registro for vazio, colocar nulo
@@ -16,7 +17,7 @@
 
 int main (int argc, char *argv[]){
     
-    int f;
+    int f, rrn;
     char nomeArquivoCSV[30], nomeArquivoBIN[30];
     scanf("%d ", &f);
 
@@ -39,7 +40,8 @@ int main (int argc, char *argv[]){
 
 
     case 4:
-
+        scanf("%s %d", nomeArquivoBIN, &rrn);
+        buscaPorRRN(nomeArquivoBIN, rrn);
         break;
 
 
