@@ -5,9 +5,10 @@
 #include "funcionalidade1.h"
 #include "registros.h"
 #include "funcoesCriadas.h"
+#include "funcoesFornecidas.h"
 
 // Funcionalidade 1
-void criaTabela(const char *nomeArquivoCSV, const char *nomeArquivoBIN){ 
+void criaTabela(char *nomeArquivoCSV, char *nomeArquivoBIN){ 
     
     // Abrindo o arquivo CSV
     FILE *arquivoCSV = fopen(nomeArquivoCSV, "r");
@@ -114,6 +115,6 @@ void criaTabela(const char *nomeArquivoCSV, const char *nomeArquivoBIN){
     free(r);
     free(cabecalho);
 
-    //binarionatela()
+    binarioNaTela(nomeArquivoBIN);
 
 }

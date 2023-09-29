@@ -2,6 +2,12 @@ Principais dúvidas que surgiram com o desenvolvimento do projeto
 
 O cabeçalho deve ser atualizado a cada novo registro, ou posso atualizá-lo ao final da função 1?
 
+O que exatamente são os campos nroTecnologias e nroParesTecnologias
+
+binario3.bin está errado!
+
+
+
 Excluir antes da entrega final
 
 

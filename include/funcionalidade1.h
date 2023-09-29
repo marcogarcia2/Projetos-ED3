@@ -2,6 +2,6 @@
 #define FUNCIONALIDADE_1_H
 
 // Funcionalidade 1
-void criaTabela(const char *nomeArquivoCSV, const char *nomeArquivoBIN);
+void criaTabela(char *nomeArquivoCSV, char *nomeArquivoBIN);
     
 #endif
