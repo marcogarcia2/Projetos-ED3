@@ -7,6 +7,7 @@
 #include <stdlib.h>
 
 #include "registros.h"
+#include "funcoesCriadas.h"
 
 Cabecalho *criaCabecalho(void){ // Inicializa o cabecalho
     
@@ -89,4 +90,14 @@ void gravaRegistro(Registro *r, FILE *arquivoBIN){ // grava o Registro criado no
     for(int i = 0; i < tamLixo; i++)
         fwrite("$", sizeof(char), 1, arquivoBIN);
 
+}
+
+//Registro *leRegistro(FILE *arquivoBIN, int byteInicial); // Função que lê o registro do arquivo binário
+
+void imprimeRegistro(Registro *r){
+    (r->tecnologiaOrigem.tamanho != 0) ? printf("%s, ", r->tecnologiaOrigem.string) : printf("NULO, ");
+    (r->grupo != -1) ? printf("%d, ", r->grupo) : printf("NULO, ");
+    (r->popularidade != -1) ? printf("%d, ", r->popularidade) : printf("NULO, ");
+    (r->tecnologiaDestino.tamanho != 0) ? printf("%s, ", r->tecnologiaDestino.string) : printf("NULO, ");
+    (r->peso != -1) ? printf("%d\n", r->peso) : printf("NULO\n");
 }

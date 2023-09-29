@@ -65,16 +65,17 @@ void buscaPorRRN(char *nomeArquivoBIN, int rrn){ // Imprime um registro após um
     r->tecnologiaOrigem.string[r->tecnologiaOrigem.tamanho] = '\0';
     r->tecnologiaDestino.string[r->tecnologiaDestino.tamanho] = '\0';
 
-    (r->tecnologiaOrigem.tamanho != 0) ? printf("%s, ", r->tecnologiaOrigem.string) : printf("NULO, ");
+    // (r->tecnologiaOrigem.tamanho != 0) ? printf("%s, ", r->tecnologiaOrigem.string) : printf("NULO, ");
 
-    (r->grupo != -1) ? printf("%d, ", r->grupo) : printf("NULO, ");
+    // (r->grupo != -1) ? printf("%d, ", r->grupo) : printf("NULO, ");
 
-    (r->popularidade != -1) ? printf("%d, ", r->popularidade) : printf("NULO, ");
+    // (r->popularidade != -1) ? printf("%d, ", r->popularidade) : printf("NULO, ");
 
-    (r->tecnologiaDestino.tamanho != 0) ? printf("%s, ", r->tecnologiaDestino.string) : printf("NULO, ");
+    // (r->tecnologiaDestino.tamanho != 0) ? printf("%s, ", r->tecnologiaDestino.string) : printf("NULO, ");
 
-    (r->peso != -1) ? printf("%d\n", r->peso) : printf("NULO\n");
+    // (r->peso != -1) ? printf("%d\n", r->peso) : printf("NULO\n");
 
+    imprimeRegistro(r);
     //printf("%s, %d, %d, %s, %d", r->tecnologiaOrigem.string, r->grupo, r->popularidade, r->tecnologiaDestino.string, r->peso);
 
     free(r->tecnologiaOrigem.string);

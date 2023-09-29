@@ -24,5 +24,8 @@ void liberaRegistro(Registro *r);
 
 void gravaRegistro(Registro *r, FILE *arquivoBIN);
 
+//Registro *leRegistro(FILE *arquivoBIN, int byteInicial);
+
+void imprimeRegistro(Registro *r);
 
 #endif

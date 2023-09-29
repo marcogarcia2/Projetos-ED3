@@ -3,11 +3,15 @@
 *   Marco Antonio Gaspar Garcia - 11833581
 */
 
+#define BYTE_GRUPO 1
+#define BYTE_POPULARIDADE 5
+#define BYTE_PESO 9
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
-#include "funcionalidade4.h"
+#include "funcionalidade3.h"
 #include "registros.h"
 #include "funcoesCriadas.h"
 #include "funcoesFornecidas.h"
@@ -46,13 +50,26 @@ void buscaPorCampo(char *nomeArquivoBIN, int n){ // Imprime os registros que pos
             printf("nomeCampo: %s\nValor Campo: %d\n", nomeCampo, valorCampoint);
 
             fseek(arquivoBIN, 13, SEEK_SET); // Pula o cabeçalho
-            if(fgetc(arquivoBIN) == '1'){ // Se o arquivo estiver inconsistente
-                printf("Registro inexistente.\n");
-                return;
-            }
+            // if(fgetc(arquivoBIN) == '1'){ // Se o arquivo estiver inconsistente
+            //     printf("Registro inexistente.\n");
+            //     return;
+            // }
 
             if(!strcmp(nomeCampo, "grupo")){ // Se é grupo
-                
+                // Estou no byte 1
+                //int byteInicial = 13; // Guarda em que byte começa o registro
+                // while(1){
+                //     if(fgetc(arquivoBIN) == '0'){ // Se não tiver removido
+                //         fread(&r->grupo, sizeof(int), 1, arquivoBIN); // Leio o grupo
+                //         if(r->grupo == valorCampoint){ // Achei um dos registros!
+                //             // Vou armazenar o registro em variáveis e printá-lo no terminal
+                //             //r = leRegistro(arquivoBIN, byteInicial);
+
+
+                //         }
+
+                //     }
+                // }
             }
             else if(!strcmp(nomeCampo, "popularidade")){ // Se é popularidade
                 
