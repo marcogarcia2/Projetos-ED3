@@ -37,57 +37,82 @@ void criaTabela(char *nomeArquivoCSV, char *nomeArquivoBIN){
     fscanf(arquivoCSV, "%*[^\n]\n");
     
     // Variáveis que nos auxiliarão na análise do arquivo
-    Registro *r = criaRegistro();
-    char str1[30], str2[30];
+    char linha[100];
     Lista *L = criaLista();
 
     // A lógica é criar um loop que irá ler cada linha do arquivo CSV
-    while (1) {   
-        int resultado = fscanf(arquivoCSV, "%[^,],%d,%d,%[^,],%d\n", str1, &r->grupo, &r->popularidade, str2, &r->peso); // Talvez nao de certo trabalhar com fscanf
-        
+    while (fgets(linha, sizeof(linha), arquivoCSV)) { 
 
-        if (resultado == EOF){ // Chegou ao fim do arquivo
-            break;
+        Registro *r = criaRegistro();
+
+        int i = 0; // Variável que percorre a linha
+
+        // Serão cinco iterações, uma para ler cada campo
+        for (int iter = 1; iter <= 5; iter++){
+
+            int j = 0;            // Variável que percorre o campo
+            char aux[100] = "";   // Variável que guardará os campos
+
+            // Tratando os 4 primeiros campos
+            if (iter != 5) {
+
+                // Percorrendo a linha e atribuindo em aux
+                while (linha[i] != ','){
+                    aux[j++] = linha[i++];
+                }
+                i++; // Pula a vírgula
+
+                if (iter == 1){
+
+                    r->tecnologiaOrigem.tamanho = strlen(aux);
+                    r->tecnologiaOrigem.string = (char*)malloc(r->tecnologiaOrigem.tamanho + 1);
+                    strcpy(r->tecnologiaOrigem.string, aux);
+                    r->tecnologiaOrigem.string[r->tecnologiaOrigem.tamanho] = '\0';
+                    //printf("Tecnologia Origem: %s || Tamanho = %d\n", r->tecnologiaOrigem.string, r->tecnologiaOrigem.tamanho);
+                }
+
+                else if (iter == 2) {
+
+                    r->grupo = aux[0] == '\0' ? -1 : atoi(aux);
+                    //printf("Grupo =  %d\n", r->grupo);
+                }
+
+                else if (iter == 3) {
+
+                    r->popularidade = aux[0] == '\0' ? -1 : atoi(aux);
+                    //printf("Popularidade = %d\n", r->popularidade);
+                }
+
+                else if (iter == 4) {
+
+                    r->tecnologiaDestino.tamanho = strlen(aux);
+                    r->tecnologiaDestino.string = (char*)malloc(r->tecnologiaDestino.tamanho + 1);
+                    strcpy(r->tecnologiaDestino.string, aux);
+                    r->tecnologiaDestino.string[r->tecnologiaDestino.tamanho] = '\0';
+                    //printf("Tecnologia Destino: %s || Tamanho = %d\n", r->tecnologiaDestino.string, r->tecnologiaDestino.tamanho);
+                }
+            }
+
+            // iter == 5, deve ser tratada de forma diferente pois não termina em ','
+            else {
+
+                while(linha[i] != '\n' && linha[i] != EOF){
+                    aux[j++] = linha[i++];
+                }
+                // nesse caso, se o campo peso estiver vazio, precisammos tratar de outra forma
+
+                r->peso = aux[0] == '\0' ? -1 : atoi(aux);
+                printf("Peso = %d\n", r->peso);
+                printf("aux[0] = %c\n\n", aux[0]);
+            }
         }
 
-        else if (resultado != 5) { // Significa que algum dos campos não foi lido
-            // TRATAR CAMPOS NULOS
-            //printf("%d  ", resultado);
-            if(resultado == 0)
-                printf("Erro Tec Origem\n");
-            if (resultado == 1){
-                printf("Erro Grupo\n");
-                continue;
-            }
-            else if (resultado == 2){
-                printf("Erro Popularidade\n");
-                continue;
-            }
-            else if (resultado == 3){
-                printf("Erro Tec Destino\n");
-                continue;
-            }
-            else if (resultado == 4){
-                printf("Erro Peso\n");
-                continue;
-            }
-        }
+        gravaRegistro(r, arquivoBIN);
+        cabecalho->proxRRN++;
+        adicionaLista(L, r->tecnologiaOrigem.string, r->tecnologiaOrigem.tamanho);        
+        adicionaLista(L, r->tecnologiaDestino.string, r->tecnologiaDestino.tamanho);        
 
-        else{ // Leitura bem-sucedida
-
-            r->tecnologiaOrigem.string = str1;
-            r->tecnologiaOrigem.tamanho = strlen(str1);
-
-            r->tecnologiaDestino.string = str2;
-            r->tecnologiaDestino.tamanho = strlen(str2);
-
-            // Escreve os valores lidos no arquivo binário
-            gravaRegistro(r, arquivoBIN);
-            r = resetaRegistro(r);
-            cabecalho->proxRRN++; 
-            
-            adicionaLista(L, str1, strlen(str1));
-        }
+        liberaRegistro(r);
     }
 
     // nroTecnologias é == o tamanho da lista
@@ -106,17 +131,12 @@ void criaTabela(char *nomeArquivoCSV, char *nomeArquivoBIN){
     cabecalho->status = '1';
     fputc(cabecalho->status, arquivoBIN);
     fwrite(&cabecalho->proxRRN, sizeof(int), 1, arquivoBIN);
-
-    
-
     
     fclose(arquivoCSV);
     fclose(arquivoBIN);
 
-    liberaRegistro(r); // Aqui não precisa dar free() pois o registro não foi alocado dinamicamente
     free(cabecalho);
     destroiLista(&L);
 
     binarioNaTela(nomeArquivoBIN);
-
 }

@@ -4,6 +4,7 @@
 
 int main (int argc, char *argv[]){
 
+
     FILE *arquivo;
 
     char linha[100];
@@ -17,60 +18,71 @@ int main (int argc, char *argv[]){
     }
 
     while (fgets(linha, sizeof(linha), arquivo)) {
-        // Use o strtok para separar a linha em tokens com base na vírgula
-        //char *token;
-        //char *rest = linha;
+
         
-        char tecnologiaOrigem[100] = ""; // Inicialize com uma string vazia
-        char tecnologiaDestino[100] = ""; // Inicialize com uma string vazia
-        int grupo, popularidade, peso;
+        char *tecnologiaOrigem; // Inicialize com uma string vazia
+        char *tecnologiaDestino; // Inicialize com uma string vazia
+        int grupo, popularidade, peso, t1, t2;
         grupo = popularidade = peso = -1; // Um valor inválido para indicar campo vazio
         
-        char aux[100];
-        int j = 0;
+        int j = 0; // percorre a linha
         for (int i = 0; i < 5; i++){
-            int k = 0;
-            while (linha[j] != ','){
-                aux[k++] = linha[j++];
+
+            int k = 0; // percorre cada campo
+            char aux[100] = "";
+
+            if (i != 4) {
+
+                // Percorrendo a linha e alocando em aux
+                while (linha[j] != ','){
+                    aux[k++] = linha[j++];
+                }
+                j++; // pular a vírgula
+
+                if (i == 0){
+
+                    t1 = strlen(aux);
+                    tecnologiaOrigem = (char*)malloc(t1+1);
+                    strcpy(tecnologiaOrigem, aux);
+                    tecnologiaOrigem[t1] = '\0';
+                    printf("Tecnologia Origem: %s // Tamanho = %d\n", tecnologiaOrigem, t1);
+                }
+
+                else if (i == 1){
+
+                    grupo = aux[0] == '\0' ? -1 : atoi(aux);
+                    printf("Grupo: %d\n", grupo);
+                }
+
+                else if (i == 2){
+
+                    popularidade = aux[0] == '\0' ? -1 : atoi(aux);
+                    printf("Popularidade: %d\n", popularidade);
+                }
+
+                else if (i == 3){
+
+                    t2 = strlen(aux);
+                    tecnologiaDestino = (char*)malloc(t2+1);
+                    strcpy(tecnologiaDestino, aux);
+                    tecnologiaDestino[t2] = '\0';
+                    printf("Tecnologia Destino: %s\nTamanho = %d\n", tecnologiaDestino, t2);
+                }
+
             }
-            j++; // pular a linha
+            // i == 4
+            else {
+                while(linha[j] != '\n' && linha[j] != EOF){
+                    aux[k++] = linha[j++];
+                }
 
-            if (i == 0) strcpy(tecnologiaOrigem, aux);
-            else if (i == 1 && aux[0] != '\0') grupo = atoi(aux);
-            else if (i == 2 && aux[0] != '\0') popularidade = atoi(aux);
-            if (i == 3) strcpy(tecnologiaDestino, aux);
-            else if (i == 4 && aux[0] != '\0') peso = atoi(aux);
-
-
+                peso = aux[0] == '\0' ? -1 : atoi(aux);
+                printf("Peso = %d\n\n\n", peso);
+            }
         }
         
-        
-        
-        /*
-        token = strtok_r(rest, ",", &rest);
-        if (token != NULL) strcpy(tecnologiaOrigem, token);
-
-        token = strtok_r(rest, ",", &rest);
-        if (token != NULL) grupo = atoi(token);
-
-        token = strtok_r(rest, ",", &rest);
-        if (token != NULL) popularidade = atoi(token);
-        
-        token = strtok_r(rest, ",", &rest);
-        if (token != NULL) strcpy(tecnologiaDestino, token);
-
-        token = strtok_r(rest, ",", &rest);
-        if (token != NULL) peso = atoi(token);
-        */
-
-        // Agora, você tem 'tecnologiaOrigem' e 'grupo' preenchidos
-        // e pode fazer algo com esses valores.
-        printf("LINHA: %s\n\n", linha);
-        printf("Tecnologia de Origem: %s\n", tecnologiaOrigem);
-        printf("Grupo: %d\n", grupo);
-        printf("Popularidade: %d\n", popularidade);
-        printf("Tecnologia Destino: %s\n", tecnologiaDestino);
-        printf("Peso: %d\n", peso);
+        free (tecnologiaDestino);
+        free (tecnologiaOrigem);
     }
 
     // Feche o arquivo
