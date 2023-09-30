@@ -11,6 +11,7 @@
 #include "registros.h"
 #include "funcoesCriadas.h"
 #include "funcoesFornecidas.h"
+#include "lista.h"
 
 // Funcionalidade 1
 void criaTabela(char *nomeArquivoCSV, char *nomeArquivoBIN){ 
@@ -30,19 +31,15 @@ void criaTabela(char *nomeArquivoCSV, char *nomeArquivoBIN){
     }
 
     Cabecalho *cabecalho = criaCabecalho();
-    // printf("Status: %c\n", cabecalho->status);
-    // printf("proxRRN: %d\n", cabecalho->proxRRN);
-    // printf("nroTecnologias: %d\n", cabecalho->nroTecnologias);
-    // printf("nroParesTecnologias: %d\n", cabecalho->nroParesTecnologias);
-    // Reservando os 13 primeiros bytes do arquivo para o cabecalho
     gravaCabecalho(cabecalho, arquivoBIN);
 
     // Descartando a primeira linha do arquivo (deve ser revisto para analisar a ordem das informações)
     fscanf(arquivoCSV, "%*[^\n]\n");
     
+    // Variáveis que nos auxiliarão na análise do arquivo
     Registro *r = criaRegistro();
-
     char str1[30], str2[30];
+    Lista *L = criaLista();
 
     // A lógica é criar um loop que irá ler cada linha do arquivo CSV
     while (1) {   
@@ -80,28 +77,25 @@ void criaTabela(char *nomeArquivoCSV, char *nomeArquivoBIN){
 
             r->tecnologiaOrigem.string = str1;
             r->tecnologiaOrigem.tamanho = strlen(str1);
-            // buscar str1 em tecnologias, cabecalho->nroTecnologias++;
 
             r->tecnologiaDestino.string = str2;
             r->tecnologiaDestino.tamanho = strlen(str2);
-            
-            /*
-            printf("r->tecnologiaOrigem.string = %s\n", r->tecnologiaOrigem.string);
-            printf("r->tecnologiaOrigem.tamanho = %d\n\n", r->tecnologiaOrigem.tamanho);
-            printf("r->tecnologiaDestino.string = %s\n", r->tecnologiaDestino.string);
-            printf("r->tecnologiaDestino.tamanho = %d\n\n", r->tecnologiaDestino.tamanho);
-            */
 
             // Escreve os valores lidos no arquivo binário
             gravaRegistro(r, arquivoBIN);
             r = resetaRegistro(r);
             cabecalho->proxRRN++; 
+            
+            adicionaLista(L, str1, strlen(str1));
         }
-
     }
 
+    // nroTecnologias é == o tamanho da lista
+    cabecalho->nroTecnologias = getTamanho(L);
     //printf("%d ", cabecalho->proxRRN);
     
+    imprimeLista(L);
+    printf("Número de tecnologias: %d\n", getTamanho(L));
 
 
     
@@ -113,12 +107,16 @@ void criaTabela(char *nomeArquivoCSV, char *nomeArquivoBIN){
     cabecalho->status = '1';
     fputc(cabecalho->status, arquivoBIN);
     fwrite(&cabecalho->proxRRN, sizeof(int), 1, arquivoBIN);
+
+    
+
     
     fclose(arquivoCSV);
     fclose(arquivoBIN);
 
     //free(r); // Aqui não precisa dar free() pois o registro não foi alocado dinamicamente
     free(cabecalho);
+    destroiLista(&L);
 
     binarioNaTela(nomeArquivoBIN);
 
