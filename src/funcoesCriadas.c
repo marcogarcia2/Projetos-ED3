@@ -92,7 +92,31 @@ void gravaRegistro(Registro *r, FILE *arquivoBIN){ // grava o Registro criado no
 
 }
 
-//Registro *leRegistro(FILE *arquivoBIN, int byteInicial); // Função que lê o registro do arquivo binário
+Registro *leRegistro(FILE *arquivoBIN, int byteInicial, Registro *r){ // Função que lê o registro do arquivo binário
+    // O byteInicial é o byte do campo removido
+    fseek(arquivoBIN, byteInicial, SEEK_SET); // Vou para o byte inicial do registro
+
+    r->removido = fgetc(arquivoBIN);
+    fread(&r->grupo, sizeof(int), 1, arquivoBIN);
+    fread(&r->popularidade, sizeof(int), 1, arquivoBIN);
+    fread(&r->peso, sizeof(int), 1, arquivoBIN);
+
+    fread(&r->tecnologiaOrigem.tamanho, sizeof(int), 1, arquivoBIN);
+    r->tecnologiaOrigem.string = (char *)malloc(r->tecnologiaOrigem.tamanho+1);
+    fread(r->tecnologiaOrigem.string, r->tecnologiaOrigem.tamanho, 1, arquivoBIN);
+
+    fread(&r->tecnologiaDestino.tamanho, sizeof(int), 1, arquivoBIN);
+    r->tecnologiaDestino.string = (char *)malloc(r->tecnologiaDestino.tamanho+1);
+    fread(r->tecnologiaDestino.string, r->tecnologiaDestino.tamanho, 1, arquivoBIN);
+
+    r->tecnologiaOrigem.string[r->tecnologiaOrigem.tamanho] = '\0';
+    r->tecnologiaDestino.string[r->tecnologiaDestino.tamanho] = '\0';
+
+    // O ponteiro do arquivo está no final do registro
+    //printf("%lu\n", ftell(arquivoBIN)); // Teste pra ver se o ponteiro está no final do registro
+
+    return r;
+}
 
 void imprimeRegistro(Registro *r){
     (r->tecnologiaOrigem.tamanho != 0) ? printf("%s, ", r->tecnologiaOrigem.string) : printf("NULO, ");
