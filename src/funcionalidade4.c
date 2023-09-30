@@ -39,44 +39,17 @@ void buscaPorRRN(char *nomeArquivoBIN, int rrn){ // Imprime um registro após um
     fseek(arquivoBIN, byteOffset, SEEK_SET); // Agora estou onde meu registro está
 
     // printf("Byte Offset: %d ", byteOffset);
-
+    
     if(fgetc(arquivoBIN) == '1'){ // Se meu registro estiver removido, eu saio também, quero testar isso num futuro, removendo algum registro forçadamente
         printf("Registro inexistente.\n");
         return;
     }
 
-    Registro *r = criaRegistro(); // Leio o registro
+    Registro *r = criaRegistro(); // Crio o registro
 
     // Agora vou ler o registro
-    fread(&r->grupo, sizeof(int), 1, arquivoBIN);
-    fread(&r->popularidade, sizeof(int), 1, arquivoBIN);
-    fread(&r->peso, sizeof(int), 1, arquivoBIN);
-    
-    fread(&r->tecnologiaOrigem.tamanho, sizeof(int), 1, arquivoBIN);
-    r->tecnologiaOrigem.string = (char *)malloc(r->tecnologiaOrigem.tamanho+1);
-    fread(r->tecnologiaOrigem.string, r->tecnologiaOrigem.tamanho, 1, arquivoBIN);
-    // printf("%d ", r->tecnologiaOrigem.tamanho);
-
-    fread(&r->tecnologiaDestino.tamanho, sizeof(int), 1, arquivoBIN);
-    r->tecnologiaDestino.string = (char *)malloc(r->tecnologiaDestino.tamanho+1);
-    fread(r->tecnologiaDestino.string, r->tecnologiaDestino.tamanho, 1, arquivoBIN);
-    // printf("%d\n", r->tecnologiaDestino.tamanho);
-
-    r->tecnologiaOrigem.string[r->tecnologiaOrigem.tamanho] = '\0';
-    r->tecnologiaDestino.string[r->tecnologiaDestino.tamanho] = '\0';
-
-    // (r->tecnologiaOrigem.tamanho != 0) ? printf("%s, ", r->tecnologiaOrigem.string) : printf("NULO, ");
-
-    // (r->grupo != -1) ? printf("%d, ", r->grupo) : printf("NULO, ");
-
-    // (r->popularidade != -1) ? printf("%d, ", r->popularidade) : printf("NULO, ");
-
-    // (r->tecnologiaDestino.tamanho != 0) ? printf("%s, ", r->tecnologiaDestino.string) : printf("NULO, ");
-
-    // (r->peso != -1) ? printf("%d\n", r->peso) : printf("NULO\n");
-
+    r = leRegistro(arquivoBIN, byteOffset, r);
     imprimeRegistro(r);
-    //printf("%s, %d, %d, %s, %d", r->tecnologiaOrigem.string, r->grupo, r->popularidade, r->tecnologiaDestino.string, r->peso);
 
     free(r->tecnologiaOrigem.string);
     free(r->tecnologiaDestino.string);
