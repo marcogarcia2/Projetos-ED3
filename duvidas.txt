@@ -6,6 +6,8 @@ O que exatamente são os campos nroTecnologias e nroParesTecnologias
 
 binario3.bin está errado!
 
+O que é mais barato: char[13] + fscanf ou fseek()
+
 
 
 Excluir antes da entrega final

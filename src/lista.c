@@ -46,6 +46,7 @@ Lista *criaLista(void) {
     return L;
 }
 
+// Função que libera a memória alocada de um nó
 void destroiNo(No *p){
 
     free(p->string);

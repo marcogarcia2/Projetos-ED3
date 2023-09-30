@@ -7,9 +7,6 @@
 #define LISTA_H
 
 #include "lista.h"
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
 
 typedef struct _no No;
 typedef struct _lista Lista;

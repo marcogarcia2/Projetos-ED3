@@ -94,9 +94,8 @@ void criaTabela(char *nomeArquivoCSV, char *nomeArquivoBIN){
     cabecalho->nroTecnologias = getTamanho(L);
     //printf("%d ", cabecalho->proxRRN);
     
-    imprimeLista(L);
+    //imprimeLista(L);
     printf("Número de tecnologias: %d\n", getTamanho(L));
-
 
     
     // fseek para voltar ao inicio e gravar o cabecalho
@@ -114,7 +113,7 @@ void criaTabela(char *nomeArquivoCSV, char *nomeArquivoBIN){
     fclose(arquivoCSV);
     fclose(arquivoBIN);
 
-    //free(r); // Aqui não precisa dar free() pois o registro não foi alocado dinamicamente
+    liberaRegistro(r); // Aqui não precisa dar free() pois o registro não foi alocado dinamicamente
     free(cabecalho);
     destroiLista(&L);
 

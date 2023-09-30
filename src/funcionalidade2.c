@@ -24,27 +24,27 @@ void recuperaDados(const char* nomeArquivoBIN){
     char aux[13];
     fread(aux, 1, 13, arquivoBIN);
 
-    // Lendo os campos do registro para recuperá-lo
+    // Lendo todos os registros e escrevendo-os
     while(1){
 
         Registro *r = criaRegistro();
         
-        // o byte do campo removido é o primeiro a ser lido, servirá de flag para saber se chegou ao fim do arquivo
+        // O byte do campo removido é o primeiro a ser lido, servirá de flag para saber se chegou ao fim do arquivo
         int byte = fread(&r->removido, sizeof(char), 1, arquivoBIN);
 
-        if(byte == 0){
+        // Se o fread não leu nada, chegamos ao fim do arquivo
+        if (byte == 0) {
             free(r);
             break;
         }
 
-        // se este não é o fim do arquivo, leremos todos os campos na ordem em que foram escritos
+        // Se este não é o fim do arquivo, leremos todos os campos na ordem em que foram escritos
 
         fread(&r->grupo, sizeof(int), 1, arquivoBIN);
         fread(&r->popularidade, sizeof(int), 1, arquivoBIN);
         fread(&r->peso, sizeof(int), 1, arquivoBIN);
 
         // para ler as strings, é necessário alocar memória 
-
 
         fread(&r->tecnologiaOrigem.tamanho, sizeof(int), 1, arquivoBIN);
         r->tecnologiaOrigem.string = (char *)malloc(r->tecnologiaOrigem.tamanho+1);
@@ -59,11 +59,11 @@ void recuperaDados(const char* nomeArquivoBIN){
         r->tecnologiaDestino.string[r->tecnologiaDestino.tamanho] = '\0';
 
         // Campo 1: Tecnologia Origem (string)
-        if (r->tecnologiaOrigem.tamanho != 0) printf("%s, ", r->tecnologiaOrigem.string);
+        if (r->tecnologiaOrigem.tamanho > 0) printf("%s, ", r->tecnologiaOrigem.string);
         else printf("NULO, ");
 
         // Campo 2: Grupo (int)
-        if(r->grupo != -1) printf("%d, ", r->grupo);
+        if (r->grupo != -1) printf("%d, ", r->grupo);
         else printf("NULO, ");
 
         // Campo 3: Popularidade (int)
@@ -71,7 +71,7 @@ void recuperaDados(const char* nomeArquivoBIN){
         else printf("NULO, ");
 
         // Campo 4: Tecnologia Destino (string)
-        if (r->tecnologiaDestino.tamanho != 0) printf("%s, ", r->tecnologiaDestino.string);
+        if (r->tecnologiaDestino.tamanho > 0) printf("%s, ", r->tecnologiaDestino.string);
         else printf("NULO, ");
 
         // Campo 5: Peso (int)
@@ -84,9 +84,7 @@ void recuperaDados(const char* nomeArquivoBIN){
         char lixos[restante];
         fread(lixos, 1, restante, arquivoBIN);
     
-        free(r->tecnologiaOrigem.string);
-        free(r->tecnologiaDestino.string);
-        free(r);
+        liberaRegistro(r);
     }
 
     fclose(arquivoBIN);
