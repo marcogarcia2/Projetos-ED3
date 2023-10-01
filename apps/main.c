@@ -43,7 +43,7 @@ int main (int argc, char *argv[]){
 
     case 3:
         scanf("%s %d", nomeArquivoBIN, &n); // Coloque n = 1 para testar sempre
-        //buscaPorCampo(nomeArquivoBIN, n);
+        buscaPorCampo(nomeArquivoBIN, n);
         break;
 
     case 4:

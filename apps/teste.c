@@ -17,7 +17,7 @@ int main (int argc, char *argv[]){
         return 1;
     }
 
-    while (fgets(linha, sizeof(linha), arquivo)) {
+    while (fgets(linha, sizeof(linha), arquivo)) { // Enquanto o retorno é != NULL
 
         
         char *tecnologiaOrigem; // Inicialize com uma string vazia
@@ -46,6 +46,7 @@ int main (int argc, char *argv[]){
                     strcpy(tecnologiaOrigem, aux);
                     tecnologiaOrigem[t1] = '\0';
                     printf("Tecnologia Origem: %s // Tamanho = %d\n", tecnologiaOrigem, t1);
+                    //free(tecnologiaOrigem);
                 }
 
                 else if (i == 1){
@@ -67,22 +68,27 @@ int main (int argc, char *argv[]){
                     strcpy(tecnologiaDestino, aux);
                     tecnologiaDestino[t2] = '\0';
                     printf("Tecnologia Destino: %s\nTamanho = %d\n", tecnologiaDestino, t2);
+                    //free(tecnologiaDestino);
                 }
 
             }
             // i == 4
             else {
-                while(linha[j] != '\n' && linha[j] != EOF){
+                while(linha[j] != '\n' && linha[j] != '\0'){
                     aux[k++] = linha[j++];
                 }
+                // if(linha[j] == '\n')
+                //     printf("/n\n");
+                // if(linha[j] == EOF) // -1
+                //     printf("EOF");
 
                 peso = aux[0] == '\0' ? -1 : atoi(aux);
                 printf("Peso = %d\n\n\n", peso);
             }
         }
         
-        free (tecnologiaDestino);
-        free (tecnologiaOrigem);
+        // free (tecnologiaDestino);
+        // free (tecnologiaOrigem);
     }
 
     // Feche o arquivo

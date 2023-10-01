@@ -96,10 +96,10 @@ void criaTabela(char *nomeArquivoCSV, char *nomeArquivoBIN){
             // iter == 5, deve ser tratada de forma diferente pois não termina em ','
             else {
 
-                while(linha[i] != '\n' && linha[i] != EOF){
+                while(linha[i] != '\n' && linha[i] != '\0'){
                     aux[j++] = linha[i++];
                 }
-                // nesse caso, se o campo peso estiver vazio, precisammos tratar de outra forma
+                // nesse caso, se o campo peso estiver vazio, precisamos tratar de outra forma
 
                 r->peso = aux[0] == '\0' ? -1 : atoi(aux);
                 printf("Peso = %d\n", r->peso);
