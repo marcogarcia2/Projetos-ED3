@@ -3,10 +3,6 @@
 *   Marco Antonio Gaspar Garcia - 11833581
 */
 
-#define BYTE_GRUPO 1
-#define BYTE_POPULARIDADE 5
-#define BYTE_PESO 9
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -74,7 +70,7 @@ void buscaPorCampo(char *nomeArquivoBIN, int n){ // Imprime os registros que pos
                         }
                         else{ // Se não encontrou, preciso dar fseek pro próximo registro
                             // Se não passou pelo if, vou estar no byte byteInicial + 1 (removido) + BYTE_GRUPO
-                            fseek(arquivoBIN, TAM_REGISTRO - (byteInicial + 1 + BYTE_GRUPO), SEEK_CUR);
+                            fseek(arquivoBIN, TAM_REGISTRO - 5, SEEK_CUR);
                             //printf("%lu", ftell(arquivoBIN));
                         }
                         byteInicial += TAM_REGISTRO;
