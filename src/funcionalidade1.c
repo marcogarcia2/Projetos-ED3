@@ -103,8 +103,7 @@ void criaTabela(char *nomeArquivoCSV, char *nomeArquivoBIN){
                 // nesse caso, se o campo peso estiver vazio, precisamos tratar de outra forma
 
                 r->peso = aux[0] == '\0' ? -1 : atoi(aux);
-                printf("Peso = %d\n", r->peso);
-                printf("aux[0] = %c\n\n", aux[0]);
+                //printf("Peso = %d\n", r->peso);
             }
         }
 
@@ -123,18 +122,10 @@ void criaTabela(char *nomeArquivoCSV, char *nomeArquivoBIN){
         liberaRegistro(r);
     }
 
-    // nroTecnologias é == o tamanho da lista
+    // nroTecnologias é == o tamanho da lista L
     cabecalho->nroTecnologias = getTamanho(L);
+    // nroParesTecnologias é == o tamanho da ListaPares
     cabecalho->nroParesTecnologias = getTamanho(ListaPares);
-    // cabecalho->nroParesTecnologias = 490;
-    //printf("%d ", cabecalho->proxRRN);
-    
-    //imprimeLista(L);
-    //printf("Numero de tecnologias: %d\n", getTamanho(L));
-    printf("Numero de tecnologias: %d\n", cabecalho->nroTecnologias);
-    printf("Numero de pares de tecnologias: %d\n", cabecalho->nroParesTecnologias);
-    
-    // fseek para voltar ao inicio e gravar o cabecalho
 
     // 1) Alterando o status para '1' antes de fechar o binário (criar uma função pra isso, fazendo as demais atualizaçãoes necessárias)
      // Ponteiro aponta para o inicio do arquivo
@@ -144,6 +135,8 @@ void criaTabela(char *nomeArquivoCSV, char *nomeArquivoBIN){
     // fwrite(&cabecalho->proxRRN, sizeof(int), 1, arquivoBIN);
     gravaCabecalho(cabecalho, arquivoBIN);
     
+    // fechando os arquivos e liberando a memória utilizada
+
     fclose(arquivoCSV);
     fclose(arquivoBIN);
 

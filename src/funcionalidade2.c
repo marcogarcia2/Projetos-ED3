@@ -57,27 +57,9 @@ void recuperaDados(const char* nomeArquivoBIN){
         // Escrevendo na ordem correta e tratando os casos nulos
         r->tecnologiaOrigem.string[r->tecnologiaOrigem.tamanho] = '\0';
         r->tecnologiaDestino.string[r->tecnologiaDestino.tamanho] = '\0';
-
-        // Campo 1: Tecnologia Origem (string)
-        if (r->tecnologiaOrigem.tamanho > 0) printf("%s, ", r->tecnologiaOrigem.string);
-        else printf("NULO, ");
-
-        // Campo 2: Grupo (int)
-        if (r->grupo != -1) printf("%d, ", r->grupo);
-        else printf("NULO, ");
-
-        // Campo 3: Popularidade (int)
-        if(r->popularidade != -1) printf("%d, ", r->popularidade);
-        else printf("NULO, ");
-
-        // Campo 4: Tecnologia Destino (string)
-        if (r->tecnologiaDestino.tamanho > 0) printf("%s, ", r->tecnologiaDestino.string);
-        else printf("NULO, ");
-
-        // Campo 5: Peso (int)
-        if(r->peso != -1) printf("%d\n", r->peso);
-        else printf("NULO\n");
-
+        
+        // Exibe o registro da vez na tela
+        imprimeRegistro(r);
         
         // Precisamos saltar até o próximo registro, calculando o quanto de lixo ainda resta
         int restante = TAM_REGISTRO - (TAM_REGISTRO_FIXO + r->tecnologiaOrigem.tamanho + r->tecnologiaDestino.tamanho);

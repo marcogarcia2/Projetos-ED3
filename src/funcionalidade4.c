@@ -33,8 +33,6 @@ void buscaPorRRN(char *nomeArquivoBIN, int rrn){ // Imprime um registro após um
         return;
     }
 
-    // printf("%d", ultimoRRN); // no tec.bin é pra dar 2 DEU!!
-
     int byteOffset = 13 + (rrn * TAM_REGISTRO); // Calculo o byte offset do registro que quero
     fseek(arquivoBIN, byteOffset, SEEK_SET); // Agora estou onde meu registro está
 
