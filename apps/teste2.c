@@ -2,33 +2,18 @@
 #include <stdlib.h>
 #include <string.h>
 
-void readline(char* string){
-    char c = 0;
-
-    do{
-        c = (char) getchar();
-
-    } while(c == '\n' || c == '\r');
-
-    int i = 0;
-
-    do{
-        string[i] = c;
-        i++;
-        c = getchar();
-    } while(c != '\n' && c != '\r');
-
-    string[i]  = '\0';
-}
 
 int main(int argc, char const *argv[])
 {
-    FILE *arquivo;
-
-    // Abra o arquivo para leitura
-    arquivo = fopen("teste.csv", "r");
-    // Testando a função readline
     
+    char *str1 = (char *) malloc(30 *sizeof(char));
+    char *str2 = (char *) malloc(30 *sizeof(char));
+    //char *conc = (char *) malloc(60 *sizeof(char));
+    
+    scanf("%s %s", str1, str2);
+    //conc = strcat(str1, str2);
+    printf("%s | Tamanho: %d\n", strcat(str1, str2), 2);
+    printf("%s %s\n", str1, str2);
 
     return 0;
 }

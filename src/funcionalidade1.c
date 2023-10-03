@@ -39,6 +39,7 @@ void criaTabela(char *nomeArquivoCSV, char *nomeArquivoBIN){
     // Variáveis que nos auxiliarão na análise do arquivo
     char linha[100];
     Lista *L = criaLista();
+    Lista *ListaPares = criaLista();
 
     // A lógica é criar um loop que irá ler cada linha do arquivo CSV
     while (fgets(linha, sizeof(linha), arquivoCSV)) { 
@@ -110,33 +111,45 @@ void criaTabela(char *nomeArquivoCSV, char *nomeArquivoBIN){
         gravaRegistro(r, arquivoBIN);
         cabecalho->proxRRN++;
         adicionaLista(L, r->tecnologiaOrigem.string, r->tecnologiaOrigem.tamanho);        
-        adicionaLista(L, r->tecnologiaDestino.string, r->tecnologiaDestino.tamanho);        
+        adicionaLista(L, r->tecnologiaDestino.string, r->tecnologiaDestino.tamanho);
 
+        if(strcmp(r->tecnologiaOrigem.string, "") != 0 && strcmp(r->tecnologiaDestino.string, "") != 0){
+            char *stringConcatenada = (char*) malloc(r->tecnologiaOrigem.tamanho + r->tecnologiaDestino.tamanho + 1);
+            strcpy(stringConcatenada, r->tecnologiaOrigem.string);
+            strcat(stringConcatenada, r->tecnologiaDestino.string);
+            adicionaLista(ListaPares, stringConcatenada, r->tecnologiaOrigem.tamanho + r->tecnologiaDestino.tamanho);
+        }
+            
         liberaRegistro(r);
     }
 
     // nroTecnologias é == o tamanho da lista
     cabecalho->nroTecnologias = getTamanho(L);
+    cabecalho->nroParesTecnologias = getTamanho(ListaPares);
+    // cabecalho->nroParesTecnologias = 490;
     //printf("%d ", cabecalho->proxRRN);
     
     //imprimeLista(L);
-    printf("Número de tecnologias: %d\n", getTamanho(L));
-
+    //printf("Numero de tecnologias: %d\n", getTamanho(L));
+    printf("Numero de tecnologias: %d\n", cabecalho->nroTecnologias);
+    printf("Numero de pares de tecnologias: %d\n", cabecalho->nroParesTecnologias);
     
     // fseek para voltar ao inicio e gravar o cabecalho
 
     // 1) Alterando o status para '1' antes de fechar o binário (criar uma função pra isso, fazendo as demais atualizaçãoes necessárias)
-    fseek(arquivoBIN, 0, SEEK_SET); // Ponteiro aponta para o inicio do arquivo
+     // Ponteiro aponta para o inicio do arquivo
     //fwrite("1", sizeof(char), 1, arquivoBIN);
     cabecalho->status = '1';
-    fputc(cabecalho->status, arquivoBIN);
-    fwrite(&cabecalho->proxRRN, sizeof(int), 1, arquivoBIN);
+    // fputc(cabecalho->status, arquivoBIN);
+    // fwrite(&cabecalho->proxRRN, sizeof(int), 1, arquivoBIN);
+    gravaCabecalho(cabecalho, arquivoBIN);
     
     fclose(arquivoCSV);
     fclose(arquivoBIN);
 
     free(cabecalho);
     destroiLista(&L);
+    destroiLista(&ListaPares);
 
     binarioNaTela(nomeArquivoBIN);
 }

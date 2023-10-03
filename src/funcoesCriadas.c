@@ -22,6 +22,7 @@ Cabecalho *criaCabecalho(void){ // Inicializa o cabecalho
 
 // Gravando o cabecalho em 13 bytes
 void gravaCabecalho(Cabecalho *c, FILE *arquivoBIN){
+    fseek(arquivoBIN, 0, SEEK_SET);
     fwrite(&c->status, sizeof(char), 1, arquivoBIN);
     fwrite(&c->proxRRN, sizeof(int), 1, arquivoBIN);
     fwrite(&c->nroTecnologias, sizeof(int), 1, arquivoBIN);
