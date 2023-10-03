@@ -12,7 +12,7 @@
 #include "funcoesCriadas.h"
 #include "funcoesFornecidas.h"
 
-// Funcionalidade 3: imprime o registro associado a um dado campo
+// Funcionalidade 3: imprime os registros associados a um dado campo e seu respectivo valor
 
 void buscaPorCampo(char *nomeArquivoBIN, int n){ // Imprime os registros que possuem o campo dado
     Registro *r = criaRegistro(); // Criei o registro que irei retornar
@@ -34,7 +34,6 @@ void buscaPorCampo(char *nomeArquivoBIN, int n){ // Imprime os registros que pos
     ultimoRRN--;
 
     // Preciso saber o valor de 13 + ultimoRRN * 76 como condicao de parada
-
     for (int i = 0; i < n; i++){
         flagEncontrouRegistro = 0; // Inicializo a flag como 0
         scanf("%s", nomeCampo); // Leitura do nome do campo
@@ -177,9 +176,9 @@ void buscaPorCampo(char *nomeArquivoBIN, int n){ // Imprime os registros que pos
                 //printf("%lu", ftell(arquivoBIN)); // 13
                 while(byteInicial < ultimoRRN * TAM_REGISTRO + 13){ // Sou obrigado a fazer uma busca sequencial no binário inteiro
                     if(fgetc(arquivoBIN) == '0'){ // Se não tiver removido
-                        // Pula o campo grupo
+                        // Pula o campo grupo e popularidade
                         fseek(arquivoBIN, 2 * sizeof(int), SEEK_CUR);
-                        fread(&r->peso, sizeof(int), 1, arquivoBIN); // Leio o grupo
+                        fread(&r->peso, sizeof(int), 1, arquivoBIN); // Leio o peso
                         if(r->peso == valorCampoint){ // Achei um dos registros!
                             // Vou armazenar o registro em variáveis e printá-lo no terminal
                             r = leRegistro(arquivoBIN, byteInicial, r);
@@ -187,7 +186,7 @@ void buscaPorCampo(char *nomeArquivoBIN, int n){ // Imprime os registros que pos
                             flagEncontrouRegistro = 1;
                         }
                         else{ // Se não encontrou, preciso dar fseek pro próximo registro
-                            // Se não passou pelo if, vou estar no byte byteInicial + 1 (removido) + BYTE_GRUPO
+                            // Se não passou pelo if, vou estar no byte byteInicial + 1 (removido) + 8 (grupo + popularidade) + peso
                             fseek(arquivoBIN, TAM_REGISTRO - 13, SEEK_CUR);
                             //printf("%lu", ftell(arquivoBIN));
                         }

@@ -36,12 +36,12 @@ run:
 clear:
 
 # Ainda falta
-- Tratar campos nulos 
+- Tratar campos nulos (Tratado)
 - Atualizar o cabecalho
-	- nroTecnologias
+	- nroTecnologias *
 	- nroParesTecnologias
 	OBS.: Achar uma maneira de contabilizar isso
 
-- Implementar a funcionalidade [3]
+- Implementar a funcionalidade [3] (Implementada)
 - Gravar o vídeo
 - Documentação Interna
