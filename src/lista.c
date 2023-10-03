@@ -77,7 +77,7 @@ bool escaneiaLista(const Lista *L, const No *p){
     No *aux = L->ini;
     while(aux != NULL){
 
-        if (strcmp(aux->string, p->string) == 0) return false;
+        if (!strcmp(aux->string, p->string)) return false;
         aux = aux->prox;
     }
 
@@ -91,6 +91,8 @@ int getTamanho(const Lista *L){
 
 // Função que adiciona elementos ao fim de uma lista
 void adicionaLista(Lista *L, char *string, int tamString) {
+
+    if (!strcmp(string, "")) return;
 
     No *p = criaNo(string, tamString);
 
