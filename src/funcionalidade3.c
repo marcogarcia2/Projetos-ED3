@@ -39,7 +39,7 @@ void buscaPorCampo(char *nomeArquivoBIN, int n){ // Imprime os registros que pos
         scanf("%s", nomeCampo); // Leitura do nome do campo
         if(strcmp(nomeCampo, "nomeTecnologiaOrigem") == 0 || strcmp(nomeCampo, "nomeTecnologiaDestino") == 0){ // Se forem iguais utiliza-se a função de leitura de string com aspas
             scan_quote_string(valorCampo); // Leitura de um valor de campo
-            printf("nomeCampo: %s\nValor Campo: %s\n", nomeCampo, valorCampo);
+            //printf("nomeCampo: %s\nValor Campo: %s\n", nomeCampo, valorCampo);
 
             fseek(arquivoBIN, 13, SEEK_SET); // Pula o cabeçalho
 
@@ -112,7 +112,7 @@ void buscaPorCampo(char *nomeArquivoBIN, int n){ // Imprime os registros que pos
         }
         else{ // Caso não for nenhuma das duas strings, o próximo valor é um inteiro
             scanf("%d", &valorCampoint);
-            printf("nomeCampo: %s\nValor Campo: %d\n", nomeCampo, valorCampoint);
+            //printf("nomeCampo: %s\nValor Campo: %d\n", nomeCampo, valorCampoint);
 
             fseek(arquivoBIN, 13, SEEK_SET); // Pula o cabeçalho
 

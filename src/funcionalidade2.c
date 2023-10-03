@@ -16,7 +16,7 @@ void recuperaDados(const char* nomeArquivoBIN){
 
     FILE *arquivoBIN = fopen(nomeArquivoBIN, "rb");
     if (arquivoBIN == NULL) {
-        printf("Falha no carregamento do Arquivo Binário.");
+        printf("Falha no processamento do arquivo.");
         return;
     }
 
