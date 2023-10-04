@@ -36,12 +36,15 @@ run:
 clear:
 
 # Ainda falta
-- Tratar campos nulos (Tratado)
-- Atualizar o cabecalho
+- Tratar campos nulos XXXXXXXXXX
+- Atualizar o cabecalho XXXXXXXXXXX
 	- nroTecnologias *
-	- nroParesTecnologias
-	OBS.: Achar uma maneira de contabilizar isso
+	- nroParesTecnologias *
+	OBS.: Achar uma maneira de contabilizar isso XXXXXXXXXXX
 
-- Implementar a funcionalidade [3] (Implementada)
+- Implementar a funcionalidade [3] XXXXXXXXXXXX
+
 - Gravar o vídeo
 - Documentação Interna
+- Perguntar pro Heitor se todo arquivo "inconsistente" precisa retornar: "Falha no processamento do arquivo.\n"
+- Fazer o Caso 2 funcionar com o binarioNaTela() correto

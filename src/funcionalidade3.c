@@ -28,8 +28,13 @@ void buscaPorCampo(char *nomeArquivoBIN, int n){ // Imprime os registros que pos
         return;
     }
 
+    if(fgetc(arquivoBIN) == '0'){
+        printf("Falha no processamento do arquivo.\n");
+        return;
+    }
+
     int ultimoRRN;
-    fseek(arquivoBIN, 1, SEEK_SET); // Pula o status
+    //fseek(arquivoBIN, 1, SEEK_SET); // Pula o status
     fread(&ultimoRRN, sizeof(int), 1, arquivoBIN); // Leio o proxRRN e tiro 1 para saber o último RRN
     ultimoRRN--;
 
