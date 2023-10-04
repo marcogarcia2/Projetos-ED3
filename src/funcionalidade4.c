@@ -22,8 +22,14 @@ void buscaPorRRN(char *nomeArquivoBIN, int rrn){ // Imprime um registro após um
         printf("Falha no processamento do arquivo.\n");
         return;
     }
+    
+    if(fgetc(arquivoBIN) == '0'){
+        printf("Falha no processamento do arquivo.\n");
+        fclose(arquivoBIN);
+        return;
+    }
 
-    fseek(arquivoBIN, 1, SEEK_SET); // Posiciono meu cursor no byte offset 1, onde há a info de proxRRN do cabeçalho
+    //fseek(arquivoBIN, 1, SEEK_SET); // Posiciono meu cursor no byte offset 1, onde há a info de proxRRN do cabeçalho
     int ultimoRRN = 0; 
     fread(&ultimoRRN, sizeof(int), 1, arquivoBIN);
     ultimoRRN--;

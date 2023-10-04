@@ -30,6 +30,7 @@ void buscaPorCampo(char *nomeArquivoBIN, int n){ // Imprime os registros que pos
 
     if(fgetc(arquivoBIN) == '0'){
         printf("Falha no processamento do arquivo.\n");
+        fclose(arquivoBIN);
         return;
     }
 

@@ -21,8 +21,15 @@ void recuperaDados(const char* nomeArquivoBIN){
     }
 
     // Pular os bytes do cabecalho // fseek????????
-    char aux[13];
-    fread(aux, 1, 13, arquivoBIN);
+    // char aux[13];
+    // fread(aux, 1, 13, arquivoBIN);
+    if(fgetc(arquivoBIN) == '0'){
+        printf("Falha no processamento do arquivo.\n");
+        fclose(arquivoBIN);
+        return;
+    }
+
+    fseek(arquivoBIN, 13, SEEK_SET);
 
     // Lendo todos os registros e escrevendo-os
     while(1){
