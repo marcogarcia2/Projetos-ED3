@@ -11,21 +11,25 @@
 
 #include "registros.h"
 
+// Função que cria um Cabecalho
 Cabecalho *criaCabecalho(void);
 
-// Gravando o cabecalho em 13 bytes
+// Gravando o cabecalho nos 13 bytes iniciais
 void gravaCabecalho(Cabecalho *c, FILE *arquivoBIN);
 
+// Função que cria um Registro
 Registro *criaRegistro(void);
 
-Registro *resetaRegistro(Registro *r);
-
+// Função que desaloca a memória de um Registro
 void liberaRegistro(Registro *r);
 
+// Função que escreve um registor em um arquivo binário
 void gravaRegistro(Registro *r, FILE *arquivoBIN);
 
-Registro *leRegistro(FILE *arquivoBIN, int byteInicial, Registro *r);
+// Função que lê um registro de um arquivo binário
+Registro *leRegistro(int byteInicial, Registro *r, FILE *arquivoBIN);
 
-void imprimeRegistro(Registro *r);
+// Função que imprime os campos de um registro
+void imprimeRegistro(const Registro *r);
 
 #endif

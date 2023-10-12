@@ -7,74 +7,50 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "funcionalidade2.h"
+#include "funcionalidades.h"
 #include "registros.h"
 #include "funcoesCriadas.h"
 
-// Funcionalidade 2: imprimir todo o arquivo binário na tela
+// Funcionalidade 2: imprimir todo um arquivo binário na tela
+
 void recuperaDados(const char* nomeArquivoBIN){
 
+    // Abrindo o arquivo binario no modo de escrita
     FILE *arquivoBIN = fopen(nomeArquivoBIN, "rb");
     if (arquivoBIN == NULL) {
         printf("Falha no processamento do arquivo.");
         return;
     }
 
-    // Pular os bytes do cabecalho // fseek????????
-    // char aux[13];
-    // fread(aux, 1, 13, arquivoBIN);
+    // Se seu status for igual a zero, o arquivo está inconsistente
     if(fgetc(arquivoBIN) == '0'){
         printf("Falha no processamento do arquivo.\n");
         fclose(arquivoBIN);
         return;
     }
 
-    fseek(arquivoBIN, 13, SEEK_SET);
+    // Pula os 13 primeiros bytes do arquivo, referentes ao cabeçalho
+    int byteOffset = 13;
+    fseek(arquivoBIN, byteOffset, SEEK_SET);
 
     // Lendo todos os registros e escrevendo-os
     while(1){
 
+        // Cria e lê um registro
         Registro *r = criaRegistro();
+        r = leRegistro(byteOffset, r, arquivoBIN);
+
+        // Se acabaram os registros, encerra o ciclo, senão imprime-o na tela
+        if (r == NULL) break;
+        else imprimeRegistro(r);
         
-        // O byte do campo removido é o primeiro a ser lido, servirá de flag para saber se chegou ao fim do arquivo
-        int byte = fread(&r->removido, sizeof(char), 1, arquivoBIN);
-
-        // Se o fread não leu nada, chegamos ao fim do arquivo
-        if (byte == 0) {
-            free(r);
-            break;
-        }
-
-        // Se este não é o fim do arquivo, leremos todos os campos na ordem em que foram escritos
-
-        fread(&r->grupo, sizeof(int), 1, arquivoBIN);
-        fread(&r->popularidade, sizeof(int), 1, arquivoBIN);
-        fread(&r->peso, sizeof(int), 1, arquivoBIN);
-
-        // para ler as strings, é necessário alocar memória 
-
-        fread(&r->tecnologiaOrigem.tamanho, sizeof(int), 1, arquivoBIN);
-        r->tecnologiaOrigem.string = (char *)malloc(r->tecnologiaOrigem.tamanho+1);
-        fread(r->tecnologiaOrigem.string, r->tecnologiaOrigem.tamanho, 1, arquivoBIN);
-
-        fread(&r->tecnologiaDestino.tamanho, sizeof(int), 1, arquivoBIN);
-        r->tecnologiaDestino.string = (char *)malloc(r->tecnologiaDestino.tamanho+1);
-        fread(r->tecnologiaDestino.string, r->tecnologiaDestino.tamanho, 1, arquivoBIN);
-        
-        // Escrevendo na ordem correta e tratando os casos nulos
-        r->tecnologiaOrigem.string[r->tecnologiaOrigem.tamanho] = '\0';
-        r->tecnologiaDestino.string[r->tecnologiaDestino.tamanho] = '\0';
-        
-        // Exibe o registro da vez na tela
-        imprimeRegistro(r);
-        
-        // Precisamos saltar até o próximo registro, calculando o quanto de lixo ainda resta
-        int restante = TAM_REGISTRO - (TAM_REGISTRO_FIXO + r->tecnologiaOrigem.tamanho + r->tecnologiaDestino.tamanho);
-        char lixos[restante];
-        fread(lixos, 1, restante, arquivoBIN);
-    
+        // Desalocando a memória
         liberaRegistro(r);
+
+        // Precisamos saltar até o próximo registro
+        byteOffset += TAM_REGISTRO;
     }
 
+    // Fechando o arquivo
     fclose(arquivoBIN);
 }

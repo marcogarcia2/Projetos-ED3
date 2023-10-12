@@ -113,7 +113,6 @@ void adicionaLista(Lista *L, char *string, int tamString) {
     else destroiNo(p);
 }
 
-
 // Função que exibe os elementos da lista
 void imprimeLista(const Lista *L){
 

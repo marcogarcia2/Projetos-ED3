@@ -8,9 +8,6 @@
 
 #include "lista.h"
 
-typedef struct _no No;
-typedef struct _lista Lista;
-
 // Estrutura que define o nó de uma lista
 typedef struct _no No;
 

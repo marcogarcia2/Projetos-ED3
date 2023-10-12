@@ -1,19 +1,20 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-
 /*  
 *   Lucas Lima Romero - 13676325
 *   Marco Antonio Gaspar Garcia - 11833581
 */
 
-#include "funcionalidade1.h"
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#include "funcionalidades.h"
 #include "registros.h"
 #include "funcoesCriadas.h"
 #include "funcoesFornecidas.h"
 #include "lista.h"
 
-// Funcionalidade 1
+// Funcionalidade 1: criar um arquivo binário a partir de um arquivo CSV
+
 void criaTabela(char *nomeArquivoCSV, char *nomeArquivoBIN){ 
     
     // Abrindo o arquivo CSV
@@ -30,10 +31,11 @@ void criaTabela(char *nomeArquivoCSV, char *nomeArquivoBIN){
         return;
     }
 
+    // Criando e reservando os 13 primeiros bytes ao cabeçalho
     Cabecalho *cabecalho = criaCabecalho();
     gravaCabecalho(cabecalho, arquivoBIN);
 
-    // Descartando a primeira linha do arquivo (deve ser revisto para analisar a ordem das informações)
+    // Descartando a primeira linha do arquivo CSV
     fscanf(arquivoCSV, "%*[^\n]\n");
     
     // Variáveis que nos auxiliarão na análise do arquivo
@@ -41,9 +43,12 @@ void criaTabela(char *nomeArquivoCSV, char *nomeArquivoBIN){
     Lista *L = criaLista();
     Lista *ListaPares = criaLista();
 
-    // A lógica é criar um loop que irá ler cada linha do arquivo CSV
+    // Criando um loop que irá ler cada linha do arquivo CSV
     while (fgets(linha, sizeof(linha), arquivoCSV)) { 
 
+        // A variável linha contém todas as informações que precisamos, separadas por ','
+        
+        // Criando um registro para guardar as informações desta linha
         Registro *r = criaRegistro();
 
         int i = 0; // Variável que percorre a linha
@@ -118,7 +123,8 @@ void criaTabela(char *nomeArquivoCSV, char *nomeArquivoBIN){
             strcat(stringConcatenada, r->tecnologiaDestino.string);
             adicionaLista(ListaPares, stringConcatenada, r->tecnologiaOrigem.tamanho + r->tecnologiaDestino.tamanho);
         }
-            
+
+        // Liberando a memória do registro
         liberaRegistro(r);
     }
 
@@ -128,21 +134,26 @@ void criaTabela(char *nomeArquivoCSV, char *nomeArquivoBIN){
     cabecalho->nroParesTecnologias = getTamanho(ListaPares);
 
     // 1) Alterando o status para '1' antes de fechar o binário (criar uma função pra isso, fazendo as demais atualizaçãoes necessárias)
-     // Ponteiro aponta para o inicio do arquivo
+    // Ponteiro aponta para o inicio do arquivo
     //fwrite("1", sizeof(char), 1, arquivoBIN);
     cabecalho->status = '1';
     // fputc(cabecalho->status, arquivoBIN);
     // fwrite(&cabecalho->proxRRN, sizeof(int), 1, arquivoBIN);
     gravaCabecalho(cabecalho, arquivoBIN);
     
-    // fechando os arquivos e liberando a memória utilizada
 
+    // Fechando os dois arquivos
     fclose(arquivoCSV);
     fclose(arquivoBIN);
 
+    // Liberando a memória do cabecalho e das listas encadeadas
     free(cabecalho);
     destroiLista(&L);
     destroiLista(&ListaPares);
 
     binarioNaTela(nomeArquivoBIN);
+    /*
+    printf("AGNES E CAROL: ");
+    binarioNaTela("agnes.bin");
+    */
 }

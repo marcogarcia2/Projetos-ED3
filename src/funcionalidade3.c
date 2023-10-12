@@ -7,217 +7,302 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "funcionalidade3.h"
+#include "funcionalidades.h"
 #include "registros.h"
 #include "funcoesCriadas.h"
 #include "funcoesFornecidas.h"
 
 // Funcionalidade 3: imprime os registros associados a um dado campo e seu respectivo valor
 
-void buscaPorCampo(char *nomeArquivoBIN, int n){ // Imprime os registros que possuem o campo dado
-    Registro *r = criaRegistro(); // Criei o registro que irei retornar
-
+void buscaPorCampo(char *nomeArquivoBIN, int n){
+    
+    // Variáveis para a leitura da entrada
     char nomeCampo[30], valorCampo[30];
     int valorCampoint;
-    int flagEncontrouRegistro; // Flag que indica se encontrou algum registro
 
-    // Agora vou abrir o arquivo binário
+    // Flag que indica se encontrou algum registro
+    int flagEncontrouRegistro; 
+
+    // Abrindo o arquivo binário
     FILE *arquivoBIN = fopen(nomeArquivoBIN, "rb"); // Modo de leitura em binário
     if (arquivoBIN == NULL){ // Se o arquivo não existir, erro
         printf("Falha no processamento do arquivo.\n");
         return;
     }
 
+    // Se ele está inconsistente, encerra-se a função
     if(fgetc(arquivoBIN) == '0'){
         printf("Falha no processamento do arquivo.\n");
         fclose(arquivoBIN);
         return;
     }
 
-    int ultimoRRN;
-    //fseek(arquivoBIN, 1, SEEK_SET); // Pula o status
-    fread(&ultimoRRN, sizeof(int), 1, arquivoBIN); // Leio o proxRRN e tiro 1 para saber o último RRN
+    // Descobrindo qual é o último RRN deste arquivo
+    int ultimoRRN = 0;
+    fread(&ultimoRRN, sizeof(int), 1, arquivoBIN);
     ultimoRRN--;
 
-    // Preciso saber o valor de 13 + ultimoRRN * 76 como condicao de parada
+    // 13 + (ultimoRRN * TAM_REGISTRO) é o número total de bytes deste arquivo, será a condição de parada
+    int tamTotal = 13 + (ultimoRRN * TAM_REGISTRO);
+
+    // Loop mestre, n é dado pela entrada
     for (int i = 0; i < n; i++){
+
         flagEncontrouRegistro = 0; // Inicializo a flag como 0
         scanf("%s", nomeCampo); // Leitura do nome do campo
-        if(strcmp(nomeCampo, "nomeTecnologiaOrigem") == 0 || strcmp(nomeCampo, "nomeTecnologiaDestino") == 0){ // Se forem iguais utiliza-se a função de leitura de string com aspas
-            scan_quote_string(valorCampo); // Leitura de um valor de campo
-            //printf("nomeCampo: %s\nValor Campo: %s\n", nomeCampo, valorCampo);
 
+        /// O tratamento será diferente, se o campo for string ou int
+
+        // Se o campo for string: utilizaremos a função fornecida scan_quote_string
+        if(!strcmp(nomeCampo, "nomeTecnologiaOrigem") || !strcmp(nomeCampo, "nomeTecnologiaDestino")){ 
+            
+            scan_quote_string(valorCampo); // Leitura de um valor de campo
             fseek(arquivoBIN, 13, SEEK_SET); // Pula o cabeçalho
 
-            if(strcmp(nomeCampo, "nomeTecnologiaOrigem") == 0){
-                long byteInicial = ftell(arquivoBIN); // Guarda em que byte começa o registro, primeira vez = 13
-                //printf("%lu", ftell(arquivoBIN)); // 13
-                while(byteInicial < ultimoRRN * TAM_REGISTRO + 13){ // Sou obrigado a fazer uma busca sequencial no binário inteiro
-                    if(fgetc(arquivoBIN) == '0'){ // Se não tiver removido
-                        // Pula o campo grupo
+            // Caso 1: campo escolhido é nomeTecnologiaOrigem
+            if(!strcmp(nomeCampo, "nomeTecnologiaOrigem")){
+                
+                // Guarda em que byte começa o registro, primeira vez = 13
+                unsigned long byteOffset = ftell(arquivoBIN);
+
+                // Fazendo uma busca sequencial em todo o arquivo binário
+                while(byteOffset < tamTotal){ 
+
+                    // Só leremos se o registro não tiver sido removido
+                    if(fgetc(arquivoBIN) == '0'){
+
+                        // Pula os campos grupo, popularidade e peso (3 ints)
                         fseek(arquivoBIN, 3 * sizeof(int), SEEK_CUR);
-                        // Leio o tamanho da string
+
+                        // Criando um registro para auxiliar na leitura e impressão
+                        Registro *r = criaRegistro(); 
+
+                        // Lendo o tamanho da string e a própria string desejada
                         fread(&r->tecnologiaOrigem.tamanho, sizeof(int), 1, arquivoBIN);
                         r->tecnologiaOrigem.string = (char *)malloc(r->tecnologiaOrigem.tamanho+1);
                         fread(r->tecnologiaOrigem.string, r->tecnologiaOrigem.tamanho, 1, arquivoBIN);
                         
-                        if(!strcmp(r->tecnologiaOrigem.string, valorCampo)){ // Achei um dos registros!
-                            // Vou armazenar o registro em variáveis e printá-lo no terminal
-                            r = leRegistro(arquivoBIN, byteInicial, r);
+                        // Comparando a string com o valorCampo. Se true, encontramos um registro!
+                        if(!strcmp(r->tecnologiaOrigem.string, valorCampo)){
+                            
+                            free(r->tecnologiaOrigem.string);
+                            // Armazenando o registro em variáveis e imprimindo-o
+                            r = leRegistro(byteOffset, r, arquivoBIN);
                             imprimeRegistro(r);
                             flagEncontrouRegistro = 1;
                         }
-                        else{ // Se não encontrou, preciso dar fseek pro próximo registro
-                            
-                            fseek(arquivoBIN, TAM_REGISTRO - 17 - r->tecnologiaOrigem.tamanho, SEEK_CUR);
-                            //printf("%lu", ftell(arquivoBIN));
-                        }
-                        byteInicial += TAM_REGISTRO;
+
+                        // Se não encontrou, preciso dar fseek pro próximo registro
+                        else fseek(arquivoBIN, TAM_REGISTRO - 17 - r->tecnologiaOrigem.tamanho, SEEK_CUR);
+
+
+                        byteOffset += TAM_REGISTRO;
+                        liberaRegistro(r);
                     }
                 }
 
                 // Caso depois de rodar todo o while eu não achar nenhum grupo (flagEncontrou = 0), eu printo
-                if(!flagEncontrouRegistro){
-                    printf("Registro inexistente.\n");
-                } 
-            }else{
-                long byteInicial = ftell(arquivoBIN); // Guarda em que byte começa o registro, primeira vez = 13
-                //printf("%lu", ftell(arquivoBIN)); // 13
-                while(byteInicial < ultimoRRN * TAM_REGISTRO + 13){ // Sou obrigado a fazer uma busca sequencial no binário inteiro
-                    if(fgetc(arquivoBIN) == '0'){ // Se não tiver removido
-                        // Pula o campo grupo
+                if(!flagEncontrouRegistro) printf("Registro inexistente.\n");
+            }
+            
+            // Caso 2: campo escolhido é nomeTecnologiaDestino
+            else if (!strcmp(nomeCampo, "nomeTecnologiaDestino")){
+                
+                // Guarda em que byte começa o registro, primeira vez = 13
+                unsigned long byteOffset = ftell(arquivoBIN);
+
+                // Fazendo uma busca sequencial em todo o arquivo binário
+                while(byteOffset < tamTotal){ 
+
+                    // Só leremos se o registro não tiver sido removido
+                    if(fgetc(arquivoBIN) == '0'){ 
+
+                        // Pula os campo grupos grupo, popularidade e peso (3 ints)
                         fseek(arquivoBIN, 3 * sizeof(int), SEEK_CUR);
-                        // Leio o tamanho da string
+
+                        // Criando um registro para auxiliar na leitura e impressão
+                        Registro *r = criaRegistro();
+
+                        // Lendo um int de 4 bytes, e pulando a string com o valor do int
                         fread(&r->tecnologiaOrigem.tamanho, sizeof(int), 1, arquivoBIN);
                         fseek(arquivoBIN, r->tecnologiaOrigem.tamanho, SEEK_CUR);
+
+                        // Lendo o tamanho da string e a própria string desejada
                         fread(&r->tecnologiaDestino.tamanho, sizeof(int), 1, arquivoBIN);
                         r->tecnologiaDestino.string = (char *)malloc(r->tecnologiaDestino.tamanho+1);
                         fread(r->tecnologiaDestino.string, r->tecnologiaDestino.tamanho, 1, arquivoBIN);
                         
-                        if(!strcmp(r->tecnologiaDestino.string, valorCampo)){ // Achei um dos registros!
-                            // Vou armazenar o registro em variáveis e printá-lo no terminal
-                            r = leRegistro(arquivoBIN, byteInicial, r);
+                        // Comparando a string com o valorCampo. Se true, encontramos um registro!
+                        if(!strcmp(r->tecnologiaDestino.string, valorCampo)){
+                            
+                            free(r->tecnologiaDestino.string);
+                            // Armazenando o registro em variáveis e imprimindo-o
+                            r = leRegistro(byteOffset, r, arquivoBIN);
                             imprimeRegistro(r);
                             flagEncontrouRegistro = 1;
                         }
-                        else{ // Se não encontrou, preciso dar fseek pro próximo registro
-                            
-                            fseek(arquivoBIN, TAM_REGISTRO - 21 - r->tecnologiaOrigem.tamanho - r->tecnologiaDestino.tamanho, SEEK_CUR);
-                            //printf("%lu", ftell(arquivoBIN));
-                        }
-                        byteInicial += TAM_REGISTRO;
+
+                        // Se não encontrou, preciso dar fseek pro próximo registro
+                        else fseek(arquivoBIN, TAM_REGISTRO - 21 - r->tecnologiaOrigem.tamanho - r->tecnologiaDestino.tamanho, SEEK_CUR);
+                        
+
+                        byteOffset += TAM_REGISTRO;
+                        liberaRegistro(r);
                     }
                 }
 
                 // Caso depois de rodar todo o while eu não achar nenhum grupo (flagEncontrou = 0), eu printo
-                if(!flagEncontrouRegistro){
-                    printf("Registro inexistente.\n");
-                } 
+                if(!flagEncontrouRegistro) printf("Registro inexistente.\n");
             }
-
         }
-        else{ // Caso não for nenhuma das duas strings, o próximo valor é um inteiro
-            scanf("%d", &valorCampoint);
-            //printf("nomeCampo: %s\nValor Campo: %d\n", nomeCampo, valorCampoint);
 
+        // Caso não for nenhuma das duas strings, o valor desejado é um inteiro
+        else {
+
+            scanf("%d", &valorCampoint); // Escaneando seu valor
             fseek(arquivoBIN, 13, SEEK_SET); // Pula o cabeçalho
 
-            if(!strcmp(nomeCampo, "grupo")){ // Se é grupo
-                // Estou no byte 1
-                long byteInicial = ftell(arquivoBIN); // Guarda em que byte começa o registro, primeira vez = 13
-                //printf("%lu", ftell(arquivoBIN)); // 13
-                while(byteInicial < ultimoRRN * TAM_REGISTRO + 13){ // Sou obrigado a fazer uma busca sequencial no binário inteiro
-                    if(fgetc(arquivoBIN) == '0'){ // Se não tiver removido
-                        fread(&r->grupo, sizeof(int), 1, arquivoBIN); // Leio o grupo
-                        if(r->grupo == valorCampoint){ // Achei um dos registros!
-                            // Vou armazenar o registro em variáveis e printá-lo no terminal
-                            r = leRegistro(arquivoBIN, byteInicial, r);
+            // Caso 3: Grupo
+            if(!strcmp(nomeCampo, "grupo")){ 
+
+                // Guarda em que byte começa o registro, primeira vez = 13
+                unsigned long byteOffset = ftell(arquivoBIN);
+
+                // Fazendo uma busca sequencial no arquivo binário
+                while(byteOffset < tamTotal){
+                    
+                    // Só leremos se não estiver removido
+                    if(fgetc(arquivoBIN) == '0'){ 
+                        
+                        // Criando um registro para auxiliar na leitura e impressão
+                        Registro *r = criaRegistro();
+
+                        // Lendo o grupo
+                        fread(&r->grupo, sizeof(int), 1, arquivoBIN);
+
+                        // Comparando o int com grupo. Se true, encontramos um registro!
+                        if(r->grupo == valorCampoint){
+
+                            // Armazenando o registro em variáveis e imprimindo-o
+                            r = leRegistro(byteOffset, r, arquivoBIN);
                             imprimeRegistro(r);
                             flagEncontrouRegistro = 1;
                         }
-                        else{ // Se não encontrou, preciso dar fseek pro próximo registro
-                            // Se não passou pelo if, vou estar no byte byteInicial + 1 (removido) + BYTE_GRUPO
-                            fseek(arquivoBIN, TAM_REGISTRO - 5, SEEK_CUR);
-                            //printf("%lu", ftell(arquivoBIN));
-                        }
-                        byteInicial += TAM_REGISTRO;
+
+                        // Se não encontrou, preciso dar fseek pro próximo registro
+                        else fseek(arquivoBIN, TAM_REGISTRO - 5, SEEK_CUR);
+
+
+                        byteOffset += TAM_REGISTRO;
+                        liberaRegistro(r);
                     }
                 }
 
                 // Caso depois de rodar todo o while eu não achar nenhum grupo (flagEncontrou = 0), eu printo
-                if(!flagEncontrouRegistro){
-                    printf("Registro inexistente.\n");
-                }
+                if(!flagEncontrouRegistro) printf("Registro inexistente.\n");
             }
-            else if(!strcmp(nomeCampo, "popularidade")){ // Se é popularidade
-                long byteInicial = ftell(arquivoBIN); // Guarda em que byte começa o registro, primeira vez = 13
-                //printf("%lu", ftell(arquivoBIN)); // 13
-                while(byteInicial < ultimoRRN * TAM_REGISTRO + 13){ // Sou obrigado a fazer uma busca sequencial no binário inteiro
-                    if(fgetc(arquivoBIN) == '0'){ // Se não tiver removido
-                        // Pula o campo grupo
+
+            // Caso 4: popularidade
+            else if(!strcmp(nomeCampo, "popularidade")){
+
+                // Guarda em que byte começa o registro, primeira vez = 13
+                long byteOffset = ftell(arquivoBIN);
+
+                // Fazendo uma busca sequencial no arquivo binário
+                while(byteOffset < tamTotal){ 
+
+                    // Só leremos se não estiver removido
+                    if(fgetc(arquivoBIN) == '0'){ 
+
+                        // Pulando o campo grupo (1 int)
                         fseek(arquivoBIN, sizeof(int), SEEK_CUR);
-                        fread(&r->popularidade, sizeof(int), 1, arquivoBIN); // Leio o grupo
-                        if(r->popularidade == valorCampoint){ // Achei um dos registros!
-                            // Vou armazenar o registro em variáveis e printá-lo no terminal
-                            r = leRegistro(arquivoBIN, byteInicial, r);
+
+                        // Criando um registro para auxiliar na leitura e impressão
+                        Registro *r = criaRegistro();
+
+                        // Lendo a popularidade
+                        fread(&r->popularidade, sizeof(int), 1, arquivoBIN);
+
+                        // Comparando o int com o grupo. Se true, encontramos um registro!
+                        if(r->popularidade == valorCampoint){
+
+                            // Armazenando o registro em variáveis e imprimindo-o
+                            r = leRegistro(byteOffset, r, arquivoBIN);
                             imprimeRegistro(r);
                             flagEncontrouRegistro = 1;
                         }
-                        else{ // Se não encontrou, preciso dar fseek pro próximo registro
-                            // Se não passou pelo if, vou estar no byte byteInicial + 1 (removido) + BYTE_GRUPO
-                            fseek(arquivoBIN, TAM_REGISTRO - 9, SEEK_CUR);
-                            //printf("%lu", ftell(arquivoBIN));
-                        }
-                        byteInicial += TAM_REGISTRO;
+
+                        // Se não encontrou, preciso dar fseek pro próximo registro
+                        else fseek(arquivoBIN, TAM_REGISTRO - 9, SEEK_CUR);
+                        
+
+                        byteOffset += TAM_REGISTRO;
+                        liberaRegistro(r);
                     }
                 }
 
                 // Caso depois de rodar todo o while eu não achar nenhum grupo (flagEncontrou = 0), eu printo
-                if(!flagEncontrouRegistro){
-                    printf("Registro inexistente.\n");
-                }
+                if(!flagEncontrouRegistro) printf("Registro inexistente.\n");
             }
-            else if(!strcmp(nomeCampo, "peso")){ // Se é peso
-                long byteInicial = ftell(arquivoBIN); // Guarda em que byte começa o registro, primeira vez = 13
-                //printf("%lu", ftell(arquivoBIN)); // 13
-                while(byteInicial < ultimoRRN * TAM_REGISTRO + 13){ // Sou obrigado a fazer uma busca sequencial no binário inteiro
-                    if(fgetc(arquivoBIN) == '0'){ // Se não tiver removido
-                        // Pula o campo grupo e popularidade
+
+            // Caso 5: peso
+            else if(!strcmp(nomeCampo, "peso")){ 
+
+                // Guarda em que byte começa o registro, primeira vez = 13
+                long byteOffset = ftell(arquivoBIN); 
+
+                // Fazendo uma busca sequencial no arquivo binário
+                while(byteOffset < tamTotal){ 
+
+                    // Só leremos se não estiver removido
+                    if(fgetc(arquivoBIN) == '0'){ 
+                        // Pula o campo grupo e popularidade (2 ints)
                         fseek(arquivoBIN, 2 * sizeof(int), SEEK_CUR);
-                        fread(&r->peso, sizeof(int), 1, arquivoBIN); // Leio o peso
-                        if(r->peso == valorCampoint){ // Achei um dos registros!
-                            // Vou armazenar o registro em variáveis e printá-lo no terminal
-                            r = leRegistro(arquivoBIN, byteInicial, r);
+
+                        // Criando um registro para auxiliar na leitura e impressão
+                        Registro *r = criaRegistro();
+
+                        // Lendo o peso
+                        fread(&r->peso, sizeof(int), 1, arquivoBIN);
+
+                        // Comparando o int com o grupo. Se true, encontramos um registro!
+                        if(r->peso == valorCampoint){ 
+
+                            // Armazenando o registro em variáveis e imprimindo-o
+                            r = leRegistro(byteOffset, r, arquivoBIN);
                             imprimeRegistro(r);
                             flagEncontrouRegistro = 1;
                         }
-                        else{ // Se não encontrou, preciso dar fseek pro próximo registro
-                            // Se não passou pelo if, vou estar no byte byteInicial + 1 (removido) + 8 (grupo + popularidade) + peso
-                            fseek(arquivoBIN, TAM_REGISTRO - 13, SEEK_CUR);
-                            //printf("%lu", ftell(arquivoBIN));
-                        }
-                        byteInicial += TAM_REGISTRO;
+
+                        // Se não encontrou, preciso dar fseek pro próximo registro
+                        else fseek(arquivoBIN, TAM_REGISTRO - 13, SEEK_CUR);
+
+                        
+                        byteOffset += TAM_REGISTRO;
+                        liberaRegistro(r);
                     }
                 }
 
                 // Caso depois de rodar todo o while eu não achar nenhum grupo (flagEncontrou = 0), eu printo
-                if(!flagEncontrouRegistro){
-                    printf("Registro inexistente.\n");
-                }
+                if(!flagEncontrouRegistro) printf("Registro inexistente.\n");
+                
             }
+
             else{
                 printf("ERRO! Esse campo não existe.\n");
                 return;
             }
-            
-
 
         }
+        
         // Volto para o início do arquivo
-        fseek(arquivoBIN, 0, SEEK_SET); 
-    }
+        fseek(arquivoBIN, 0, SEEK_SET);
+    
+    
+    } // fim loop mestre
 
-    // liberaRegistro(r);
-    fclose(arquivoBIN); // Fechando o arquivo
+
+    // Fechando o arquivo
+    fclose(arquivoBIN); 
 }
 

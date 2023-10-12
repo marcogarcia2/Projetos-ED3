@@ -11,22 +11,16 @@
 #include "funcoesFornecidas.h"
 #include "registros.h"
 #include "funcoesCriadas.h"
-#include "funcionalidade1.h"
-#include "funcionalidade2.h"
-#include "funcionalidade3.h"
-#include "funcionalidade4.h"
+#include "funcionalidades.h"
 
-// Depois (?) tem uma funçao que gera um binario aleatorio para checar se criou certo
-// quando o campo do registro for vazio, colocar nulo
-
-// comando linux para comparar binario cmp bin1.bin bin2.bin
+// main: switch case com as funcionalidades 
 
 int main (int argc, char *argv[]){
     
     int f; // Funcionalidade
-    int rrn; // RRN utilizado na funcionalidade 4
+    char nomeArquivoCSV[30], nomeArquivoBIN[30]; // Strings da funcionalidade 1
     int n; // Número de vezes que será executada a funcionalidade 3
-    char nomeArquivoCSV[30], nomeArquivoBIN[30];
+    int rrn; // RRN utilizado na funcionalidade 4
     scanf("%d ", &f);
 
     switch (f){
@@ -41,12 +35,12 @@ int main (int argc, char *argv[]){
         recuperaDados(nomeArquivoBIN);
         break;
 
-    case 3:
-        scanf("%s %d", nomeArquivoBIN, &n); // Coloque n = 1 para testar sempre
+    case 3: // Funcionalidade 3
+        scanf("%s %d", nomeArquivoBIN, &n);
         buscaPorCampo(nomeArquivoBIN, n);
         break;
 
-    case 4:
+    case 4: // Funcionalidade 4
         scanf("%s %d", nomeArquivoBIN, &rrn);
         buscaPorRRN(nomeArquivoBIN, rrn);
         break;
@@ -56,8 +50,6 @@ int main (int argc, char *argv[]){
         break;
     }
     
-
-
 
     return 0;
 }

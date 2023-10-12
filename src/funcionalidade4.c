@@ -7,58 +7,58 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "funcionalidade4.h"
+#include "funcionalidades.h"
 #include "registros.h"
 #include "funcoesCriadas.h"
 
 // Funcionalidade 4: imprimir o registro de um dado RRN
 
-void buscaPorRRN(char *nomeArquivoBIN, int rrn){ // Imprime um registro após uma leitura num binário dado
-    //Registro *r = criaRegistro(); // Criei o registro que irei retornar
+void buscaPorRRN(char *nomeArquivoBIN, int rrn){ 
 
-    // Agora vou abrir o arquivo binário
+    // Abrindo o arquivo binário
     FILE *arquivoBIN = fopen(nomeArquivoBIN, "rb"); // Modo de leitura em binário
     if (arquivoBIN == NULL){ // Se o arquivo não existir, erro
         printf("Falha no processamento do arquivo.\n");
         return;
     }
     
+    // Se ele está inconsistente, encerra-se a função
     if(fgetc(arquivoBIN) == '0'){
         printf("Falha no processamento do arquivo.\n");
         fclose(arquivoBIN);
         return;
     }
 
-    //fseek(arquivoBIN, 1, SEEK_SET); // Posiciono meu cursor no byte offset 1, onde há a info de proxRRN do cabeçalho
+    // Descobrindo qual é o último RRN deste arquivo
     int ultimoRRN = 0; 
     fread(&ultimoRRN, sizeof(int), 1, arquivoBIN);
     ultimoRRN--;
 
+    // Se a entrada de RRN não existir no arquivo, encerra-se a função
     if(rrn > ultimoRRN || rrn < 0){
         printf("Registro inexistente.\n");
         return;
     }
 
-    int byteOffset = 13 + (rrn * TAM_REGISTRO); // Calculo o byte offset do registro que quero
-    fseek(arquivoBIN, byteOffset, SEEK_SET); // Agora estou onde meu registro está
+    // Calculando o byte offset do registro desejado
+    int byteOffset = 13 + (rrn * TAM_REGISTRO); 
 
-    // printf("Byte Offset: %d ", byteOffset);
+    // Apontando o ponteiro para o início do registro desejado
+    fseek(arquivoBIN, byteOffset, SEEK_SET); 
     
-    if(fgetc(arquivoBIN) == '1'){ // Se meu registro estiver removido, eu saio também, quero testar isso num futuro, removendo algum registro forçadamente
+    // Se este registro estiver removido, encerra-se a função
+    if(fgetc(arquivoBIN) == '1'){ 
         printf("Registro inexistente.\n");
         return;
     }
 
-    Registro *r = criaRegistro(); // Crio o registro
-
-    // Agora vou ler o registro
-    r = leRegistro(arquivoBIN, byteOffset, r);
+    // Finalmente: Criando, lendo, printando e desalocando o registro
+    Registro *r = criaRegistro(); 
+    r = leRegistro(byteOffset, r, arquivoBIN);
     imprimeRegistro(r);
+    liberaRegistro(r);
 
-    free(r->tecnologiaOrigem.string);
-    free(r->tecnologiaDestino.string);
-    free(r);
-
-    fclose(arquivoBIN); // Fechando o arquivo
+    // Fechando o arquivo binário
+    fclose(arquivoBIN);
 }
 

@@ -6,6 +6,7 @@
 #ifndef FUNCOES_FORNECIDAS_H
 #define FUNCOES_FORNECIDAS_H
 
+// Funções fornecidas previamente
 void readline(char* string);
 void binarioNaTela(char *nomeArquivoBinario);
 void scan_quote_string(char *str);
