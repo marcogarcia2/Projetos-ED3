@@ -41,7 +41,10 @@ void recuperaDados(const char* nomeArquivoBIN){
         r = leRegistro(byteOffset, r, arquivoBIN);
 
         // Se acabaram os registros, encerra o ciclo, senão imprime-o na tela
-        if (r == NULL) break;
+        if (r == NULL) {
+            liberaRegistro(r);
+            break;
+        }
         else imprimeRegistro(r);
         
         // Desalocando a memória

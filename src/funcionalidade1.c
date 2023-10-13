@@ -102,13 +102,12 @@ void criaTabela(char *nomeArquivoCSV, char *nomeArquivoBIN){
             // iter == 5, deve ser tratada de forma diferente pois não termina em ','
             else {
 
-                while(linha[i] != '\n' && linha[i] != '\0'){
+                while(linha[i+1] != '\n' && linha[i] != '\0'){
                     aux[j++] = linha[i++];
                 }
                 // nesse caso, se o campo peso estiver vazio, precisamos tratar de outra forma
 
-                r->peso = aux[0] == '\0' ? -1 : atoi(aux);
-                //printf("Peso = %d\n", r->peso);
+                r->peso = strlen(aux) == 0 ? -1 : atoi(aux);
             }
         }
 
@@ -152,8 +151,4 @@ void criaTabela(char *nomeArquivoCSV, char *nomeArquivoBIN){
     destroiLista(&ListaPares);
 
     binarioNaTela(nomeArquivoBIN);
-    /*
-    printf("AGNES E CAROL: ");
-    binarioNaTela("agnes.bin");
-    */
 }
