@@ -42,11 +42,10 @@ void recuperaDados(const char* nomeArquivoBIN){
 
         // Se acabaram os registros, encerra o ciclo, senão imprime-o na tela
         if (r == NULL) {
-            liberaRegistro(r);
+            free(r);
             break;
         }
         else imprimeRegistro(r);
-        
         // Desalocando a memória
         liberaRegistro(r);
 

@@ -305,4 +305,3 @@ void buscaPorCampo(char *nomeArquivoBIN, int n){
     // Fechando o arquivo
     fclose(arquivoBIN); 
 }
-

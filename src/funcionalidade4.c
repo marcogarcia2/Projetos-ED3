@@ -61,4 +61,3 @@ void buscaPorRRN(char *nomeArquivoBIN, int rrn){
     // Fechando o arquivo binário
     fclose(arquivoBIN);
 }
-

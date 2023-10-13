@@ -70,43 +70,45 @@ void criaTabela(char *nomeArquivoCSV, char *nomeArquivoBIN){
 
                 if (iter == 1){
 
+                    // Guardando o campo nomeTecnologiaOrigem
                     r->tecnologiaOrigem.tamanho = strlen(aux);
                     r->tecnologiaOrigem.string = (char*)malloc(r->tecnologiaOrigem.tamanho + 1);
                     strcpy(r->tecnologiaOrigem.string, aux);
                     r->tecnologiaOrigem.string[r->tecnologiaOrigem.tamanho] = '\0';
-                    //printf("Tecnologia Origem: %s || Tamanho = %d\n", r->tecnologiaOrigem.string, r->tecnologiaOrigem.tamanho);
                 }
 
                 else if (iter == 2) {
 
+                    // Guardando o campo grupo
                     r->grupo = aux[0] == '\0' ? -1 : atoi(aux);
-                    //printf("Grupo =  %d\n", r->grupo);
                 }
 
                 else if (iter == 3) {
 
+                    // Guardando o campo popularidade
                     r->popularidade = aux[0] == '\0' ? -1 : atoi(aux);
                     //printf("Popularidade = %d\n", r->popularidade);
                 }
 
                 else if (iter == 4) {
 
+                    // Guardando o campo nomeTecnologiaDestino
                     r->tecnologiaDestino.tamanho = strlen(aux);
                     r->tecnologiaDestino.string = (char*)malloc(r->tecnologiaDestino.tamanho + 1);
                     strcpy(r->tecnologiaDestino.string, aux);
                     r->tecnologiaDestino.string[r->tecnologiaDestino.tamanho] = '\0';
-                    //printf("Tecnologia Destino: %s || Tamanho = %d\n", r->tecnologiaDestino.string, r->tecnologiaDestino.tamanho);
                 }
             }
 
             // iter == 5, deve ser tratada de forma diferente pois não termina em ','
             else {
 
+                // Percorrendo o restante da linha
                 while(linha[i+1] != '\n' && linha[i] != '\0'){
                     aux[j++] = linha[i++];
                 }
-                // nesse caso, se o campo peso estiver vazio, precisamos tratar de outra forma
 
+                // Guardando o campo peso
                 r->peso = strlen(aux) == 0 ? -1 : atoi(aux);
             }
         }
@@ -129,18 +131,16 @@ void criaTabela(char *nomeArquivoCSV, char *nomeArquivoBIN){
 
     // nroTecnologias é == o tamanho da lista L
     cabecalho->nroTecnologias = getTamanho(L);
+
     // nroParesTecnologias é == o tamanho da ListaPares
     cabecalho->nroParesTecnologias = getTamanho(ListaPares);
 
-    // 1) Alterando o status para '1' antes de fechar o binário (criar uma função pra isso, fazendo as demais atualizaçãoes necessárias)
-    // Ponteiro aponta para o inicio do arquivo
-    //fwrite("1", sizeof(char), 1, arquivoBIN);
+    // 1) Alterando o status para '1' antes de fechar o binário
     cabecalho->status = '1';
-    // fputc(cabecalho->status, arquivoBIN);
-    // fwrite(&cabecalho->proxRRN, sizeof(int), 1, arquivoBIN);
+
+    // Finalmente, gravando o cabeçalho no início do arquivo
     gravaCabecalho(cabecalho, arquivoBIN);
     
-
     // Fechando os dois arquivos
     fclose(arquivoCSV);
     fclose(arquivoBIN);
