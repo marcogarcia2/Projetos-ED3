@@ -13,7 +13,7 @@ void criaTabela(char *nomeArquivoCSV, char *nomeArquivoBIN);
 void recuperaDados(const char* nomeArquivoBIN);
 
 // Funcionalidade 3
-void buscaPorCampo(char *nomeArquivoBIN, int n);
+void buscaPorCampo(char *nomeArquivoBIN, int N);
 
 // Funcionalidade 4
 void buscaPorRRN(char *nomeArquivoBIN, int RRN);
