@@ -49,6 +49,7 @@ void buscaString(char *nomeCampo, char *tecnologia, int tamTotal, FILE *arquivoB
             fread(&tamanhoString, sizeof(int), 1, arquivoBIN);
             char stringEncontrada[tamanhoString + 1];
             fread(stringEncontrada, tamanhoString, 1, arquivoBIN);
+            stringEncontrada[tamanhoString] = '\0';
             
             // Comparando a stringEncontrada com a que estamos buscando
             if(!strcmp(stringEncontrada, tecnologia)){
