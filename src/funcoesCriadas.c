@@ -38,7 +38,8 @@ void gravaCabecalho(Cabecalho *c, FILE *arquivoBIN){
 }
 
 // Função que cria um Registro
-Registro *criaRegistro(void){ // Aloca-se memória para um registro
+Registro *criaRegistro(void){
+    
     Registro *r = (Registro *) malloc(sizeof(Registro));
 
     // inicializando os atributos com um valor vazio
