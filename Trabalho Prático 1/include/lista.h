@@ -6,8 +6,6 @@
 #ifndef LISTA_H
 #define LISTA_H
 
-#include "lista.h"
-
 // Estrutura que define o nó de uma lista
 typedef struct _no No;
 
@@ -31,6 +29,5 @@ int getTamanho(const Lista *L);
 
 // Função que exibe os elementos da lista
 void imprimeLista(const Lista *L);
-
 
 #endif
