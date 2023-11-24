@@ -3,7 +3,7 @@ BIN = ./bin
 INCLUDE = ./include
 OBJ = ./obj
 SRC = ./src
-MSG = "Variavel MSG criada"
+MSG = "Testando"
 
 all: libed myapps
 
