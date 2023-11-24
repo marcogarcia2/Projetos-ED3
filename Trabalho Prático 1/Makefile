@@ -18,6 +18,12 @@ libed:
 myapps:
 	gcc -Wall -Wpedantic -Werror -march=native -O3 -fsanitize=address $(APPS)/main.c $(OBJ)/*.o -I $(INCLUDE) -o $(BIN)/main
 
+commit:
+	git pull origin main
+	git add .
+	git commit -m "Commit Automatico"
+	git push origin main
+
 run:
 	$(BIN)/main
 
