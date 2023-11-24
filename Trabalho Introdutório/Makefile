@@ -21,5 +21,5 @@ myapps:
 run:
 	$(BIN)/main
 
-clear:
+clean:
 	rm $(BIN)/* $(OBJ)/*
