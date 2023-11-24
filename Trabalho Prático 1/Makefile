@@ -3,7 +3,7 @@ BIN = ./bin
 INCLUDE = ./include
 OBJ = ./obj
 SRC = ./src
-MSG = "Função gravaNo"
+MSG = "Update .gitignore"
 
 all: libed myapps
 
