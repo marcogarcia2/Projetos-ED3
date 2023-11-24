@@ -5,19 +5,41 @@
 
 #include "arvoreB.h"
 
-#define STRING_TAM 55
+// Estrutura que define um Nó (ou página) de Árvore B
+typedef struct _No{ 
+    
+    int nroChavesNo, alturaNo, RRNdoNo;
 
-typedef struct _No{
-    // Deve ter mais coisa, mas isso aqui é o que tem que ter pelo trabalho
-    int P1, PR1;
-    char C1[55]; // malloc ???
+    int P[5];       
+    int PR[4];
+    char C[4][STRING_TAM];  // Tornar dinâmico posteriormente
 
-    int P2, PR2; // pelo que eu entendi, Px e PRx são os RRNs do arquivo binário normal e do arquivo de índice, respectivamente
-    char C2[55]; // Strings concatenadas
-
-    int P3, PR3;
-    char C3[55];
-
-    int P4;
-
+    // De acordo com a especificação do projeto:
+    // P1 == P[0]; P2 == P[1]; P3 == P[2]; P4 == P[3]
+    // PR1 == PR[0] ...
+    // C1 == C[0] ...
+    // e assim por diante...
+    // Os últimos elementos serão apenas para guardar temporariamente para fazer os splits
+    
 } No;
+
+// Função que cria um Cabeçalho de Nó, inserido antes de cada nó
+No *criaNo(void){
+
+    // Alocando a memória dinamicamente
+    No *no = (No*) malloc(sizeof(No));
+
+    // Iniciando com valores nulos, precisam ser lidos da Árvore B
+    no->nroChavesNo = -1;
+    no->alturaNo = -1;
+    no->RRNdoNo = -1;
+    for (int i = 0; i < 4; i++){
+        for(int j = 0; j < STRING_TAM; j++){
+
+            // Preenchendo com lixo, para facilitar posteriormente a escrita
+            no->C[i][j] = '$'; //LIXO???
+        }
+    }
+
+    return no;
+}

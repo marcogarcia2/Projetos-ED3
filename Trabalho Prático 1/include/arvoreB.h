@@ -6,16 +6,13 @@
 #ifndef ARVORE_B_H
 #define ARVORE_B_H
 
-#define M 4
+#define STRING_TAM 55
 
-////////////// TAD de árvore B, adaptada ao nosso problema
-
+// Estrutura que define um Nó (ou página) de Árvore B
 typedef struct _No No;
 
-
-
-
-
+// Função que cria um Nó de árvore B
+No *criaNo(void);
 
 
 
