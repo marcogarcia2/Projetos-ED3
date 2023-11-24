@@ -3,6 +3,7 @@ BIN = ./bin
 INCLUDE = ./include
 OBJ = ./obj
 SRC = ./src
+MSG = "Variavel MSG criada"
 
 all: libed myapps
 
@@ -21,7 +22,7 @@ myapps:
 commit:
 	git pull origin main
 	git add .
-	git commit -m "Commit Automatico"
+	git commit -m $(MSG)
 	git push origin main
 
 run:
