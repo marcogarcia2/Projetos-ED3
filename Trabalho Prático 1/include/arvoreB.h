@@ -6,10 +6,11 @@
 #ifndef ARVORE_B_H
 #define ARVORE_B_H
 
+#define M 4
 
+////////////// TAD de árvore B, adaptada ao nosso problema
 
-typedef struct ArvoreB;
-
+typedef struct _No No;
 
 
 

@@ -34,4 +34,19 @@ typedef struct{
     StringVariavel tecnologiaDestino;
 } Registro;
 
+// VAI TER UM DESSE NO COMEÇO DO ARQUIVO DE ÍNDICE
+typedef struct{
+    char status;
+    int noRaiz;
+    int RRNproxNo;
+} CabecalhoArv;
+
+// VAI TER UM DESSE PARA CADA NÓ
+typedef struct{
+    int nroChavesNo;
+    int alturaNo;
+    int RRNdoNo;
+} CabecalhoNo;
+
+
 #endif

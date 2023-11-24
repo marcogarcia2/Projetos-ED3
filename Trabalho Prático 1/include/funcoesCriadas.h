@@ -10,10 +10,10 @@
 
 #include "registros.h"
 
-// Função que cria um Cabecalho
+// Função que cria um Cabeçalho
 Cabecalho *criaCabecalho(void);
 
-// Gravando o cabecalho nos 13 bytes iniciais
+// Função que grava o Cabeçalho nos 13 bytes iniciais
 void gravaCabecalho(Cabecalho *c, FILE *arquivoBIN);
 
 // Função que cria um Registro

@@ -12,8 +12,8 @@
 // Criando uma estrutura Cabecalho
 Cabecalho *criaCabecalho(void){
     
-    // Alocando memória dinamicamente para o cabecalho
-    Cabecalho *c = (Cabecalho *) malloc(sizeof(Cabecalho));
+    // Alocando memória dinamicamente para o cabeçalho
+    Cabecalho *c = (Cabecalho*) malloc(sizeof(Cabecalho));
 
     // inicializando seus atributos com valores vazios
     c->status = '0';
