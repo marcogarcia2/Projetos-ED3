@@ -3,7 +3,7 @@ BIN = ./bin
 INCLUDE = ./include
 OBJ = ./obj
 SRC = ./src
-MSG = "Testando"
+MSG = "Função gravaNo"
 
 all: libed myapps
 
