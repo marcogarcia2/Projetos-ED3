@@ -6,7 +6,7 @@
 #ifndef ARVORE_B_H
 #define ARVORE_B_H
 
-#define M 4
+#define M 3
 #define STRING_TAM 55
 
 // Estrutura que define um Nó (ou página) de Árvore B
@@ -26,6 +26,16 @@ typedef struct _No{
     // Os últimos elementos serão apenas para guardar temporariamente para fazer os splits
     
 } No;
+
+// Estrutura do Cabeçalho do Arquivo de Índice da Árvore-B
+typedef struct{
+    char status;
+    int noRaiz;
+    int RRNproxNo;
+} CabecalhoIndice;
+
+// Função que inicializa o cabeçalho
+CabecalhoIndice *criaCabecalho(void);
 
 // Função que cria um Nó de árvore B
 No *criaNo(void);

@@ -3,7 +3,7 @@ BIN = ./bin
 INCLUDE = ./include
 OBJ = ./obj
 SRC = ./src
-MSG = "Update .gitignore"
+MSG = "Iniciando a funcionalidade 5"
 
 all: libed myapps
 

@@ -34,12 +34,4 @@ typedef struct{
     StringVariavel tecnologiaDestino;
 } Registro;
 
-// Estrutura do Cabeçalho do Arquivo de Índice
-typedef struct{
-    char status;
-    int noRaiz;
-    int RRNproxNo;
-} CabecalhoIndice;
-
-
 #endif

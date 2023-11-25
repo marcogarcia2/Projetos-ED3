@@ -17,5 +17,8 @@ void buscaPorCampo(char *nomeArquivoBIN, int N);
 
 // Funcionalidade 4
 void buscaPorRRN(char *nomeArquivoBIN, int RRN);
+
+// Funcionalidade 5
+void geraArquivoIndice(char *nomeArquivoBIN, char *nomeArquivoIND);
     
 #endif

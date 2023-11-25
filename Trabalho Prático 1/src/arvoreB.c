@@ -5,6 +5,20 @@
 
 #include "arvoreB.h"
 
+CabecalhoIndice *criaCabecalho(void){
+
+    // Alocando memória dinamicamente
+    CabecalhoIndice *cabecalho = (CabecalhoIndice*) malloc(sizeof(CabecalhoIndice));
+
+    // Iniciando com os parâmetros iniciais
+    cabecalho->status = '0';
+    cabecalho->noRaiz = -1;
+    cabecalho->RRNproxNo = 0;
+
+    return cabecalho;
+
+}
+
 // Função que cria um Cabeçalho de Nó, inserido antes de cada nó
 No *criaNo(void){
 
