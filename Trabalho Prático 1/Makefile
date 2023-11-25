@@ -4,7 +4,7 @@ INCLUDE = ./include
 OBJ = ./obj
 SRC = ./src
 FLAGS = -Wall -Wpedantic -Werror -march=native -O3 -fsanitize=address
-MSG = "Colocando flags Makefile"
+MSG = "Construindo esqueleto da funcionalidade 5"
 
 all: libed myapps
 
@@ -15,6 +15,7 @@ libed:
 	gcc $(FLAGS) -c $(SRC)/funcionalidade2.c -I $(INCLUDE) -o $(OBJ)/funcionalidade2.o
 	gcc $(FLAGS) -c $(SRC)/funcionalidade3.c -I $(INCLUDE) -o $(OBJ)/funcionalidade3.o
 	gcc $(FLAGS) -c $(SRC)/funcionalidade4.c -I $(INCLUDE) -o $(OBJ)/funcionalidade4.o
+	gcc $(FLAGS) -c $(SRC)/funcionalidade5.c -I $(INCLUDE) -o $(OBJ)/funcionalidade5.o
 	gcc $(FLAGS) -c $(SRC)/lista.c -I $(INCLUDE) -o $(OBJ)/lista.o
 
 myapps:

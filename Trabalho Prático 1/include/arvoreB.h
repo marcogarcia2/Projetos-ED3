@@ -35,7 +35,7 @@ typedef struct{
 } CabecalhoIndice;
 
 // Função que inicializa o cabeçalho
-CabecalhoIndice *criaCabecalho(void);
+CabecalhoIndice *criaCabecalhoIndice(void);
 
 // Função que cria um Nó de árvore B
 No *criaNo(void);

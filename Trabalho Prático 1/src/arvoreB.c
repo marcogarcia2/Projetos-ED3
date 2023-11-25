@@ -5,7 +5,7 @@
 
 #include "arvoreB.h"
 
-CabecalhoIndice *criaCabecalho(void){
+CabecalhoIndice *criaCabecalhoIndice(void){
 
     // Alocando memória dinamicamente
     CabecalhoIndice *cabecalho = (CabecalhoIndice*) malloc(sizeof(CabecalhoIndice));

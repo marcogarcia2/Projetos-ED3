@@ -35,16 +35,59 @@ void geraArquivoIndice(char *nomeArquivoBIN, char *nomeArquivoIND){
     }
 
     // Criando o cabeçalho do arquivo de índices
-    CabecalhoIndice *cabecalho = criaCabecalho();
+    CabecalhoIndice *cabecalho = criaCabecalhoIndice();
 
     // Grava o cabecalho no arquivo de índices
     gravaCabecalhoIndice(cabecalho, arquivoIND);
 
     // Algoritmo:
 
-    // Cria a árvore B
-    // Lê o arquivo de dados e insere na árvore B
-    // Grava a árvore B no arquivo de índices
+    // 1. Verifica a consistência do arquivo de dados
+    int byteOffset = 0;
+
+    // Se o arquivo de dados estiver consistente
+    if(fgetc(arquivoBIN) == '1') // Pula os 13 primeiros bytes do arquivo, referentes ao cabeçalho
+        byteOffset = 13;
+        
+    else{ // Se estiver inconsistente
+        printf("Falha no processamento do arquivo.\n");
+        fclose(arquivoBIN);
+        fclose(arquivoIND);
+        return;
+    }
+
+    // 2. Cria a árvore B (só depois de verificar a consistência)
+    // Aqui...
+
+    // 3. Lê o arquivo de dados e insere na árvore B concomitantemente (?)
+
+    while(1){
+        // Cria o registro que será lido
+        Registro *r = criaRegistro();
+        r = leRegistro(byteOffset, r, arquivoBIN);
+
+        // Se acabaram os registros, chegou ao final do arquivo
+        if (r == NULL) {
+            free(r); // Libera o registro
+            break;
+        }
+
+        // Criando a chave (stringConcatenada) concatenando nomeTecnologiaOrigem e nomeTecnologiaDestino
+        char *stringConcatenada = (char*) malloc(r->tecnologiaOrigem.tamanho + r->tecnologiaDestino.tamanho + 1);
+        strcpy(stringConcatenada, r->tecnologiaOrigem.string);
+        strcat(stringConcatenada, r->tecnologiaDestino.string);
+
+        // Insere stringConcatenada como C (chave) na árvore B
+        // Aqui...
+
+        // Libera o registro completo
+        liberaRegistro(r);
+
+        // Precisamos saltar até o próximo registro
+        byteOffset += TAM_REGISTRO;
+    }
+
+    // 5. Grava a árvore B no arquivo de índices
 
     // Fecha os arquivos
     fclose(arquivoBIN);
