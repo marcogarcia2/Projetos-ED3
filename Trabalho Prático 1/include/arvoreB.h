@@ -10,7 +10,7 @@
 #define STRING_TAM 55
 
 // Estrutura que define um Nó (ou página) de Árvore B
-typedef struct _No{ 
+typedef struct _Node{ 
     
     int nroChavesNo, alturaNo, RRNdoNo;
 
@@ -25,7 +25,7 @@ typedef struct _No{
     // e assim por diante...
     // Os últimos elementos serão apenas para guardar temporariamente para fazer os splits
     
-} No;
+} Node;
 
 // Estrutura do Cabeçalho do Arquivo de Índice da Árvore-B
 typedef struct{
@@ -34,11 +34,8 @@ typedef struct{
     int RRNproxNo;
 } CabecalhoIndice;
 
-// Função que inicializa o cabeçalho
-CabecalhoIndice *criaCabecalhoIndice(void);
-
 // Função que cria um Nó de árvore B
-No *criaNo(void);
+Node *criaNode(void);
 
 
 

@@ -5,6 +5,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 #include "arvoreB.h"
 #include "registros.h"
@@ -137,18 +138,6 @@ void imprimeRegistro(const Registro *r){
     (r->popularidade != -1) ? printf("%d, ", r->popularidade) : printf("NULO, ");
     (r->tecnologiaDestino.tamanho != 0) ? printf("%s, ", r->tecnologiaDestino.string) : printf("NULO, ");
     (r->peso != -1) ? printf("%d\n", r->peso) : printf("NULO\n");
-}
-
-// Função que grava o cabeçalho de um arquivo de índice
-void gravaCabecalhoIndice(CabecalhoIndice *c, FILE *arquivoIND){
-
-    // Voltando ao início do arquivo
-    fseek(arquivoIND, 0, SEEK_SET);
-
-    // Escrevendo os valores adequadamente
-    fwrite(&c->status, sizeof(char), 1, arquivoIND);
-    fwrite(&c->noRaiz, sizeof(int), 1, arquivoIND);
-    fwrite(&c->RRNproxNo, sizeof(int), 1, arquivoIND);
 }
 
 char *concatenaStrings(Registro *r){

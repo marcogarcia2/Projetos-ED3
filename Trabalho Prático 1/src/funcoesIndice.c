@@ -36,7 +36,7 @@ void gravaCabecalhoIndice(CabecalhoIndice *cIndice, FILE *arquivoIND){
 }
 
 // Função que grava um nó (ou página) no arquivo binário de índice
-void gravaNo(No *no, FILE *arquivoIND){
+void gravaNo(Node *no, FILE *arquivoIND){
 
     fwrite(&no->nroChavesNo, sizeof(int), 1, arquivoIND);
     fwrite(&no->alturaNo, sizeof(int), 1, arquivoIND);

@@ -7,6 +7,7 @@
 #define FUNCOES_INDICE_H
 
 #include <stdio.h>
+#include <stdlib.h>
 
 #include "registros.h"
 #include "arvoreB.h"
@@ -18,7 +19,7 @@ CabecalhoIndice *criaCabecalhoIndice(void);
 void gravaCabecalhoIndice(CabecalhoIndice *cIndice, FILE *arquivoIND);
 
 // Função que grava um nó (ou página) no arquivo binário de índice
-void gravaNo(No *no, FILE *arquivoIND);
+void gravaNo(Node *no, FILE *arquivoIND);
 
 
 

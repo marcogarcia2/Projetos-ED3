@@ -9,6 +9,7 @@
 #include <stdio.h>
 
 #include "registros.h"
+#include "arvoreB.h"
 
 // Função que cria um Cabeçalho
 Cabecalho *criaCabecalho(void);
@@ -30,9 +31,6 @@ Registro *leRegistro(int byteInicial, Registro *r, FILE *arquivoBIN);
 
 // Função que imprime os campos de um registro
 void imprimeRegistro(const Registro *r);
-
-// Função que cria um Cabeçalho do arquivo de índices
-void gravaCabecalhoIndice(CabecalhoIndice *c, FILE *arquivoIND);
 
 // Funcao que concatena as strings nomeTecnologiaOrigem e nomeTecnologiaDestino de um registro
 char *concatenaStrings(Registro *r);
