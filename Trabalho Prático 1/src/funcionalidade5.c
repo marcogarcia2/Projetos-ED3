@@ -73,9 +73,7 @@ void geraArquivoIndice(char *nomeArquivoBIN, char *nomeArquivoIND){
         }
 
         // Criando a chave (stringConcatenada) concatenando nomeTecnologiaOrigem e nomeTecnologiaDestino
-        char *stringConcatenada = (char*) malloc(r->tecnologiaOrigem.tamanho + r->tecnologiaDestino.tamanho + 1);
-        strcpy(stringConcatenada, r->tecnologiaOrigem.string);
-        strcat(stringConcatenada, r->tecnologiaDestino.string);
+        char *stringConcatenada = concatenaStrings(r); // Lembrar de dar free nessa string alocada depois
 
         // Insere stringConcatenada como C (chave) na árvore B
         // Aqui...
@@ -87,7 +85,8 @@ void geraArquivoIndice(char *nomeArquivoBIN, char *nomeArquivoIND){
         byteOffset += TAM_REGISTRO;
     }
 
-    // 5. Grava a árvore B no arquivo de índices
+    // 4. Grava a árvore B no arquivo de índices
+    // Aqui...
 
     // Fecha os arquivos
     fclose(arquivoBIN);

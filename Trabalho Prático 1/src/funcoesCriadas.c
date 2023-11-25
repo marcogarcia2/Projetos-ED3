@@ -150,3 +150,13 @@ void gravaCabecalhoIndice(CabecalhoIndice *c, FILE *arquivoIND){
     fwrite(&c->noRaiz, sizeof(int), 1, arquivoIND);
     fwrite(&c->RRNproxNo, sizeof(int), 1, arquivoIND);
 }
+
+char *concatenaStrings(Registro *r){
+    // Concatena as strings de tecnologiaOrigem e tecnologiaDestino
+    // Retorna a string concatenada
+    char *stringConcatenada = (char*) malloc(r->tecnologiaOrigem.tamanho + r->tecnologiaDestino.tamanho + 1);
+    strcpy(stringConcatenada, r->tecnologiaOrigem.string);
+    strcat(stringConcatenada, r->tecnologiaDestino.string);
+
+    return stringConcatenada;
+}
