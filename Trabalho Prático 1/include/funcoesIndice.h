@@ -19,9 +19,9 @@ CabecalhoIndice *criaCabecalhoIndice(void);
 void gravaCabecalhoIndice(CabecalhoIndice *cIndice, FILE *arquivoIND);
 
 // Função que grava um nó (ou página) no arquivo binário de índice
-void gravaNo(Node *no, FILE *arquivoIND);
+void gravaNo(NoArv *no, FILE *arquivoIND);
 
-
-
+// Função que grava toda a Árvore B em um arquivo binário de índice
+void gravaArvore(NoArv *raiz, FILE *arquivoIND);
 
 #endif

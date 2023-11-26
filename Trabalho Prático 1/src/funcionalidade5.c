@@ -62,45 +62,56 @@ void geraArquivoIndice(char *nomeArquivoBIN, char *nomeArquivoIND){
 
     // 3. Cria a árvore B (só depois de verificar a consistência)
     // Aqui...
+    NoArv *raiz = NULL;
 
     // 4. Lê o arquivo de dados e insere na árvore B concomitantemente (?)
 
-    // while(1){
-    //     // Cria o registro que será lido
-    //     Registro *r = criaRegistro();
+    while(1){
 
-    //     // Lê o registro do arquivo de dados
-    //     r = leRegistro(byteOffset, r, arquivoBIN);
+        // Cria o registro que será lido
+        Registro *r = criaRegistro();
 
-    //     // Se acabaram os registros, chegou ao final do arquivo
-    //     if (r == NULL) {
-    //         free(r); // Libera o registro
-    //         break;
-    //     }
+        // Lê o registro do arquivo de dados
+        r = leRegistro(byteOffset, r, arquivoBIN);
 
-    //     // OBS.: O registro só poderá ser inserido se ele não estiver removido (TESTAR O 204)
-    //     // if(r->removido == '1') 
-    //         // fseek(arquivoBIN, 204, SEEK_CUR); // Se estiver removido, pula para o próximo registro
+        // Se acabaram os registros, chegou ao final do arquivo
+        if (r == NULL) {
+            free(r); // Libera o registro
+            break;
+        }
 
-    //     // Criando a chave (stringConcatenada) concatenando nomeTecnologiaOrigem e nomeTecnologiaDestino
-    //     char *stringConcatenada = concatenaStrings(r); 
+        // OBS.: O registro só poderá ser inserido se ele não estiver removido (TESTAR O 204)
+        // if(r->removido == '1') 
+            // fseek(arquivoBIN, 204, SEEK_CUR); // Se estiver removido, pula para o próximo registro
 
-    //     // Insere stringConcatenada como C (chave) na árvore B
-    //     // Aqui...
+        // Criando a chave (stringConcatenada) concatenando nomeTecnologiaOrigem e nomeTecnologiaDestino
+        char *stringConcatenada = concatenaStrings(r); 
+        //printf("String inserida: %s\n", stringConcatenada);
+        // Insere stringConcatenada como C (chave) na árvore B
+        raiz = inserirChave(stringConcatenada, raiz);
+        // ALTERAR ESTA FUNÇÃO, DE MODO QUE OS ATRIBUTOS SEJAM PREENCHIDOS
+        // RRN DO NÓ E ALTURA DO NÓ???
+        // P, PR???
 
-    //     // Libera o registro completo e a string alocada
-    //     liberaRegistro(r);
-    //     free(stringConcatenada);
 
-    //     // Precisamos saltar até o próximo registro
-    //     byteOffset += TAM_REGISTRO;
-    // }
+        // Libera o registro completo e a string alocada
+        liberaRegistro(r);
+        free(stringConcatenada);
 
-    // 5. Grava a árvore B no arquivo de índices
-    // Aqui...
+        // Precisamos saltar até o próximo registro
+        byteOffset += TAM_REGISTRO;
+    }
+
+    // 5. Grava a árvore B no arquivo de índices (ORDEM ALFABÉTICA PARA TESTAR)
+    gravaArvore(raiz, arquivoIND);
+
+    //imprimeArvoreB(raiz);
 
     // Grava o cabecalho no arquivo de índices
     gravaCabecalhoIndice(cabecalho, arquivoIND);
+
+    // Desalocando a memória da Árvore B
+    destroiArvoreB(raiz);
 
     // Fecha os arquivos
     fclose(arquivoBIN);

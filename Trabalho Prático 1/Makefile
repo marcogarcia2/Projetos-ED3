@@ -3,8 +3,8 @@ BIN = ./bin
 INCLUDE = ./include
 OBJ = ./obj
 SRC = ./src
-FLAGS = -Wall 
-MSG = "Várias pequenas alterações para pelo menos fazer rodar"
+FLAGS = -Wall -Wpedantic -Werror #-march=native -O3 -fsanitize=address
+MSG = "TAD Árvore B + implementação parcial da funcionalidade 5"
 
 all: libed myapps
 
@@ -18,6 +18,7 @@ libed:
 	gcc $(FLAGS) -c $(SRC)/funcionalidade4.c -I $(INCLUDE) -o $(OBJ)/funcionalidade4.o
 	gcc $(FLAGS) -c $(SRC)/funcionalidade5.c -I $(INCLUDE) -o $(OBJ)/funcionalidade5.o
 	gcc $(FLAGS) -c $(SRC)/lista.c -I $(INCLUDE) -o $(OBJ)/lista.o
+	gcc $(FLAGS) -c $(SRC)/arvoreB.c -I $(INCLUDE) -o $(OBJ)/arvoreB.o
 
 myapps:
 	gcc $(FLAGS) $(APPS)/main.c $(OBJ)/*.o -I $(INCLUDE) -o $(BIN)/main
