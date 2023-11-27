@@ -20,5 +20,8 @@ void buscaPorRRN(char *nomeArquivoBIN, int RRN);
 
 // Funcionalidade 5
 void geraArquivoIndice(char *nomeArquivoBIN, char *nomeArquivoIND);
-    
+
+// Funcionalidade 6
+void buscaComIndice(char *nomeArquivoBIN, char *nomeArquivoIND, int n);
+
 #endif

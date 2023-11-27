@@ -19,7 +19,7 @@ int main (int argc, char *argv[]){
     
     int f; // Funcionalidade
     char nomeArquivoCSV[30], nomeArquivoBIN[30], nomeArquivoIND[30]; // Strings da funcionalidade 1
-    int n; // Número de vezes que será executada a funcionalidade 3
+    int n; // Número de vezes que será executada alguma funcionalidade
     int rrn; // RRN utilizado na funcionalidade 4
     scanf("%d ", &f);
 
@@ -49,6 +49,9 @@ int main (int argc, char *argv[]){
         scanf("%s %s", nomeArquivoBIN, nomeArquivoIND);
         geraArquivoIndice(nomeArquivoBIN, nomeArquivoIND);
         break;
+
+    case 6: // Funcionalidade 6
+        scanf("%s %s %d", nomeArquivoBIN, nomeArquivoIND, &n);
 
     default:
         break;
