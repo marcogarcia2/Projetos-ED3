@@ -152,15 +152,15 @@ void buscaComIndice(char *nomeArquivoBIN, char *nomeArquivoIND, int n){
         return;
     }
 
+    // Variáveis auxiliares
     char nomeCampo[30], valorCampo[30];
     int valorCampoint;
     int rrnBuscado;
 
+    // Calculando o tamanho total do arquivo
     int ultimoRRN;
     fread(&ultimoRRN, sizeof(int), 1, arquivoBIN); 
     ultimoRRN--;
-
-    // Calculando o tamanho total do arquivo
     const unsigned int tamTotal = 13 + (TAM_PAGINA * ultimoRRN);
 
     for(int i = 0; i < n; i++){
