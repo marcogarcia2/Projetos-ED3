@@ -51,7 +51,7 @@ void posicionaPonteiroPorRRN(int RRN, FILE *arquivoIND){
     // Função que deverá ser usada com fseek com SEEK_SET
     int byteOffset = TAM_PAGINA * (RRN + 1); 
 
-    printf("Byte offset: %d\n", byteOffset);
+    //printf("Byte offset: %d\n", byteOffset);
 
     fseek(arquivoIND, byteOffset, SEEK_SET);
 }
@@ -116,7 +116,7 @@ int buscaPelaChave(char *nomeChave, FILE *arquivoIND){ // Essa funcao retorna o 
     // Estamos na raiz, agora chamaremos a recursão para tentar encontrar a chave
     rrnBuscado = buscaRecursivaPelaChave(nomeChave, arquivoIND, rrnRaiz);
 
-    printf("RRN da raiz: %d\n", rrnRaiz);
+    //printf("RRN da raiz: %d\n", rrnRaiz);
 
     return rrnBuscado;
 }   
@@ -189,10 +189,13 @@ void buscaComIndice(char *nomeArquivoBIN, char *nomeArquivoIND, int n){
 
             // Guardo o valor do RRN encontrado
             rrnBuscado = buscaPelaChave(valorCampo, arquivoIND);
-            printf("RRN buscado: %d\n", rrnBuscado);
+            //printf("RRN buscado: %d\n", rrnBuscado);
             // Realizo a busca a partir da funcionalidade 4
             if(rrnBuscado != -1){
                 buscaPorRRN(nomeArquivoBIN, rrnBuscado);
+            }
+            else{
+                printf("Registro inexistente.\n");
             }
         }
 
