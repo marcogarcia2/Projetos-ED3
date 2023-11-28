@@ -35,12 +35,8 @@ void imprimeRegistro(const Registro *r);
 // Funcao que concatena as strings nomeTecnologiaOrigem e nomeTecnologiaDestino de um registro
 char *concatenaStrings(Registro *r);
 
-void buscaString2(char *nomeCampo, char *tecnologia, int tamTotal, FILE *arquivoBIN);
-
 void buscaString(char *nomeCampo, char *tecnologia, int tamTotal, FILE *arquivoBIN);
 
 void buscaInteiro(char *nomeCampo, int valor, int tamTotal, FILE *arquivoBIN);
-
-void buscaInteiro2(char *nomeCampo, int valor, int tamTotal, FILE *arquivoBIN);
 
 #endif
