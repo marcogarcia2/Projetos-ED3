@@ -113,11 +113,11 @@ int buscaPelaChave(char *nomeChave, FILE *arquivoIND){ // Essa funcao retorna o 
 
     // Leio onde está o RRN do nó da raiz
     fread(&rrnRaiz, sizeof(int), 1, arquivoIND);
+    printf("RRN da raiz: %d\n", rrnRaiz);
     
     // Estamos na raiz, agora chamaremos a recursão para tentar encontrar a chave
     rrnBuscado = buscaRecursivaPelaChave(nomeChave, arquivoIND, rrnRaiz);
 
-    //printf("RRN da raiz: %d\n", rrnRaiz);
 
     return rrnBuscado;
 }   
@@ -173,7 +173,7 @@ void buscaComIndice(char *nomeArquivoBIN, char *nomeArquivoIND, int n){
 
         // Pula o cabeçalho do arquivo de dados
         fseek(arquivoBIN, 13, SEEK_SET);
-        fseek(arquivoIND, 0, SEEK_SET);
+        fseek(arquivoIND, 1, SEEK_SET);
 
         /* O tratamento será diferente para buscarmos uma string ou um inteiro */
 
@@ -193,7 +193,7 @@ void buscaComIndice(char *nomeArquivoBIN, char *nomeArquivoIND, int n){
 
             // Guardo o valor do RRN encontrado
             rrnBuscado = buscaPelaChave(valorCampo, arquivoIND);
-            //printf("RRN buscado: %d\n", rrnBuscado);
+            printf("RRN buscado: %d\n", rrnBuscado);
             // Realizo a busca a partir da funcionalidade 4
             if(rrnBuscado != -1){
                 buscaPorRRN(nomeArquivoBIN, rrnBuscado);
@@ -212,7 +212,7 @@ void buscaComIndice(char *nomeArquivoBIN, char *nomeArquivoIND, int n){
         }
 
         // Volto para o início do arquivo de dados
-        fseek(arquivoBIN, 0, SEEK_SET);
+        //fseek(arquivoBIN, 0, SEEK_SET);
     }
 
     fclose(arquivoBIN);

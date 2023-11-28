@@ -27,14 +27,14 @@ void geraArquivoIndice(char *nomeArquivoBIN, char *nomeArquivoIND){
     // Abre o arquivo de dados
     FILE *arquivoBIN = fopen(nomeArquivoBIN, "rb");
     if(arquivoBIN == NULL){
-        printf("Falha no carregamento do Arquivo Binário.\n");
+        printf("Falha no processamento do arquivo.\n");
         return;
     }
 
     // Cria o arquivo de índices
     FILE *arquivoIND = fopen(nomeArquivoIND, "wb");
     if(arquivoIND == NULL){
-        printf("Falha no carregamento do Arquivo Binário.\n");
+        printf("Falha no processamento do arquivo.\n");
         return;
     }
 
