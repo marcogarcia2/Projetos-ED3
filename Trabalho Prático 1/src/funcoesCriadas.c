@@ -150,6 +150,91 @@ char *concatenaStrings(Registro *r){
     return stringConcatenada;
 }
 
+void buscaString2(char *nomeCampo, char *tecnologia, int tamTotal, FILE *arquivoBIN){
+
+    // Guarda o byte inicial
+    Registro *r;
+    int flag = 0;
+    unsigned long byteOffset = ftell(arquivoBIN);
+
+    while(byteOffset < tamTotal){
+        if(fgetc(arquivoBIN) == '0'){ // Se não estiver removido
+
+            // Crio meu registro
+            r = criaRegistro();
+
+            // Trago as informações para a memória primária
+            r = leRegistro(byteOffset, r, arquivoBIN);
+
+            if(!strcmp(nomeCampo, "nomeTecnologiaOrigem")){
+                if(!strcmp(r->tecnologiaOrigem.string, tecnologia)){
+                    imprimeRegistro(r);
+                    flag = 1;
+                }
+            }
+
+            else if(!strcmp(nomeCampo, "nomeTecnologiaDestino")){
+                if(!strcmp(r->tecnologiaDestino.string, tecnologia)){
+                    imprimeRegistro(r);
+                    flag = 1;
+                }
+            }
+
+            liberaRegistro(r);
+            byteOffset += TAM_REGISTRO;
+        }
+    }
+
+    // Caso depois de rodar todo o while e não encontrar nenhum (flag = 0)
+    if(!flag) printf("Registro inexistente.\n");
+}
+
+void buscaInteiro2(char *nomeCampo, int valor, int tamTotal, FILE *arquivoBIN){
+
+    // Guarda o byte inicial
+    Registro *r;
+    int flag = 0;
+    unsigned long byteOffset = ftell(arquivoBIN);
+
+    while(byteOffset < tamTotal){
+        if(fgetc(arquivoBIN) == '0'){ // Se não estiver removido
+
+            // Crio meu registro
+            r = criaRegistro();
+
+            // Trago as informações para a memória primária
+            r = leRegistro(byteOffset, r, arquivoBIN);
+
+            if(!strcmp(nomeCampo, "grupo")){
+                if(r->grupo == valor){
+                    imprimeRegistro(r);
+                    flag = 1;
+                }
+            }
+
+            else if(!strcmp(nomeCampo, "popularidade")){
+                if(r->popularidade == valor){
+                    imprimeRegistro(r);
+                    flag = 1;
+                }
+            }
+
+            else if(!strcmp(nomeCampo, "peso")){
+                if(r->peso == valor){
+                    imprimeRegistro(r);
+                    flag = 1;
+                }
+            }
+
+            liberaRegistro(r);
+            byteOffset += TAM_REGISTRO;
+        }
+    }
+
+    // Caso depois de rodar todo o while e não encontrar nenhum (flag = 0)
+    if(!flag) printf("Registro inexistente.\n");
+}
+
 void buscaString(char *nomeCampo, char *tecnologia, int tamTotal, FILE *arquivoBIN){
 
     // Variáveis que nos auxiliarão na análise

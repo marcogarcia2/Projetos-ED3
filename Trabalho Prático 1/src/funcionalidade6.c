@@ -109,6 +109,7 @@ int buscaPelaChave(char *nomeChave, FILE *arquivoIND){ // Essa funcao retorna o 
     int rrnRaiz;
 
     // Primeiro eu coloco o ponteiro do meu arquivo na raiz (no / pagina)
+    
 
     // Leio onde está o RRN do nó da raiz
     fread(&rrnRaiz, sizeof(int), 1, arquivoIND);
@@ -161,7 +162,7 @@ void buscaComIndice(char *nomeArquivoBIN, char *nomeArquivoIND, int n){
     ultimoRRN--;
 
     // Calculando o tamanho total do arquivo
-    const unsigned int tamTotal = 13 + (TAM_PAGINA * ultimoRRN);
+    const unsigned int tamTotal = 13 + (TAM_REGISTRO * ultimoRRN);
 
     for(int i = 0; i < n; i++){
 
@@ -170,6 +171,7 @@ void buscaComIndice(char *nomeArquivoBIN, char *nomeArquivoIND, int n){
 
         // Pula o cabeçalho do arquivo de dados
         fseek(arquivoBIN, 13, SEEK_SET);
+        fseek(arquivoIND, 0, SEEK_SET);
 
         /* O tratamento será diferente para buscarmos uma string ou um inteiro */
 
@@ -178,7 +180,7 @@ void buscaComIndice(char *nomeArquivoBIN, char *nomeArquivoIND, int n){
             
             // Leitura da entrada entre aspas e chamada da função de busca
             scan_quote_string(valorCampo); 
-            buscaString(nomeCampo, valorCampo, tamTotal, arquivoBIN);
+            buscaString2(nomeCampo, valorCampo, tamTotal, arquivoBIN);
         }
 
         // Se o campo for a chave de busca
@@ -204,7 +206,7 @@ void buscaComIndice(char *nomeArquivoBIN, char *nomeArquivoIND, int n){
 
             // Leitura da entrada e chamada da função de busca
             scanf("%d", &valorCampoint);
-            buscaInteiro(nomeCampo, valorCampoint, tamTotal, arquivoBIN);
+            buscaInteiro2(nomeCampo, valorCampoint, tamTotal, arquivoBIN);
         }
 
         // Volto para o início do arquivo de dados
