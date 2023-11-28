@@ -8,6 +8,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 #include "registros.h"
 #include "arvoreB.h"
@@ -23,5 +24,22 @@ void gravaNo(NoArv *no, FILE *arquivoIND);
 
 // Função que grava toda a Árvore B em um arquivo binário de índice
 void gravaArvore(NoArv *raiz, FILE *arquivoIND);
+
+typedef struct _noArvoreB{
+    int nroChavesNo;
+    int alturaNo;
+    int RRNdoNo;
+
+    int P1, P2, P3, P4; // Ponteiros para uma subárvore
+    char C1[55], C2[55], C3[55]; // Chaves de busca, sempre ordenadas C1 < C2 < C3
+    int PR1, PR2, PR3; // Ponteiros para o registro associado a Ci no arquivos de dados
+} NoArvoreB;
+
+NoArvoreB *criaNoArvoreB(void);
+
+// Função que lê um nó da árvore B do arquivo de índices e grava em um NoArvoreB
+void leNoArvoreB(NoArvoreB *noArvB, FILE *arquivoIND);
+
+void imprimeNoArvoreB(NoArvoreB *no);
 
 #endif
