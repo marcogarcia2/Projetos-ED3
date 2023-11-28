@@ -237,3 +237,17 @@ void buscaInteiro(char *nomeCampo, int valor, int tamTotal, FILE *arquivoBIN){
     // Caso depois de rodar todo o while e não encontrar nenhum (flag = 0)
     if(!flag) printf("Registro inexistente.\n");
 }
+
+int calculaTamanhoTotal(FILE *arquivoBIN){
+    // Para usar a função, é necessário que esteja no início do arquivo (byte 1, depois do status (byte 0))
+    
+    // Calculando o tamanho total do arquivo
+    int ultimoRRN;
+    fread(&ultimoRRN, sizeof(int), 1, arquivoBIN); 
+    ultimoRRN--;
+
+    // Calculando o tamanho total do arquivo
+    const unsigned int tamTotal = 13 + (TAM_REGISTRO * ultimoRRN);
+
+    return tamTotal;
+}

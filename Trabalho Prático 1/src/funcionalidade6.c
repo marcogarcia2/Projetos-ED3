@@ -14,8 +14,6 @@
 #include "funcoesIndice.h"
 #include "arvoreB.h"
 
-#define TAM_PAGINA 205
-
 // Funcionalidade 6
 
 /* Pensando em voz alta (TIRAR DEPOIS)

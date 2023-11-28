@@ -4,7 +4,7 @@ INCLUDE = ./include
 OBJ = ./obj
 SRC = ./src
 FLAGS = -Wall -Wpedantic -Werror #-march=native -O3 -fsanitize=address
-MSG = "Funcionalidade 6 funcionando 3/3"
+MSG = "Início da funcionalidade 5 com testes de concatenação e remoção da aplicação do TAD"
 
 all: libed myapps
 

@@ -13,6 +13,8 @@
 #include "registros.h"
 #include "arvoreB.h"
 
+#define TAM_PAGINA 205
+
 // Função que cria um Cabeçalho de Árvore, inserido no início do arquivo binário de índice
 CabecalhoIndice *criaCabecalhoIndice(void);
 

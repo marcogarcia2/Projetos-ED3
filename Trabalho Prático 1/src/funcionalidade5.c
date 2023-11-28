@@ -38,9 +38,7 @@ void geraArquivoIndice(char *nomeArquivoBIN, char *nomeArquivoIND){
         return;
     }
 
-    // Algoritmo:
-
-    // 1. Verifica a consistência do arquivo de dados
+    // Verifica a consistência do arquivo de dados
     int byteOffset = 0;
 
     // Se o arquivo de dados estiver consistente
@@ -55,44 +53,47 @@ void geraArquivoIndice(char *nomeArquivoBIN, char *nomeArquivoIND){
     }
     printf("byteOffset: %d\n", byteOffset);
 
-    // 2. Cria o cabeçalho do arquivo de índices
+    // Cria o cabeçalho do arquivo de índices
     CabecalhoIndice *cabecalho = criaCabecalhoIndice();
-    // Presumo que aqui já deveríamos colocar '0' no arquivo 
-    // fwrite(&cabecalho->status, sizeof(char), 1, arquivoIND);
 
-    // 3. Cria a árvore B (só depois de verificar a consistência)
-    // Aqui...
-    NoArv *raiz = NULL;
+    // Colocando '0' de status no arquivo (pois foi aberto)
+    gravaCabecalhoIndice(cabecalho, arquivoIND);
 
-    // 4. Lê o arquivo de dados e insere na árvore B concomitantemente (?)
+    // Cria um nó da árvore B (raiz) em memória principal
+    //NoArvoreB *noArv = criaNoArvoreB();
 
-    while(1){
+    // Cria o registro que será lido em memória principal
+    Registro *r;
 
-        // Cria o registro que será lido
-        Registro *r = criaRegistro();
+    // Tamanho total do arquivo de dados
+    const unsigned int tamTotal = calculaTamanhoTotal(arquivoBIN);
+    printf("Tamanho total: %d\n", tamTotal);
 
-        // Lê o registro do arquivo de dados
+    // Lê o arquivo de dados e insere na árvore B concomitantemente
+    while(byteOffset < tamTotal){
+
+        // Cria e lê o registro do arquivo de dados que será lido em memória principal
+        r = criaRegistro(); 
         r = leRegistro(byteOffset, r, arquivoBIN);
 
         // Se acabaram os registros, chegou ao final do arquivo
-        if (r == NULL) {
-            free(r); // Libera o registro
-            break;
+        // if (r == NULL) {
+        //     free(r); // Libera o registro
+        //     break;
+        // }
+        if(r->removido == '0'){ // Se não estiver removido
+            // Insere o registro no arquivo de índices
+            // Criando a chave (stringConcatenada) concatenando nomeTecnologiaOrigem e nomeTecnologiaDestino
+            char *stringConcatenada = concatenaStrings(r); 
+            //printf("String inserida: %s\n", stringConcatenada); 
+
+
         }
 
         // OBS.: O registro só poderá ser inserido se ele não estiver removido (TESTAR O 204)
-        // if(r->removido == '1') 
-            // fseek(arquivoBIN, 204, SEEK_CUR); // Se estiver removido, pula para o próximo registro
+        // if não removido eu insiro, se não eu continuo e dou byteOffset += TAM_REGISTRO; normalmente
 
-        // Criando a chave (stringConcatenada) concatenando nomeTecnologiaOrigem e nomeTecnologiaDestino
-        char *stringConcatenada = concatenaStrings(r); 
-        //printf("String inserida: %s\n", stringConcatenada);
-        // Insere stringConcatenada como C (chave) na árvore B
-        raiz = inserirChave(stringConcatenada, raiz);
-        // ALTERAR ESTA FUNÇÃO, DE MODO QUE OS ATRIBUTOS SEJAM PREENCHIDOS
-        // RRN DO NÓ E ALTURA DO NÓ???
-        // P, PR???
-
+        
 
         // Libera o registro completo e a string alocada
         liberaRegistro(r);
@@ -102,16 +103,17 @@ void geraArquivoIndice(char *nomeArquivoBIN, char *nomeArquivoIND){
         byteOffset += TAM_REGISTRO;
     }
 
-    // 5. Grava a árvore B no arquivo de índices (ORDEM ALFABÉTICA PARA TESTAR)
-    gravaArvore(raiz, arquivoIND);
+    // Grava a árvore B no arquivo de índices (ORDEM ALFABÉTICA PARA TESTAR)
+    //gravaArvore(raiz, arquivoIND);
 
     //imprimeArvoreB(raiz);
 
     // Grava o cabecalho no arquivo de índices
-    gravaCabecalhoIndice(cabecalho, arquivoIND);
+    cabecalho->status = '1';
+    gravaCabecalhoIndice(cabecalho, arquivoIND); 
 
     // Desalocando a memória da Árvore B
-    destroiArvoreB(raiz);
+    //destroiArvoreB(raiz);
 
     // Fecha os arquivos
     fclose(arquivoBIN);

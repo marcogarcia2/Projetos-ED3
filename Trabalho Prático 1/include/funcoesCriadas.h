@@ -39,4 +39,6 @@ void buscaString(char *nomeCampo, char *tecnologia, int tamTotal, FILE *arquivoB
 
 void buscaInteiro(char *nomeCampo, int valor, int tamTotal, FILE *arquivoBIN);
 
+int calculaTamanhoTotal(FILE *arquivoBIN);
+
 #endif
