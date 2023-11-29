@@ -79,12 +79,10 @@ void geraArquivoIndice(char *nomeArquivoBIN, char *nomeArquivoIND){
     // Cria o registro que será lido em memória principal e um nó da árvore B (raiz)
     Registro *r;
     DadosChave *dados;
-    //NoArvoreB *no;
 
     // Contador de RRN (começa no 0 e é incrementado a cada leitura ou pulo de registro)
     int ponteiroReferencia = 0;
     int RRNraiz;
-    
 
     // Tamanho total do arquivo de dados
     const unsigned int tamTotal = calculaTamanhoTotal(arquivoBIN);
@@ -101,8 +99,6 @@ void geraArquivoIndice(char *nomeArquivoBIN, char *nomeArquivoIND){
         // A cada iteração, precisarei saber onde está a raiz
         fseek(arquivoIND, 1, SEEK_SET);
         fread(&RRNraiz, sizeof(int), 1, arquivoIND);
-
-        //no = criaNoArvoreB();
 
         // Se acabaram os registros, chegou ao final do arquivo
         // if (r == NULL) {
@@ -124,17 +120,14 @@ void geraArquivoIndice(char *nomeArquivoBIN, char *nomeArquivoIND){
             free(dados->chave);
         }
 
-        // OBS.: O registro só poderá ser inserido se ele não estiver removido (TESTAR O 204)
-        // if não removido eu insiro, se não eu continuo e dou byteOffset += TAM_REGISTRO; normalmente
-
-        
-
         // Libera o registro completo e a string alocada
         liberaRegistro(r);
         
-
         // Precisamos saltar até o próximo registro
         byteOffset += TAM_REGISTRO;
+
+        // Precisamos incrementar o PR
+        ponteiroReferencia++;
     }
 
     // Grava a árvore B no arquivo de índices (ORDEM ALFABÉTICA PARA TESTAR)

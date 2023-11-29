@@ -224,6 +224,7 @@ void insereArquivoIndice(DadosChave *dados, int RRNraiz, FILE *arquivoIND){
         2- Inserção sem divisão (quando tem espaço)
         3- Inserção com divisão (quando está cheio)
     */
+    // NoArvoreB *no = criaNoArvoreB();
 
     if(RRNraiz == -1){
         // Se o arquivo estiver vazio, vamos inserir na raiz
@@ -247,6 +248,6 @@ void insereRecursivamente(DadosChave *dados, FILE *arquivoIND){
 }
 
 // Função que efetua o split
-void split(DadosChave *dados, FILE *arquivoIND){
+void splitNoArvore(DadosChave *dados, FILE *arquivoIND){
 
 }

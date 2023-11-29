@@ -19,7 +19,7 @@ libed:
 	@gcc $(FLAGS) -c $(SRC)/funcionalidade5.c -I $(INCLUDE) -o $(OBJ)/funcionalidade5.o
 	@gcc $(FLAGS) -c $(SRC)/funcionalidade6.c -I $(INCLUDE) -o $(OBJ)/funcionalidade6.o
 	@gcc $(FLAGS) -c $(SRC)/lista.c -I $(INCLUDE) -o $(OBJ)/lista.o
-	@gcc $(FLAGS) -c $(SRC)/arvoreB.c -I $(INCLUDE) -o $(OBJ)/arvoreB.o
+# @gcc $(FLAGS) -c $(SRC)/arvoreB.c -I $(INCLUDE) -o $(OBJ)/arvoreB.o
 
 myapps:
 	@gcc $(FLAGS) $(APPS)/main.c $(OBJ)/*.o -I $(INCLUDE) -o $(BIN)/main
