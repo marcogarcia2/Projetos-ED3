@@ -218,9 +218,13 @@ DadosChave *criaDadosChave(void){
 }
 
 // Função que insere no arquivo de índices
-void insereArquivoIndice(DadosChave *dados, FILE *arquivoIND){
-    int RRNraiz;
-    fread(&RRNraiz, sizeof(int), 1, arquivoIND);
+void insereArquivoIndice(DadosChave *dados, int RRNraiz, FILE *arquivoIND){
+    /* --------- TIPOS DE INSERÇÃO ---------
+        1- Inserção na raiz (RRNraiz == -1)
+        2- Inserção sem divisão (quando tem espaço)
+        3- Inserção com divisão (quando está cheio)
+    */
+
     if(RRNraiz == -1){
         // Se o arquivo estiver vazio, vamos inserir na raiz
         //insereNaRaiz(dados, arquivoIND);
@@ -229,14 +233,20 @@ void insereArquivoIndice(DadosChave *dados, FILE *arquivoIND){
         // Se não estiver vazio, vamos inserir recursivamente
         //insereRecursivamente(dados, arquivoIND, RRNraiz);
     }
-    
-
-    // Vamos inserir recursivamente
-    //insereRecursivamente(dados, arquivoIND, RRNraiz);
 }
 
+// Ocorrerá quando o arquivo estiver vazio
+void insereNaRaiz(DadosChave *dados, FILE *arquivoIND){
+
+}
 
 // Função que insere uma chave dentro do nó
-void insereDentroDoNo(DadosChave *dados){
+void insereRecursivamente(DadosChave *dados, FILE *arquivoIND){
+    // Aqui conterá a lógica de inserção recursiva que poderá ou não ter split
+    // Se tiver, será chamada uma função para efetuar o split
+}
+
+// Função que efetua o split
+void split(DadosChave *dados, FILE *arquivoIND){
 
 }

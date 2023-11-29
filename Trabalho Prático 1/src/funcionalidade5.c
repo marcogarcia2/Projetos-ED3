@@ -83,6 +83,8 @@ void geraArquivoIndice(char *nomeArquivoBIN, char *nomeArquivoIND){
 
     // Contador de RRN (começa no 0 e é incrementado a cada leitura ou pulo de registro)
     int ponteiroReferencia = 0;
+    int RRNraiz;
+    
 
     // Tamanho total do arquivo de dados
     const unsigned int tamTotal = calculaTamanhoTotal(arquivoBIN);
@@ -95,6 +97,10 @@ void geraArquivoIndice(char *nomeArquivoBIN, char *nomeArquivoIND){
         r = criaRegistro(); 
         r = leRegistro(byteOffset, r, arquivoBIN);
         dados = criaDadosChave();
+
+        // A cada iteração, precisarei saber onde está a raiz
+        fseek(arquivoIND, 1, SEEK_SET);
+        fread(&RRNraiz, sizeof(int), 1, arquivoIND);
 
         //no = criaNoArvoreB();
 
@@ -111,9 +117,10 @@ void geraArquivoIndice(char *nomeArquivoBIN, char *nomeArquivoIND){
 
             // Preciso guardar também o que será o PR, que é o RRN dessa chave (ponteiroReferencia)
             dados->PR = ponteiroReferencia;
+            printf("PR: %d\n", dados->PR);
 
             // Agora vou fazer a inserção
-            insereArquivoIndice(dados, arquivoIND);
+            insereArquivoIndice(dados, RRNraiz ,arquivoIND);
             free(dados->chave);
         }
 

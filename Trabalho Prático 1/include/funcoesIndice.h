@@ -52,7 +52,7 @@ void leNoArvoreB(NoArvoreB *noArvB, FILE *arquivoIND);
 void imprimeNoArvoreB(NoArvoreB *no);
 
 // Função que toma conta da inserção no arquivo de índices
-void insereArquivoIndice(DadosChave *dados, FILE *arquivoIND);
+void insereArquivoIndice(DadosChave *dados, int RRNraiz, FILE *arquivoIND);
 
 // Função que cria um DadosChave, que é usado para inserir no arquivo de índices
 DadosChave *criaDadosChave(void);
