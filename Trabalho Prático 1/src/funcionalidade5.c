@@ -48,7 +48,7 @@ void geraArquivoIndice(char *nomeArquivoBIN, char *nomeArquivoIND){
     }
 
     // Cria o arquivo de índices
-    FILE *arquivoIND = fopen(nomeArquivoIND, "wb");
+    FILE *arquivoIND = fopen(nomeArquivoIND, "wb+");
     if(arquivoIND == NULL){
         printf("Falha no processamento do arquivo.\n");
         return;
@@ -81,19 +81,13 @@ void geraArquivoIndice(char *nomeArquivoBIN, char *nomeArquivoIND){
 
     // Contador de RRN (começa no 0 e é incrementado a cada leitura ou pulo de registro)
     int ponteiroReferencia = 0;
-    int RRNraiz = 666;
-    
-    cabecalho->noRaiz = RRNraiz;
-    gravaCabecalhoIndice(cabecalho, arquivoIND);
-
-
+        printf("cabecalho->noRaiz: %d\n", cabecalho->noRaiz);
     // Tamanho total do arquivo de dados
     const unsigned int tamTotal = calculaTamanhoTotal(arquivoBIN);
     printf("Tamanho total: %d\n", tamTotal);
 
     // Lê o arquivo de dados e insere na árvore B concomitantemente
     while(byteOffset < tamTotal){
-
         // Cria e lê o registro do arquivo de dados que será lido em memória principal
         r = criaRegistro(); 
         r = leRegistro(byteOffset, r, arquivoBIN);
@@ -101,15 +95,14 @@ void geraArquivoIndice(char *nomeArquivoBIN, char *nomeArquivoIND){
 
         // A cada iteração, precisarei saber onde está a raiz
         fseek(arquivoIND, 1, SEEK_SET);
-        fread(&RRNraiz, sizeof(int), 1, arquivoIND);
-        fscanf(arquivoIND, "%d", &RRNraiz);
-        printf("RRNraiz: %d\n", RRNraiz);
+        fread(&cabecalho->noRaiz, sizeof(int), 1, arquivoIND);
 
         // Se acabaram os registros, chegou ao final do arquivo
         // if (r == NULL) {
         //     free(r); // Libera o registro
         //     break;
         // }
+
         if(r->removido == '0'){ // Se não estiver removido
             
             // Criando a chave (stringConcatenada) concatenando nomeTecnologiaOrigem e nomeTecnologiaDestino
@@ -121,12 +114,13 @@ void geraArquivoIndice(char *nomeArquivoBIN, char *nomeArquivoIND){
             //printf("PR: %d\n", dados->PR);
 
             // Agora vou fazer a inserção
-            insereArquivoIndice(dados, RRNraiz, arquivoIND);
+            insereArquivoIndice(dados, cabecalho->noRaiz, arquivoIND);
             free(dados->chave);
         }
 
-        // Libera o registro completo e a string alocada
+        // Libera o registro completo e a struct chave
         liberaRegistro(r);
+        free(dados);
         
         // Precisamos saltar até o próximo registro
         byteOffset += TAM_REGISTRO;
@@ -146,6 +140,7 @@ void geraArquivoIndice(char *nomeArquivoBIN, char *nomeArquivoIND){
 
     // Desalocando a memória da Árvore B
     //destroiArvoreB(raiz);
+
 
     // Fecha os arquivos
     fclose(arquivoBIN);

@@ -146,6 +146,7 @@ void gravaDadosIndice(DadosChave *dados, FILE *arquivoIND, int byteOffset){
 
 // Ocorrerá quando o arquivo estiver vazio
 void insereNaRaiz(DadosChave *dados, FILE *arquivoIND){
+
     NoArvoreB *no = criaNoArvoreB();
 
     fwrite(&no->nroChavesNo, sizeof(int), 1, arquivoIND); // Inserindo o nro de chaves
