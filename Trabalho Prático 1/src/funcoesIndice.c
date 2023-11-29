@@ -158,6 +158,20 @@ void gravaDadosIndice(DadosChave *dados, FILE *arquivoIND, int byteOffset){
     fwrite(&dados->PR, sizeof(int), 1, arquivoIND);
 }
 
+void resetaNo(NoArvoreB *no){
+
+    no->nroChavesNo = 0;
+    no->alturaNo = 1; ////////////////////VERDE POIS///////////////////////////////////////////
+
+    for (int i = 0; i < ORDEM_M; i++) {
+        no->P[i] = -1;
+        if (i < ORDEM_M - 1) {
+            strcpy(no->C[i], "");
+            no->PR[i] = -1;
+        }
+    }
+}
+
 // 
 bool noFolha(NoArvoreB *no){
 
@@ -186,6 +200,7 @@ void insereNaRaiz(DadosChave *dados, FILE *arquivoIND){
 
 void insereSemSplit(NoArvoreB *no, DadosChave *dados, FILE *arquivoIND, int byteInicial){
     int flagInseriu = 0;
+    
 
     // Se o nó não estiver cheio, insere no nó
     for (int i = 0; i < no->nroChavesNo; i++){ // Só entrará aqui se o nó tiver no máximo 2 chaves
@@ -240,7 +255,7 @@ void insereSemSplit(NoArvoreB *no, DadosChave *dados, FILE *arquivoIND, int byte
 }
 
 // Função que insere uma chave dentro do nó
-void insereRecursivamente(DadosChave *dados, FILE *arquivoIND, int RRNno){
+void insereRecursivamente(DadosChave *dados, FILE *arquivoIND, CabecalhoIndice *cabecalho, int RRNno){
     // Aqui conterá a lógica de inserção recursiva que poderá ou não ter split
     // Se tiver, será chamada uma função para efetuar o split
 
@@ -251,6 +266,29 @@ void insereRecursivamente(DadosChave *dados, FILE *arquivoIND, int RRNno){
     NoArvoreB *no = criaNoArvoreB();
     leNoArvoreB(no, arquivoIND);
 
+    // Leu a raiz, vai pra onde agora, filho? 
+    for(int i = 0; i < no->nroChavesNo; i++){
+        if(strcmp(dados->chave, no->C[i]) <= 0){
+            if(strcmp(dados->chave, no->C[i]) == 0){
+                printf("Deu pau!\n"); 
+                break;
+            }
+            else{ // Ou seja, se for menor na ordem alfabética, vamos para a esquerda
+                if (no->P[i] != -1){ // existe subárvore
+                    fseek(arquivoIND, TAM_PAGINA + (no->P[i] * TAM_PAGINA), SEEK_SET);
+                    
+                    //insereRecursivamente(dados, arquivoIND, cabecalho, no->P[i]);
+                }
+            }
+        }
+        else // Se não for menor nem igual, vou para a próxima chave!
+            continue;
+    }
+
+    // Se sair do for sem entrar no if, significa que a 
+    // chave é maior que todas as chaves do nó atual, então passamos P[3] = P[nroChavesNo]
+
+
     // Se é um nó folha, a inserção ocorre diretamente
     if (noFolha(no)){
         // Vou fazer a checagem, se consigo colocar no nó atual
@@ -258,18 +296,107 @@ void insereRecursivamente(DadosChave *dados, FILE *arquivoIND, int RRNno){
             //printf("Inserindo no nó\n");
             insereSemSplit(no, dados, arquivoIND, byteInicial);
             liberaNoArvoreB(no);
-            return;
         }
 
         else{ // Se o nó estiver cheio, insere no nó e faz o split
             
-            // printf("Inserindo no nó e fazendo split\n");
-            // insereNo(no, dados, arquivoIND, RRNraiz);
-            // splitNoArvore(dados, arquivoIND);
+            /*
+            no->nroChavesNo == 3;
+            achamos o nó que queremos, mas se inserirmos vai ficar com 4 chaves
+
+                ASP AZU SQL  ->> ASP AZU ENT SQL
+
+                  AZU
+                /      \
+              ASP    ENT SQL
+
+            Limpar o primeiro nó e deixar só ASP e gravar no arquivo
+            Criar a nova raiz, alterar o RRN no cabeçalho e gravar no arquivo
+            Criar o nó folha com ENT e SQL e gravar no arquivo
+            */
+
+            NoSplit noAtual;
+
+            // Copiando informacoes do no para o nosplit
+            int i;
+            for (i = 0; i < ORDEM_M-1; i++){
+                strcpy(noAtual.Csplit[i], no->C[i]);
+                noAtual.PRsplit[i] = no->PR[i];
+            }
+            strcpy(noAtual.Csplit[i], dados->chave);
+            noAtual.PRsplit[i] = dados->PR;
+
+            // Depois de tudo copiado, ordena as chaves (Bubble Sort)
+            for (int i = 0; i < ORDEM_M; i++){
+                for (int j = i + 1; j < ORDEM_M; j++){
+                    if(strcmp(noAtual.Csplit[i], noAtual.Csplit[j]) > 0){
+                        char aux[55];
+                        strcpy(aux, noAtual.Csplit[i]);
+                        strcpy(noAtual.Csplit[i], noAtual.Csplit[j]);
+                        strcpy(noAtual.Csplit[j], aux);
+
+                        int aux2 = noAtual.PRsplit[i];
+                        noAtual.PRsplit[i] = noAtual.PRsplit[j];
+                        noAtual.PRsplit[j] = aux2;
+                    }
+                }
+            }
+
+            // Agora as chaves estão ordenadas, escolheremos qual vai pra cada lado
+            // O do meio menor vai para a raiz (AZU) == noAtual.Csplit[1]
+            // O da esquerda (ASP) permanece no nó atual, temos que limpá-lo
+            // Os da direita (ENT e SQL) vão para o nó irmão
+
+            // Criando o nó irmão
+            NoArvoreB *noIrmao = criaNoArvoreB();
+            noIrmao->nroChavesNo = ORDEM_M/2;           //SEMPRE
+            noIrmao->RRNdoNo = cabecalho->RRNproxNo;
+            cabecalho->RRNproxNo++;
+            strcpy(noIrmao->C[0], noAtual.Csplit[2]);
+            noIrmao->PR[0] = noAtual.PRsplit[2];
+            strcpy(noIrmao->C[1], noAtual.Csplit[3]);
+            noIrmao->PR[1] = noAtual.PRsplit[3];
+
+            //if (no->RRNdoNo == cabecalho->noRaiz){
+                // Criando o nó raiz
+                NoArvoreB *noRaiz = criaNoArvoreB();
+                noRaiz->nroChavesNo = 1;
+                noRaiz->RRNdoNo = cabecalho->RRNproxNo;
+                cabecalho->RRNproxNo++;
+                noRaiz->alturaNo = no->alturaNo + 1;
+                strcpy(noRaiz->C[0], noAtual.Csplit[1]);
+                noRaiz->PR[0] = noAtual.PRsplit[1];
+                // P deve apontar corretamente para os filhos
+                noRaiz->P[0] = no->RRNdoNo;
+                noRaiz->P[1] = noIrmao->RRNdoNo;
+            //}
+
+            // Limpando o nó atual
+            resetaNo(no);
+            no->nroChavesNo = 1;
+            strcpy(no->C[0], noAtual.Csplit[0]);
+            no->PR[0] = noAtual.PRsplit[0];
+
+            // Gravando os nós no arquivo
+            fseek(arquivoIND, byteInicial, SEEK_SET);
+            gravaNoArvoreB(no, arquivoIND);
+
+            fseek(arquivoIND, TAM_PAGINA + (noIrmao->RRNdoNo * TAM_PAGINA), SEEK_SET);
+            gravaNoArvoreB(noIrmao, arquivoIND);
+
+            fseek(arquivoIND, TAM_PAGINA + (noRaiz->RRNdoNo * TAM_PAGINA), SEEK_SET);
+            gravaNoArvoreB(noRaiz, arquivoIND);
+
+            // Atualizando o cabeçalho
+            cabecalho->noRaiz = noRaiz->RRNdoNo;
+            
+            gravaCabecalhoIndice(cabecalho, arquivoIND);
+
+            liberaNoArvoreB(no);
+            liberaNoArvoreB(noIrmao);
+            liberaNoArvoreB(noRaiz);
         }
     }
-    
-
 }
 
 // Função que efetua o split
@@ -284,6 +411,12 @@ void insereArquivoIndice(DadosChave *dados, CabecalhoIndice *cabecalho, FILE *ar
         2- Inserção sem divisão (quando tem espaço)
         3- Inserção com divisão (quando está cheio)
     */
+   // chave = WPF
+
+    printf("---------------------\n");
+    printf("nó Raiz: %d\n", cabecalho->noRaiz);
+    printf("Chave a ser inserida: %s\n", dados->chave);
+    printf("---------------------\n");
 
     // NoArvoreB *no = criaNoArvoreB();
     //printf("Dado a ser inserido: %s\n", dados->chave);
@@ -291,10 +424,11 @@ void insereArquivoIndice(DadosChave *dados, CabecalhoIndice *cabecalho, FILE *ar
         // Se o arquivo estiver vazio, vamos inserir na raiz
         insereNaRaiz(dados, arquivoIND);
         cabecalho->noRaiz = 0;
+        cabecalho->RRNproxNo = 1;
         gravaCabecalhoIndice(cabecalho, arquivoIND);
     }
     else{
         // Se não estiver vazio, vamos inserir recursivamente
-        insereRecursivamente(dados, arquivoIND, cabecalho->noRaiz);
+        insereRecursivamente(dados, arquivoIND, cabecalho, cabecalho->noRaiz);
     }
 }
