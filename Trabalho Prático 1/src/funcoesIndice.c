@@ -199,17 +199,18 @@ void insereRecursivamente(DadosChave *dados, FILE *arquivoIND, int RRNraiz){
     leNoArvoreB(no, arquivoIND);
 
     // Vou fazer a checagem, se consigo colocar no nó atual
-    if(no->nroChavesNo < ORDEM_M){
-        // Se o nó não estiver cheio, insere no nó
-        printf("Inserindo no nó\n");
+    if(no->nroChavesNo < ORDEM_M - 1){ 
+        //printf("Inserindo no nó\n");
         
+        // Se o nó não estiver cheio, insere no nó
         for (int i = 0; i < no->nroChavesNo; i++){ // Só entrará aqui se o nó tiver no máximo 2 chaves
             if(strcmp(dados->chave, no->C[i]) <= 0){
                 if(strcmp(dados->chave, no->C[i]) == 0){
                     // Achamos a chave, retornamos seu ponteiro de referência para o arquivo de dados
                     printf("Elemento repetido!"); // Não é para ocorrer!
                     break;
-                } else{ // Ou seja, se for menor na ordem alfabética, vamos inserir na sua esquerda
+                }
+                else{ // Ou seja, se for menor na ordem alfabética, vamos inserir na sua esquerda
                     // Fazendo um shift dos elementos para a direita
                     for(int j = no->nroChavesNo; j > i; j--){
                         strcpy(no->C[j], no->C[j-1]);
@@ -224,12 +225,12 @@ void insereRecursivamente(DadosChave *dados, FILE *arquivoIND, int RRNraiz){
             }
             else // Se não for menor nem igual, vou para a próxima chave!
                 continue;
-            }
+        }
 
         // Fora do loop, precisamos saber se houve inserção (se não, inserimos no final)
         if(flagInseriu == 0){
-            strcpy(no->C[no->nroChavesNo - 1], dados->chave);
-            no->PR[no->nroChavesNo - 1] = dados->PR;
+            strcpy(no->C[no->nroChavesNo], dados->chave);
+            no->PR[no->nroChavesNo] = dados->PR;
             flagInseriu = 1;
         }
 
@@ -237,9 +238,7 @@ void insereRecursivamente(DadosChave *dados, FILE *arquivoIND, int RRNraiz){
             // Incrementando o nro de chaves
             no->nroChavesNo++;
             fseek(arquivoIND, byteInicial, SEEK_SET);
-            //printf("Inserindo no nó!!!\n");
             gravaNoArvoreB(no, arquivoIND);
-            
         }
     }
 

@@ -67,7 +67,6 @@ void geraArquivoIndice(char *nomeArquivoBIN, char *nomeArquivoIND){
         fclose(arquivoIND);
         return;
     }
-    printf("byteOffset: %d\n", byteOffset);
 
     // Cria o cabeçalho do arquivo de índices
     CabecalhoIndice *cabecalho = criaCabecalhoIndice();
@@ -117,6 +116,7 @@ void geraArquivoIndice(char *nomeArquivoBIN, char *nomeArquivoIND){
         free(dados);
         
         // Precisamos saltar até o próximo registro
+        printf("byteOffset: %d\n", byteOffset);
         byteOffset += TAM_REGISTRO;
 
         // Precisamos incrementar o PR
