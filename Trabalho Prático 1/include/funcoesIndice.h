@@ -32,16 +32,29 @@ typedef struct _noArvoreB{
     int alturaNo;
     int RRNdoNo;
 
-    int P1, P2, P3, P4; // Ponteiros para uma subárvore
-    char C1[55], C2[55], C3[55]; // Chaves de busca, sempre ordenadas C1 < C2 < C3
-    int PR1, PR2, PR3; // Ponteiros para o registro associado a Ci no arquivos de dados
+    int P[4]; // Ponteiros para uma subárvore
+    char C[3][55]; // Chaves de busca, sempre ordenadas C1 < C2 < C3
+    int PR[3]; // Ponteiros para o registro associado a Ci no arquivos de dados
 } NoArvoreB;
+
+typedef struct _dadosChave{
+    char *chave;
+    int PR;
+} DadosChave;
+
 
 NoArvoreB *criaNoArvoreB(void);
 
 // Função que lê um nó da árvore B do arquivo de índices e grava em um NoArvoreB
 void leNoArvoreB(NoArvoreB *noArvB, FILE *arquivoIND);
 
+// Função auxiliar para debugar
 void imprimeNoArvoreB(NoArvoreB *no);
+
+// Função que toma conta da inserção no arquivo de índices
+void insereArquivoIndice(DadosChave *dados, FILE *arquivoIND);
+
+// Função que cria um DadosChave, que é usado para inserir no arquivo de índices
+DadosChave *criaDadosChave(void);
 
 #endif

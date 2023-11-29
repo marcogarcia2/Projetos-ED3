@@ -132,6 +132,9 @@ void gravaArvore(NoArv *no, FILE *arquivoIND){
     }
 }
 
+void liberaNoArvoreB(NoArvoreB *no){
+    free(no);
+}
 // ------------------ FUNÇÕES AUXILIARES ------------------ //
 // As funções a seguir, foram criadas, a priori, para a funcionalidade 6
 
@@ -141,11 +144,13 @@ NoArvoreB *criaNoArvoreB(void){
     no->nroChavesNo = no->alturaNo = 0;
     no->RRNdoNo = -1;
 
-    no->P1 = no->P2 = no->P3 = no->P4 = -1;
-    strcpy(no->C1, "");
-    strcpy(no->C2, "");
-    strcpy(no->C3, "");
-    no->PR1 = no->PR2 = no->PR3 = -1;
+    for (int i = 0; i < 4; i++) {
+        no->P[i] = -1;
+        if (i < 3) {
+            strcpy(no->C[i], "");
+            no->PR[i] = -1;
+        }
+    }
 
     return no;
 }
@@ -170,36 +175,68 @@ void leNoArvoreB(NoArvoreB *noArvB, FILE *arquivoIND){
     fread(&noArvB->alturaNo, sizeof(int), 1, arquivoIND);
     fread(&noArvB->RRNdoNo, sizeof(int), 1, arquivoIND);
 
-    fread(&noArvB->P1, sizeof(int), 1, arquivoIND);
-    leInformacaoUtil(arquivoIND, noArvB->C1);
-    fread(&noArvB->PR1, sizeof(int), 1, arquivoIND);
-
-    fread(&noArvB->P2, sizeof(int), 1, arquivoIND);
-    leInformacaoUtil(arquivoIND, noArvB->C2);
-    fread(&noArvB->PR2, sizeof(int), 1, arquivoIND);
-
-    fread(&noArvB->P3, sizeof(int), 1, arquivoIND);
-    leInformacaoUtil(arquivoIND, noArvB->C3);
-    fread(&noArvB->PR3, sizeof(int), 1, arquivoIND);
-
-    fread(&noArvB->P4, sizeof(int), 1, arquivoIND);
+    for (int i = 0; i < 4; i++) {
+        fread(&noArvB->P[i], sizeof(int), 1, arquivoIND);
+        if (i < 3) {
+            leInformacaoUtil(arquivoIND, noArvB->C[i]);
+            fread(&noArvB->PR[i], sizeof(int), 1, arquivoIND);
+        }
+    }
 }
 
 void imprimeNoArvoreB(NoArvoreB *no){
     printf("Nro de chaves: %d\n", no->nroChavesNo);
     printf("Altura do no: %d\n", no->alturaNo);
     printf("RRN do no: %d\n\n", no->RRNdoNo);
+
+    // Escrevendo os ponteiros
+    printf("P 1: %d\n", no->P[0]);
+    printf("P 2: %d\n", no->P[1]);
+    printf("P 3: %d\n", no->P[2]);
     
-    printf("P1: %d\n", no->P1);
-    printf("P2: %d\n", no->P2);
-    printf("P3: %d\n", no->P3);
-    printf("P4: %d\n\n", no->P4);
+    // Escrevendo as chaves
+    printf("Chave 1: %s\n", no->C[0]);
+    printf("Chave 2: %s\n", no->C[1]);
+    printf("Chave 3: %s\n", no->C[2]);
 
-    printf("C1: %s\n", no->C1);
-    printf("C2: %s\n", no->C2);
-    printf("C3: %s\n\n", no->C3);
+    // Escrevendo os ponteiros
+    printf("PR 1: %d\n", no->PR[0]);
+    printf("PR 2: %d\n", no->PR[1]);
+    printf("PR 3: %d\n", no->PR[2]);
+    
+}
 
-    printf("PR1: %d\n", no->PR1);
-    printf("PR2: %d\n", no->PR2);
-    printf("PR3: %d\n", no->PR3);
+// ------------------ FUNÇÕES FUNCIONALIDADE 5 ------------------ //
+
+DadosChave *criaDadosChave(void){
+    DadosChave *dados = (DadosChave *) malloc(sizeof(DadosChave));
+
+    dados->chave = NULL;
+    dados->PR = -1;
+
+    return dados;
+}
+
+// Função que insere no arquivo de índices
+void insereArquivoIndice(DadosChave *dados, FILE *arquivoIND){
+    int RRNraiz;
+    fread(&RRNraiz, sizeof(int), 1, arquivoIND);
+    if(RRNraiz == -1){
+        // Se o arquivo estiver vazio, vamos inserir na raiz
+        //insereNaRaiz(dados, arquivoIND);
+    }
+    else{
+        // Se não estiver vazio, vamos inserir recursivamente
+        //insereRecursivamente(dados, arquivoIND, RRNraiz);
+    }
+    
+
+    // Vamos inserir recursivamente
+    //insereRecursivamente(dados, arquivoIND, RRNraiz);
+}
+
+
+// Função que insere uma chave dentro do nó
+void insereDentroDoNo(DadosChave *dados){
+
 }

@@ -19,11 +19,28 @@
 #include "funcoesIndice.h"
 #include "arvoreB.h"
 
-// Funcionalidade 5: criar um arquivo de índice a partir de um arquivo binário
+// Funcionalidade 5: criar um arquivo de índice a partir de um arquivo de dados binário
+
+/* --------- PRÓXIMOS PASSOS ------------
+
+- Precisamos fazer com que, dado um registro NÃO removido, concatene as strings dele e armazena numa variável (stringConcatenada) que será a chave de busca
+- Além da string, precisaremos da informação do RRN desse registro (que será o PR)
+
+- SUGESTÃO: Criar uma struct "dados", por exemplo, que terá essas duas informações para cada registro
+
+- Depois, precisamos inserir essa chave e esse PR na árvore B (que será criada em memória principal). O ponteiro P dessa chave recém inserida será sempre -1.
+
+- A princípio, vou escrever o nó raiz no arquivo de índices, e depois vou inserindo os outros nós (sempre atualizando o cabeçalho)
+
+- A ideia seria construir uma função que:
+    - Recebe esses DadosChave (chave e PR) e insere (recursivamente)
+    - Se a chave já existir, não insere
+
+
+*/
 
 void geraArquivoIndice(char *nomeArquivoBIN, char *nomeArquivoIND){
 
-    
     // Abre o arquivo de dados
     FILE *arquivoBIN = fopen(nomeArquivoBIN, "rb");
     if(arquivoBIN == NULL){
@@ -59,11 +76,13 @@ void geraArquivoIndice(char *nomeArquivoBIN, char *nomeArquivoIND){
     // Colocando '0' de status no arquivo (pois foi aberto)
     gravaCabecalhoIndice(cabecalho, arquivoIND);
 
-    // Cria um nó da árvore B (raiz) em memória principal
-    //NoArvoreB *noArv = criaNoArvoreB();
-
-    // Cria o registro que será lido em memória principal
+    // Cria o registro que será lido em memória principal e um nó da árvore B (raiz)
     Registro *r;
+    DadosChave *dados;
+    //NoArvoreB *no;
+
+    // Contador de RRN (começa no 0 e é incrementado a cada leitura ou pulo de registro)
+    int ponteiroReferencia = 0;
 
     // Tamanho total do arquivo de dados
     const unsigned int tamTotal = calculaTamanhoTotal(arquivoBIN);
@@ -75,6 +94,9 @@ void geraArquivoIndice(char *nomeArquivoBIN, char *nomeArquivoIND){
         // Cria e lê o registro do arquivo de dados que será lido em memória principal
         r = criaRegistro(); 
         r = leRegistro(byteOffset, r, arquivoBIN);
+        dados = criaDadosChave();
+
+        //no = criaNoArvoreB();
 
         // Se acabaram os registros, chegou ao final do arquivo
         // if (r == NULL) {
@@ -82,12 +104,17 @@ void geraArquivoIndice(char *nomeArquivoBIN, char *nomeArquivoIND){
         //     break;
         // }
         if(r->removido == '0'){ // Se não estiver removido
-            // Insere o registro no arquivo de índices
+            
             // Criando a chave (stringConcatenada) concatenando nomeTecnologiaOrigem e nomeTecnologiaDestino
-            char *stringConcatenada = concatenaStrings(r); 
-            //printf("String inserida: %s\n", stringConcatenada); 
+            dados->chave = concatenaStrings(r);
+            printf("String inserida: %s\n", dados->chave);
 
+            // Preciso guardar também o que será o PR, que é o RRN dessa chave (ponteiroReferencia)
+            dados->PR = ponteiroReferencia;
 
+            // Agora vou fazer a inserção
+            insereArquivoIndice(dados, arquivoIND);
+            free(dados->chave);
         }
 
         // OBS.: O registro só poderá ser inserido se ele não estiver removido (TESTAR O 204)
@@ -97,7 +124,7 @@ void geraArquivoIndice(char *nomeArquivoBIN, char *nomeArquivoIND){
 
         // Libera o registro completo e a string alocada
         liberaRegistro(r);
-        free(stringConcatenada);
+        
 
         // Precisamos saltar até o próximo registro
         byteOffset += TAM_REGISTRO;
@@ -122,9 +149,3 @@ void geraArquivoIndice(char *nomeArquivoBIN, char *nomeArquivoIND){
     binarioNaTela(nomeArquivoIND);
 
 }
-
-
-
-
-
-

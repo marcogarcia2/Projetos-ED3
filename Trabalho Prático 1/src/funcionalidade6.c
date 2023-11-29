@@ -69,27 +69,15 @@ int buscaRecursivaPelaChave(char *nomeChave, FILE *arquivoIND, int proxRRN){
     NoArvoreB *no = criaNoArvoreB();
     leNoArvoreB(no, arquivoIND);
 
-    // Criando um vetor para os valores de P
-    int P[4] = {no->P1, no->P2, no->P3, no->P4};
-
-    // Criando um vetor para os valores de C
-    char C[3][55];
-    strcpy(C[0], no->C1);
-    strcpy(C[1], no->C2);
-    strcpy(C[2], no->C3);
-
-    // Criando um vetor para os valores de PR
-    int PR[3] = {no->PR1, no->PR2, no->PR3};
-
     // Vamos verificar se a chave está no nó atual
     for(int i = 0; i < no->nroChavesNo; i++){
-        if(strcmp(nomeChave, C[i]) <= 0){
-            if(strcmp(nomeChave, C[i]) == 0){
+        if(strcmp(nomeChave, no->C[i]) <= 0){
+            if(strcmp(nomeChave, no->C[i]) == 0){
                 // Achamos a chave, retornamos seu ponteiro de referência para o arquivo de dados
-                return PR[i];
+                return no->PR[i];
             }
             else{ // Ou seja, se for menor na ordem alfabética, vamos para a esquerda
-                return buscaRecursivaPelaChave(nomeChave, arquivoIND, P[i]);
+                return buscaRecursivaPelaChave(nomeChave, arquivoIND, no->P[i]);
             }
         }
         else // Se não for menor nem igual, vou para a próxima chave!
@@ -97,7 +85,7 @@ int buscaRecursivaPelaChave(char *nomeChave, FILE *arquivoIND, int proxRRN){
     }
 
     // Se chegamos aqui, significa que a chave é maior que todas as chaves do nó atual, então passamos P[3] = P[nroChavesNo]
-    return buscaRecursivaPelaChave(nomeChave, arquivoIND, P[no->nroChavesNo]);
+    return buscaRecursivaPelaChave(nomeChave, arquivoIND, no->P[no->nroChavesNo]);
 }
 
 int buscaPelaChave(char *nomeChave, FILE *arquivoIND){ // Essa funcao retorna o Pr da chave buscada
