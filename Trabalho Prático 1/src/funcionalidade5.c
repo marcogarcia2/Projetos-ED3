@@ -54,7 +54,8 @@ void geraArquivoIndice(char *nomeArquivoBIN, char *nomeArquivoIND){
         return;
     }
 
-    // Verifica a consistência do arquivo de dados
+    
+    // Byte de controle do arquivo de dados
     int byteOffset = 0;
 
     // Se o arquivo de dados estiver consistente
@@ -74,18 +75,20 @@ void geraArquivoIndice(char *nomeArquivoBIN, char *nomeArquivoIND){
     // Colocando '0' de status no arquivo (pois foi aberto)
     gravaCabecalhoIndice(cabecalho, arquivoIND);
 
-    // Cria o registro que será lido em memória principal e um nó da árvore B (raiz)
+    // Cria o registro que será lido em memória principal e um struct DadosChave
     Registro *r;
     DadosChave *dados;
 
     // Contador de RRN (começa no 0 e é incrementado a cada leitura ou pulo de registro)
     int ponteiroReferencia = 0;
+
     // Tamanho total do arquivo de dados
     const unsigned int tamTotal = calculaTamanhoTotal(arquivoBIN);
     printf("Tamanho total: %d\n", tamTotal);
 
     // Lê o arquivo de dados e insere na árvore B concomitantemente
-    while(byteOffset < tamTotal){
+    while(byteOffset < 76*3){
+
         // Cria e lê o registro do arquivo de dados que será lido em memória principal
         r = criaRegistro(); 
         r = leRegistro(byteOffset, r, arquivoBIN);
@@ -94,19 +97,16 @@ void geraArquivoIndice(char *nomeArquivoBIN, char *nomeArquivoIND){
         // A cada iteração, precisarei saber onde está a raiz
         fseek(arquivoIND, 1, SEEK_SET);
         fread(&cabecalho->noRaiz, sizeof(int), 1, arquivoIND);
-        //printf("cabecalho->noRaiz: %d\n", cabecalho->noRaiz);
 
         if(r->removido == '0'){ // Se não estiver removido
             
             // Criando a chave (stringConcatenada) concatenando nomeTecnologiaOrigem e nomeTecnologiaDestino
             dados->chave = concatenaStrings(r);
-            //printf("String inserida: %s\n", dados->chave);
 
             // Preciso guardar também o que será o PR, que é o RRN dessa chave (ponteiroReferencia)
             dados->PR = ponteiroReferencia;
-            //printf("PR: %d\n", dados->PR);
 
-            // Agora vou fazer a inserção
+            // Agora vou fazer a inserção. Ponteiro arquivoBIN: byteOffset + TAM_REGISTRO (pois ele leu); Ponteiro arquivoIND: 5;
             insereArquivoIndice(dados, cabecalho, arquivoIND);
             free(dados->chave);
         }
@@ -116,10 +116,9 @@ void geraArquivoIndice(char *nomeArquivoBIN, char *nomeArquivoIND){
         free(dados);
         
         // Precisamos saltar até o próximo registro
-        //printf("byteOffset: %d\n", byteOffset);
         byteOffset += TAM_REGISTRO;
 
-        // Precisamos incrementar o PR
+        // Precisamos incrementar o PR 
         ponteiroReferencia++;
     }
 
