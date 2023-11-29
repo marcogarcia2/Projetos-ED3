@@ -12,7 +12,6 @@
 #include "funcoesCriadas.h"
 #include "funcoesFornecidas.h"
 #include "funcoesIndice.h"
-#include "arvoreB.h"
 
 // Funcionalidade 6
 
@@ -32,12 +31,12 @@ Em seguida, vamos
 . Checar sua consistencia
 . Abrir arquivo de indices (so preciso abrir se o anterior for valido)
 
-    Cabecalho arquivo de indices:
+    . Cabecalho arquivo de indices:
         - status (Checagem no início) ###
         - noRaiz (atualmente) - vou usar para começar minha busca (começo a partir dele)
         - RRNproxNo (servira para a funcao de insercao, pelo que entendi) ###
 
-    Pagina de dados (cada nó também armazena)
+    . Pagina de dados (cada nó também armazena)
         - nroChavesNo
         - alturaNo
         - RRNdoNo
@@ -192,7 +191,6 @@ void buscaComIndice(char *nomeArquivoBIN, char *nomeArquivoIND, int n){
 
         // Se o campo for um inteiro: grupo, popularidade ou peso
         else {
-
             // Leitura da entrada e chamada da função de busca
             scanf("%d", &valorCampoint);
             buscaInteiro(nomeCampo, valorCampoint, tamTotal, arquivoBIN);

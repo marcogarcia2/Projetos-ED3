@@ -17,7 +17,6 @@
 #include "funcoesCriadas.h"
 #include "funcoesFornecidas.h"
 #include "funcoesIndice.h"
-#include "arvoreB.h"
 
 // Funcionalidade 5: criar um arquivo de índice a partir de um arquivo de dados binário
 
@@ -82,7 +81,10 @@ void geraArquivoIndice(char *nomeArquivoBIN, char *nomeArquivoIND){
 
     // Contador de RRN (começa no 0 e é incrementado a cada leitura ou pulo de registro)
     int ponteiroReferencia = 0;
-    int RRNraiz;
+    int RRN = -1;
+    int RRNraiz = 0;
+
+    fwrite(&RRN, sizeof(int), 1, arquivoIND);
 
     // Tamanho total do arquivo de dados
     const unsigned int tamTotal = calculaTamanhoTotal(arquivoBIN);
@@ -99,6 +101,8 @@ void geraArquivoIndice(char *nomeArquivoBIN, char *nomeArquivoIND){
         // A cada iteração, precisarei saber onde está a raiz
         fseek(arquivoIND, 1, SEEK_SET);
         fread(&RRNraiz, sizeof(int), 1, arquivoIND);
+        fscanf(arquivoIND, "%d", &RRNraiz);
+        printf("RRNraiz: %d\n", RRNraiz);
 
         // Se acabaram os registros, chegou ao final do arquivo
         // if (r == NULL) {
@@ -109,14 +113,14 @@ void geraArquivoIndice(char *nomeArquivoBIN, char *nomeArquivoIND){
             
             // Criando a chave (stringConcatenada) concatenando nomeTecnologiaOrigem e nomeTecnologiaDestino
             dados->chave = concatenaStrings(r);
-            printf("String inserida: %s\n", dados->chave);
+            //printf("String inserida: %s\n", dados->chave);
 
             // Preciso guardar também o que será o PR, que é o RRN dessa chave (ponteiroReferencia)
             dados->PR = ponteiroReferencia;
-            printf("PR: %d\n", dados->PR);
+            //printf("PR: %d\n", dados->PR);
 
             // Agora vou fazer a inserção
-            insereArquivoIndice(dados, RRNraiz ,arquivoIND);
+            insereArquivoIndice(dados, RRNraiz, arquivoIND);
             free(dados->chave);
         }
 

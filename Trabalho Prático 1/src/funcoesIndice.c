@@ -35,103 +35,6 @@ void gravaCabecalhoIndice(CabecalhoIndice *cabIndice, FILE *arquivoIND){
         fwrite(LIXO, sizeof(char), 1, arquivoIND);
 }
 
-// Função que grava um nó (ou página) no arquivo binário de índice
-void gravaNo(NoArv *no, FILE *arquivoIND){
-
-    // printf("%s -> ", no->C[1]);
-    // if (no->C[2]) printf("%s -> ", no->C[2]);
-    // if (no->C[3]) printf("%s -> ", no->C[3]);
-    // printf("\n");
-    
-
-
-    int tam = 0, i = 0;
-
-    fwrite(&no->nroChavesNo, sizeof(int), 1, arquivoIND);
-    fwrite(&no->alturaNo, sizeof(int), 1, arquivoIND);
-    fwrite(&no->RRNdoNo, sizeof(int), 1, arquivoIND);
-
-    
-    // GRAVANDO: P1, C1, PR1
-
-    fwrite(&no->P[1], sizeof(int), 1, arquivoIND);
-
-    // Descobrindo o tamanho da chave
-    while(no->C[1][i] != '\0'){
-        tam++;
-        i++;
-    }
-    fwrite(no->C[1], tam, 1, arquivoIND);
-    for (int i = 0; i < STRING_TAM - tam; i++)
-        fwrite(LIXO, sizeof(char), 1, arquivoIND);
-
-    fwrite(&no->PR[1], sizeof(int), 1, arquivoIND);
-    // FIM
-
-
-    // GRAVANDO: P2, C2, PR2
-
-    fwrite(&no->P[2], sizeof(int), 1, arquivoIND);
-    if (no->C[2]){
-        tam = 0;
-        i = 0;
-        // Descobrindo o tamanho da chave
-        while(no->C[2][i] != '\0'){
-            tam++;
-            i++;
-        }
-        fwrite(no->C[2], tam, 1, arquivoIND);
-        for (int i = 0; i < STRING_TAM - tam; i++)
-            fwrite(LIXO, sizeof(char), 1, arquivoIND);
-    }
-    else {
-        for (int i = 0; i < STRING_TAM; i++)
-            fwrite(LIXO, sizeof(char), 1, arquivoIND);
-    }
-
-    fwrite(&no->PR[2], sizeof(int), 1, arquivoIND);
-    // FIM
-
-    // GRAVANDO: P3, C3, PR3
-
-    fwrite(&no->P[3], sizeof(int), 1, arquivoIND);
-    if (no->C[3]){
-        tam = 0;
-        i = 0;
-        // Descobrindo o tamanho da chave
-        while(no->C[3][i] != '\0'){
-            tam++;
-            i++;
-        }
-        fwrite(no->C[3], tam, 1, arquivoIND);
-        for (int i = 0; i < STRING_TAM - tam; i++)
-            fwrite(LIXO, sizeof(char), 1, arquivoIND);
-    }
-    else {
-        for (int i = 0; i < STRING_TAM; i++)
-            fwrite(LIXO, sizeof(char), 1, arquivoIND);
-    }
-    
-    fwrite(&no->PR[3], sizeof(int), 1, arquivoIND);
-    // FIM
-
-    fwrite(&no->P[4], sizeof(int), 1, arquivoIND);  
-}
-
-// Função que grava toda a Árvore B em um arquivo binário de índice
-void gravaArvore(NoArv *no, FILE *arquivoIND){
-
-    if(no) {
-        
-        for (int i = 0; i <= no->nroChavesNo; i++){
-            gravaArvore(no->ligacoes[i], arquivoIND);
-        }
-
-        gravaNo(no, arquivoIND);
-
-    }
-}
-
 void liberaNoArvoreB(NoArvoreB *no){
     free(no);
 }
@@ -208,6 +111,7 @@ void imprimeNoArvoreB(NoArvoreB *no){
 
 // ------------------ FUNÇÕES FUNCIONALIDADE 5 ------------------ //
 
+// Função que cria um registro
 DadosChave *criaDadosChave(void){
     DadosChave *dados = (DadosChave *) malloc(sizeof(DadosChave));
 
@@ -215,6 +119,54 @@ DadosChave *criaDadosChave(void){
     dados->PR = -1;
 
     return dados;
+}
+
+// Função que grava os dados de apenas uma chave
+void gravaDadosIndice(DadosChave *dados, FILE *arquivoIND, int byteOffset){
+    fseek(arquivoIND, byteOffset, SEEK_SET);
+
+    int P = -1; // Indicação de nó folha
+
+    // Gravando o ponteiro
+    fwrite(&P, sizeof(int), 1, arquivoIND);
+
+    // Gravando chave
+    fwrite(dados->chave, sizeof(char), strlen(dados->chave), arquivoIND);
+
+    // Lógica para gravar o lixo
+    int len = strlen(dados->chave);
+    while (len < 55) {
+        fputc('$', arquivoIND);
+        len++;
+    }
+
+    // Gravando PR
+    fwrite(&dados->PR, sizeof(int), 1, arquivoIND);
+}
+
+// Ocorrerá quando o arquivo estiver vazio
+void insereNaRaiz(DadosChave *dados, FILE *arquivoIND){
+    NoArvoreB *no = criaNoArvoreB();
+
+    fwrite(&no->nroChavesNo, sizeof(int), 1, arquivoIND); // Inserindo o nro de chaves
+    fwrite(&no->alturaNo, sizeof(int), 1, arquivoIND); // Inserindo a altura
+    fwrite(&no->RRNdoNo, sizeof(int), 1, arquivoIND); // Inserindo o RRN do nó
+
+    gravaDadosIndice(dados, arquivoIND, ftell(arquivoIND));
+
+    // Inserindo os dados no nó
+
+}
+
+// Função que insere uma chave dentro do nó
+void insereRecursivamente(DadosChave *dados, FILE *arquivoIND){
+    // Aqui conterá a lógica de inserção recursiva que poderá ou não ter split
+    // Se tiver, será chamada uma função para efetuar o split
+}
+
+// Função que efetua o split
+void splitNoArvore(DadosChave *dados, FILE *arquivoIND){
+
 }
 
 // Função que insere no arquivo de índices
@@ -228,26 +180,10 @@ void insereArquivoIndice(DadosChave *dados, int RRNraiz, FILE *arquivoIND){
 
     if(RRNraiz == -1){
         // Se o arquivo estiver vazio, vamos inserir na raiz
-        //insereNaRaiz(dados, arquivoIND);
+        insereNaRaiz(dados, arquivoIND);
     }
     else{
         // Se não estiver vazio, vamos inserir recursivamente
         //insereRecursivamente(dados, arquivoIND, RRNraiz);
     }
-}
-
-// Ocorrerá quando o arquivo estiver vazio
-void insereNaRaiz(DadosChave *dados, FILE *arquivoIND){
-
-}
-
-// Função que insere uma chave dentro do nó
-void insereRecursivamente(DadosChave *dados, FILE *arquivoIND){
-    // Aqui conterá a lógica de inserção recursiva que poderá ou não ter split
-    // Se tiver, será chamada uma função para efetuar o split
-}
-
-// Função que efetua o split
-void splitNoArvore(DadosChave *dados, FILE *arquivoIND){
-
 }

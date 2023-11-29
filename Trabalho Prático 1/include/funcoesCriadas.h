@@ -9,7 +9,6 @@
 #include <stdio.h>
 
 #include "registros.h"
-#include "arvoreB.h"
 
 // Função que cria um Cabeçalho
 Cabecalho *criaCabecalho(void);

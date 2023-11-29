@@ -7,7 +7,6 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "arvoreB.h"
 #include "registros.h"
 #include "funcoesCriadas.h"
 

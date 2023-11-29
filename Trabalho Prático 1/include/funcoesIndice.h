@@ -11,21 +11,15 @@
 #include <string.h>
 
 #include "registros.h"
-#include "arvoreB.h"
 
 #define TAM_PAGINA 205
 
-// Função que cria um Cabeçalho de Árvore, inserido no início do arquivo binário de índice
-CabecalhoIndice *criaCabecalhoIndice(void);
-
-// Função que grava o Cabeçalho de Árvore no início do arquivo
-void gravaCabecalhoIndice(CabecalhoIndice *cIndice, FILE *arquivoIND);
-
-// Função que grava um nó (ou página) no arquivo binário de índice
-void gravaNo(NoArv *no, FILE *arquivoIND);
-
-// Função que grava toda a Árvore B em um arquivo binário de índice
-void gravaArvore(NoArv *raiz, FILE *arquivoIND);
+// Estrutura do Cabeçalho do Arquivo de Índice da Árvore-B
+typedef struct _cab_indice{
+    char status;
+    int noRaiz;
+    int RRNproxNo;
+} CabecalhoIndice;
 
 typedef struct _noArvoreB{
     int nroChavesNo;
@@ -42,7 +36,13 @@ typedef struct _dadosChave{
     int PR;
 } DadosChave;
 
+// Função que cria um Cabeçalho de Árvore, inserido no início do arquivo binário de índice
+CabecalhoIndice *criaCabecalhoIndice(void);
 
+// Função que grava um cabeçalho de árvore no arquivo de índices
+void gravaCabecalhoIndice(CabecalhoIndice *c, FILE *arquivoIND);
+
+// Função que cria um nó da árvore B
 NoArvoreB *criaNoArvoreB(void);
 
 // Função que lê um nó da árvore B do arquivo de índices e grava em um NoArvoreB
