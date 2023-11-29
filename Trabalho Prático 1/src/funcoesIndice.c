@@ -4,6 +4,7 @@
 */
 
 #include "funcoesIndice.h"
+#include "pilha.h"
 
 // Função que cria um Cabeçalho de Árvore, inserido no início do arquivo binário de índice
 CabecalhoIndice *criaCabecalhoIndice(void){
@@ -135,29 +136,6 @@ void gravaNoArvoreB(NoArvoreB *no, FILE *arquivoIND){
     }
 }
 
-// Função que grava os dados de apenas uma chave
-void gravaDadosIndice(DadosChave *dados, FILE *arquivoIND, int byteOffset){
-    fseek(arquivoIND, byteOffset, SEEK_SET);
-
-    int P = -1; // Indicação de nó folha
-
-    // Gravando o ponteiro
-    fwrite(&P, sizeof(int), 1, arquivoIND);
-
-    // Gravando chave
-    fwrite(dados->chave, sizeof(char), strlen(dados->chave), arquivoIND);
-
-    // Lógica para gravar o lixo
-    int len = strlen(dados->chave);
-    while (len < 55) {
-        fputc('$', arquivoIND);
-        len++;
-    }
-
-    // Gravando PR
-    fwrite(&dados->PR, sizeof(int), 1, arquivoIND);
-}
-
 void resetaNo(NoArvoreB *no){
 
     no->nroChavesNo = 0;
@@ -215,8 +193,8 @@ void insereSemSplit(NoArvoreB *no, DadosChave *dados, FILE *arquivoIND, int byte
 
             else{ // Ou seja, se for menor na ordem alfabética, vamos inserir na sua esquerda
                 // Fazendo um shift dos elementos para a direita
-                printf("Inserindo no meio\n");
-                printf("Chave: %s\n", dados->chave);
+                // printf("Inserindo no meio\n");
+                // printf("Chave: %s\n", dados->chave);
 
                 for(int j = no->nroChavesNo - 1; j >= i; j--){
                     strcpy(no->C[j + 1], no->C[j]);
@@ -227,7 +205,7 @@ void insereSemSplit(NoArvoreB *no, DadosChave *dados, FILE *arquivoIND, int byte
                 no->PR[i] = dados->PR;
 
                 flagInseriu = 1;
-                imprimeNoArvoreB(no);
+                // imprimeNoArvoreB(no);
                 break;
             }
         }
@@ -240,7 +218,7 @@ void insereSemSplit(NoArvoreB *no, DadosChave *dados, FILE *arquivoIND, int byte
     if(flagInseriu == 0){
         printf("Inserindo no final\n");
         printf("Chave: %s\n", dados->chave);
-        imprimeNoArvoreB(no);
+        // imprimeNoArvoreB(no);
         strcpy(no->C[no->nroChavesNo], dados->chave);
         no->PR[no->nroChavesNo] = dados->PR;
         flagInseriu = 1;
@@ -255,17 +233,22 @@ void insereSemSplit(NoArvoreB *no, DadosChave *dados, FILE *arquivoIND, int byte
 }
 
 // Função que insere uma chave dentro do nó
-void insereRecursivamente(DadosChave *dados, FILE *arquivoIND, CabecalhoIndice *cabecalho, int RRNno){
+void insereRecursivamente(DadosChave *dados, FILE *arquivoIND, CabecalhoIndice *cabecalho, int RRNno, Pilha *ancestraisRRN){
     // Aqui conterá a lógica de inserção recursiva que poderá ou não ter split
     // Se tiver, será chamada uma função para efetuar o split
 
     // Pula para o nó desejado (o primeiro será a raiz)
     fseek(arquivoIND, TAM_PAGINA + (RRNno * TAM_PAGINA), SEEK_SET); // Vou pro começo do nó da "raiz"
     int byteInicial = ftell(arquivoIND);
+
     // Carrega o nó da raiz em memória principal
     NoArvoreB *no = criaNoArvoreB();
     leNoArvoreB(no, arquivoIND);
 
+    // Empilhando o RRN do nó atual para usar para fazer um possível split
+    empilha(ancestraisRRN, no->RRNdoNo);
+    printf("Empilhou: %d\n", topo(ancestraisRRN));
+    
     // Leu a raiz, vai pra onde agora, filho? 
     if (!noFolha(no)){
 
@@ -280,15 +263,15 @@ void insereRecursivamente(DadosChave *dados, FILE *arquivoIND, CabecalhoIndice *
                 else{ // Ou seja, se for menor na ordem alfabética, vamos para a esquerda
                     if (no->P[i] != -1){ // existe subárvore
                         fseek(arquivoIND, TAM_PAGINA + (no->P[i] * TAM_PAGINA), SEEK_SET);
-                        insereRecursivamente(dados, arquivoIND, cabecalho, no->P[i]);
+                        insereRecursivamente(dados, arquivoIND, cabecalho, no->P[i], ancestraisRRN);
                     }
                 }
             }
             else // Se não for menor nem igual, vou para a próxima chave!
                 continue;
         }
-
-        insereRecursivamente(dados, arquivoIND, cabecalho, no->P[no->nroChavesNo]);
+        
+        insereRecursivamente(dados, arquivoIND, cabecalho, no->P[no->nroChavesNo], ancestraisRRN);
     }
 
     // Se sair do for sem entrar no if, significa que a 
@@ -305,7 +288,17 @@ void insereRecursivamente(DadosChave *dados, FILE *arquivoIND, CabecalhoIndice *
             return;
         }
 
-        else{ // Se o nó estiver cheio, insere no nó e faz o split
+        else { // Se o nó estiver cheio, insere no nó e faz o split
+
+            /*  --------- TIPOS DE SPLIT ---------
+                1- Split na raiz (HANDLED)
+                2- Split em um nó folha 
+                3- Split em um nó interno
+
+                2. Estou já no nó folha, então só preciso fazer o split
+                    - Para fazer, vou usar um DadosChave para usar como aux
+                    -
+            */
             
             /*
             no->nroChavesNo == 3;
@@ -326,7 +319,7 @@ void insereRecursivamente(DadosChave *dados, FILE *arquivoIND, CabecalhoIndice *
 
             // Copiando informacoes do no para o nosplit
             int i;
-            for (i = 0; i < ORDEM_M-1; i++){
+            for (i = 0; i < ORDEM_M - 1; i++){
                 strcpy(noAtual.Csplit[i], no->C[i]);
                 noAtual.PRsplit[i] = no->PR[i];
             }
@@ -363,6 +356,8 @@ void insereRecursivamente(DadosChave *dados, FILE *arquivoIND, CabecalhoIndice *
             noIrmao->PR[0] = noAtual.PRsplit[2];
             strcpy(noIrmao->C[1], noAtual.Csplit[3]);
             noIrmao->PR[1] = noAtual.PRsplit[3];
+
+            // ATÉ AQUI IGUAL
 
             NoArvoreB *noRaiz = NULL;
             if (no->RRNdoNo == cabecalho->noRaiz){
@@ -410,19 +405,31 @@ void insereRecursivamente(DadosChave *dados, FILE *arquivoIND, CabecalhoIndice *
     }
 }
 
-// Função que efetua o split
-void splitNoArvore(DadosChave *dados, FILE *arquivoIND){
-
-}
-
 // Função que insere no arquivo de índices
 void insereArquivoIndice(DadosChave *dados, CabecalhoIndice *cabecalho, FILE *arquivoIND){
     /* --------- TIPOS DE INSERÇÃO ---------
         1- Inserção na raiz (RRNraiz == -1)
         2- Inserção sem divisão (quando tem espaço)
         3- Inserção com divisão (quando está cheio)
+
+        Por enquanto:
+        - Conseguimos inserir na raiz (quando o arquivo está vazio)
+        - Conseguimos inserir sem divisão (quando o nó não está cheio)
+        - Conseguimos inserir quando ocorre um split especificamente na raiz
+        - Agora, precisamos de uma recursão, para inserir em qualquer nó
+
     */
-   // chave = WPF
+    // chave = WPF
+
+    // ByteOffset = 
+    // Preciso saber qual a altura da raiz para que eu faça um vetor com esse tamanho (máximo)
+    fseek(arquivoIND, TAM_PAGINA + (cabecalho->noRaiz * TAM_PAGINA) + 4, SEEK_SET);
+    int alturaRaiz = 1;
+    fread(&alturaRaiz, sizeof(int), 1, arquivoIND);
+    //printf("Altura da raiz: %d\n", alturaRaiz);
+
+    // Vetor que armazena o RRN dos ancestrais para fazer um split em nós folhas ou internos
+    Pilha *ancestraisRRN = criaPilha(alturaRaiz); // Talvez colocar -1
 
     printf("---------------------\n");
     printf("nó Raiz: %d\n", cabecalho->noRaiz);
@@ -440,6 +447,10 @@ void insereArquivoIndice(DadosChave *dados, CabecalhoIndice *cabecalho, FILE *ar
     }
     else{
         // Se não estiver vazio, vamos inserir recursivamente
-        insereRecursivamente(dados, arquivoIND, cabecalho, cabecalho->noRaiz);
+        insereRecursivamente(dados, arquivoIND, cabecalho, cabecalho->noRaiz, ancestraisRRN);
     }
+
+    destroiPilha(ancestraisRRN);
+
+    return;
 }
