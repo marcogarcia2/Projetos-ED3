@@ -267,22 +267,28 @@ void insereRecursivamente(DadosChave *dados, FILE *arquivoIND, CabecalhoIndice *
     leNoArvoreB(no, arquivoIND);
 
     // Leu a raiz, vai pra onde agora, filho? 
-    for(int i = 0; i < no->nroChavesNo; i++){
-        if(strcmp(dados->chave, no->C[i]) <= 0){
-            if(strcmp(dados->chave, no->C[i]) == 0){
-                printf("Deu pau!\n"); 
-                break;
-            }
-            else{ // Ou seja, se for menor na ordem alfabética, vamos para a esquerda
-                if (no->P[i] != -1){ // existe subárvore
-                    fseek(arquivoIND, TAM_PAGINA + (no->P[i] * TAM_PAGINA), SEEK_SET);
-                    
-                    //insereRecursivamente(dados, arquivoIND, cabecalho, no->P[i]);
+    if (!noFolha(no)){
+
+        for(int i = 0; i < no->nroChavesNo; i++){
+
+            if(strcmp(dados->chave, no->C[i]) <= 0){
+
+                if(strcmp(dados->chave, no->C[i]) == 0){
+                    printf("Deu pau!\n"); 
+                    break;
+                }
+                else{ // Ou seja, se for menor na ordem alfabética, vamos para a esquerda
+                    if (no->P[i] != -1){ // existe subárvore
+                        fseek(arquivoIND, TAM_PAGINA + (no->P[i] * TAM_PAGINA), SEEK_SET);
+                        insereRecursivamente(dados, arquivoIND, cabecalho, no->P[i]);
+                    }
                 }
             }
+            else // Se não for menor nem igual, vou para a próxima chave!
+                continue;
         }
-        else // Se não for menor nem igual, vou para a próxima chave!
-            continue;
+
+        insereRecursivamente(dados, arquivoIND, cabecalho, no->P[no->nroChavesNo]);
     }
 
     // Se sair do for sem entrar no if, significa que a 
@@ -296,6 +302,7 @@ void insereRecursivamente(DadosChave *dados, FILE *arquivoIND, CabecalhoIndice *
             //printf("Inserindo no nó\n");
             insereSemSplit(no, dados, arquivoIND, byteInicial);
             liberaNoArvoreB(no);
+            return;
         }
 
         else{ // Se o nó estiver cheio, insere no nó e faz o split
@@ -357,9 +364,10 @@ void insereRecursivamente(DadosChave *dados, FILE *arquivoIND, CabecalhoIndice *
             strcpy(noIrmao->C[1], noAtual.Csplit[3]);
             noIrmao->PR[1] = noAtual.PRsplit[3];
 
-            //if (no->RRNdoNo == cabecalho->noRaiz){
+            NoArvoreB *noRaiz = NULL;
+            if (no->RRNdoNo == cabecalho->noRaiz){
                 // Criando o nó raiz
-                NoArvoreB *noRaiz = criaNoArvoreB();
+                noRaiz = criaNoArvoreB();
                 noRaiz->nroChavesNo = 1;
                 noRaiz->RRNdoNo = cabecalho->RRNproxNo;
                 cabecalho->RRNproxNo++;
@@ -369,7 +377,7 @@ void insereRecursivamente(DadosChave *dados, FILE *arquivoIND, CabecalhoIndice *
                 // P deve apontar corretamente para os filhos
                 noRaiz->P[0] = no->RRNdoNo;
                 noRaiz->P[1] = noIrmao->RRNdoNo;
-            //}
+            }
 
             // Limpando o nó atual
             resetaNo(no);
@@ -383,18 +391,21 @@ void insereRecursivamente(DadosChave *dados, FILE *arquivoIND, CabecalhoIndice *
 
             fseek(arquivoIND, TAM_PAGINA + (noIrmao->RRNdoNo * TAM_PAGINA), SEEK_SET);
             gravaNoArvoreB(noIrmao, arquivoIND);
-
-            fseek(arquivoIND, TAM_PAGINA + (noRaiz->RRNdoNo * TAM_PAGINA), SEEK_SET);
-            gravaNoArvoreB(noRaiz, arquivoIND);
-
-            // Atualizando o cabeçalho
-            cabecalho->noRaiz = noRaiz->RRNdoNo;
             
+            if (noRaiz){
+                fseek(arquivoIND, TAM_PAGINA + (noRaiz->RRNdoNo * TAM_PAGINA), SEEK_SET);
+                gravaNoArvoreB(noRaiz, arquivoIND);
+                // Atualizando o cabeçalho
+                cabecalho->noRaiz = noRaiz->RRNdoNo;
+            }
+
             gravaCabecalhoIndice(cabecalho, arquivoIND);
 
             liberaNoArvoreB(no);
             liberaNoArvoreB(noIrmao);
             liberaNoArvoreB(noRaiz);
+
+            return;
         }
     }
 }

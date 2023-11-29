@@ -87,7 +87,7 @@ void geraArquivoIndice(char *nomeArquivoBIN, char *nomeArquivoIND){
     printf("Tamanho total: %d\n", tamTotal);
 
     // Lê o arquivo de dados e insere na árvore B concomitantemente
-    while(byteOffset < 76*5){
+    while(byteOffset < tamTotal){
 
         // Cria e lê o registro do arquivo de dados que será lido em memória principal
         r = criaRegistro(); 
