@@ -33,6 +33,11 @@ typedef struct _noArvoreB{
     int PR[3]; // Ponteiros para o registro associado a Ci no arquivos de dados
 } NoArvoreB;
 
+typedef struct _noSplit{
+    char Csplit[4][55];
+    int PRsplit[4];
+} NoSplit;
+
 typedef struct _dadosChave{
     char *chave;
     int PR;
