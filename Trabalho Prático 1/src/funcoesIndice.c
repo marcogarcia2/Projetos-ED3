@@ -158,6 +158,12 @@ void gravaDadosIndice(DadosChave *dados, FILE *arquivoIND, int byteOffset){
     fwrite(&dados->PR, sizeof(int), 1, arquivoIND);
 }
 
+// 
+bool noFolha(NoArvoreB *no){
+
+    return no->P[0] == -1 ? true : false;
+}
+
 // Ocorrerá quando o arquivo estiver vazio
 void insereNaRaiz(DadosChave *dados, FILE *arquivoIND){
 
@@ -234,29 +240,35 @@ void insereSemSplit(NoArvoreB *no, DadosChave *dados, FILE *arquivoIND, int byte
 }
 
 // Função que insere uma chave dentro do nó
-void insereRecursivamente(DadosChave *dados, FILE *arquivoIND, int RRNraiz){
+void insereRecursivamente(DadosChave *dados, FILE *arquivoIND, int RRNno){
     // Aqui conterá a lógica de inserção recursiva que poderá ou não ter split
     // Se tiver, será chamada uma função para efetuar o split
 
     // Pula para o nó desejado (o primeiro será a raiz)
-    fseek(arquivoIND, TAM_PAGINA + (RRNraiz * TAM_PAGINA), SEEK_SET); // Vou pro começo do nó da "raiz"
+    fseek(arquivoIND, TAM_PAGINA + (RRNno * TAM_PAGINA), SEEK_SET); // Vou pro começo do nó da "raiz"
     int byteInicial = ftell(arquivoIND);
     // Carrega o nó da raiz em memória principal
     NoArvoreB *no = criaNoArvoreB();
     leNoArvoreB(no, arquivoIND);
 
-    // Vou fazer a checagem, se consigo colocar no nó atual
-    if(no->nroChavesNo < ORDEM_M - 1){ 
-        //printf("Inserindo no nó\n");
-        insereSemSplit(no, dados, arquivoIND, byteInicial);
-    }
+    // Se é um nó folha, a inserção ocorre diretamente
+    if (noFolha(no)){
+        // Vou fazer a checagem, se consigo colocar no nó atual
+        if(no->nroChavesNo < ORDEM_M - 1){ 
+            //printf("Inserindo no nó\n");
+            insereSemSplit(no, dados, arquivoIND, byteInicial);
+            liberaNoArvoreB(no);
+            return;
+        }
 
-    else{ // Se o nó estiver cheio, insere no nó e faz o split
-        
-        // printf("Inserindo no nó e fazendo split\n");
-        // insereNo(no, dados, arquivoIND, RRNraiz);
-        // splitNoArvore(dados, arquivoIND);
+        else{ // Se o nó estiver cheio, insere no nó e faz o split
+            
+            // printf("Inserindo no nó e fazendo split\n");
+            // insereNo(no, dados, arquivoIND, RRNraiz);
+            // splitNoArvore(dados, arquivoIND);
+        }
     }
+    
 
 }
 
