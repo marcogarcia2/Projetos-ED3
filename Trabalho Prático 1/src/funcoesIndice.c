@@ -92,21 +92,14 @@ void imprimeNoArvoreB(NoArvoreB *no){
     printf("Altura do no: %d\n", no->alturaNo);
     printf("RRN do no: %d\n\n", no->RRNdoNo);
 
-    // Escrevendo os ponteiros
-    printf("P 1: %d\n", no->P[0]);
-    printf("P 2: %d\n", no->P[1]);
-    printf("P 3: %d\n", no->P[2]);
-    
-    // Escrevendo as chaves
-    printf("Chave 1: %s\n", no->C[0]);
-    printf("Chave 2: %s\n", no->C[1]);
-    printf("Chave 3: %s\n", no->C[2]);
 
-    // Escrevendo os ponteiros
-    printf("PR 1: %d\n", no->PR[0]);
-    printf("PR 2: %d\n", no->PR[1]);
-    printf("PR 3: %d\n", no->PR[2]);
-    
+    int i;
+    for (i = 0; i < 3; i++) {
+        printf("P %d: %d\n", i+1, no->P[i]);
+        printf("Chave %d: %s\n", i+1, no->C[i]);
+        printf("PR %d: %d\n", i+1, no->PR[i]);
+    }
+    printf("P %d: %d\n\n\n", i+1, no->P[i]);
 }
 
 // ------------------ FUNÇÕES FUNCIONALIDADE 5 ------------------ //
@@ -178,16 +171,21 @@ void insereNaRaiz(DadosChave *dados, FILE *arquivoIND){
     fwrite(&no->nroChavesNo, sizeof(int), 1, arquivoIND); // Inserindo o nro de chaves
     fwrite(&no->alturaNo, sizeof(int), 1, arquivoIND); // Inserindo a altura
     fwrite(&no->RRNdoNo, sizeof(int), 1, arquivoIND); // Inserindo o RRN do nó
+    
+    strcpy(no->C[0], dados->chave);
+    no->PR[0] = dados->PR;
 
-    gravaDadosIndice(dados, arquivoIND, ftell(arquivoIND));
+    //gravaDadosIndice(dados, arquivoIND, ftell(arquivoIND));
+    gravaNoArvoreB(no, arquivoIND);
 
+    imprimeNoArvoreB(no);
+    liberaNoArvoreB(no);
 }
 
 // Função que insere uma chave dentro do nó
 void insereRecursivamente(DadosChave *dados, FILE *arquivoIND, int RRNraiz){
     // Aqui conterá a lógica de inserção recursiva que poderá ou não ter split
     // Se tiver, será chamada uma função para efetuar o split
-    
 
     // Pula para o nó desejado (o primeiro será a raiz)
     fseek(arquivoIND, TAM_PAGINA + (RRNraiz * TAM_PAGINA), SEEK_SET);
@@ -204,12 +202,15 @@ void insereRecursivamente(DadosChave *dados, FILE *arquivoIND, int RRNraiz){
         
         // Se o nó não estiver cheio, insere no nó
         for (int i = 0; i < no->nroChavesNo; i++){ // Só entrará aqui se o nó tiver no máximo 2 chaves
+            
             if(strcmp(dados->chave, no->C[i]) <= 0){
+
                 if(strcmp(dados->chave, no->C[i]) == 0){
                     // Achamos a chave, retornamos seu ponteiro de referência para o arquivo de dados
                     printf("Elemento repetido!"); // Não é para ocorrer!
                     break;
                 }
+
                 else{ // Ou seja, se for menor na ordem alfabética, vamos inserir na sua esquerda
                     // Fazendo um shift dos elementos para a direita
                     for(int j = no->nroChavesNo; j > i; j--){
@@ -221,8 +222,10 @@ void insereRecursivamente(DadosChave *dados, FILE *arquivoIND, int RRNraiz){
                     no->PR[i] = dados->PR;
 
                     flagInseriu = 1;
+                    imprimeNoArvoreB(no);
                 }
             }
+
             else // Se não for menor nem igual, vou para a próxima chave!
                 continue;
         }
@@ -264,7 +267,7 @@ void insereArquivoIndice(DadosChave *dados, CabecalhoIndice *cabecalho, FILE *ar
         3- Inserção com divisão (quando está cheio)
     */
     // NoArvoreB *no = criaNoArvoreB();
-
+    //printf("Dado a ser inserido: %s\n", dados->chave);
     if(cabecalho->noRaiz == -1){
         // Se o arquivo estiver vazio, vamos inserir na raiz
         //printf("Inserindo na raiz\n");

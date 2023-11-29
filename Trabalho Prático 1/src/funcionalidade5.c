@@ -116,7 +116,7 @@ void geraArquivoIndice(char *nomeArquivoBIN, char *nomeArquivoIND){
         free(dados);
         
         // Precisamos saltar até o próximo registro
-        printf("byteOffset: %d\n", byteOffset);
+        //printf("byteOffset: %d\n", byteOffset);
         byteOffset += TAM_REGISTRO;
 
         // Precisamos incrementar o PR
