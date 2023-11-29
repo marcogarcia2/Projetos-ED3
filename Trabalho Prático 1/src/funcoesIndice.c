@@ -288,7 +288,7 @@ void insereRecursivamente(DadosChave *dados, FILE *arquivoIND, CabecalhoIndice *
             return;
         }
 
-        else { // Se o nó estiver cheio, insere no nó e faz o split
+        else{ // Se o nó estiver cheio, insere no nó e faz o split
 
             /*  --------- TIPOS DE SPLIT ---------
                 1- Split na raiz (HANDLED)
@@ -297,7 +297,6 @@ void insereRecursivamente(DadosChave *dados, FILE *arquivoIND, CabecalhoIndice *
 
                 2. Estou já no nó folha, então só preciso fazer o split
                     - Para fazer, vou usar um DadosChave para usar como aux
-                    -
             */
             
             /*
@@ -357,8 +356,6 @@ void insereRecursivamente(DadosChave *dados, FILE *arquivoIND, CabecalhoIndice *
             strcpy(noIrmao->C[1], noAtual.Csplit[3]);
             noIrmao->PR[1] = noAtual.PRsplit[3];
 
-            // ATÉ AQUI IGUAL
-
             NoArvoreB *noRaiz = NULL;
             if (no->RRNdoNo == cabecalho->noRaiz){
                 // Criando o nó raiz
@@ -403,6 +400,11 @@ void insereRecursivamente(DadosChave *dados, FILE *arquivoIND, CabecalhoIndice *
             return;
         }
     }
+}
+
+// Função que efetua o split
+void splitNoArvore(DadosChave *dados, FILE *arquivoIND){
+
 }
 
 // Função que insere no arquivo de índices
@@ -451,6 +453,5 @@ void insereArquivoIndice(DadosChave *dados, CabecalhoIndice *cabecalho, FILE *ar
     }
 
     destroiPilha(ancestraisRRN);
-
     return;
 }
