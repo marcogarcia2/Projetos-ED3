@@ -13,6 +13,7 @@
 #include "registros.h"
 
 #define TAM_PAGINA 205
+#define ORDEM_M 4
 
 // Estrutura do Cabeçalho do Arquivo de Índice da Árvore-B
 typedef struct _cab_indice{
@@ -52,7 +53,7 @@ void leNoArvoreB(NoArvoreB *noArvB, FILE *arquivoIND);
 void imprimeNoArvoreB(NoArvoreB *no);
 
 // Função que toma conta da inserção no arquivo de índices
-void insereArquivoIndice(DadosChave *dados, int RRNraiz, FILE *arquivoIND);
+void insereArquivoIndice(DadosChave *dados, CabecalhoIndice *cabecalho, FILE *arquivoIND);
 
 // Função que cria um DadosChave, que é usado para inserir no arquivo de índices
 DadosChave *criaDadosChave(void);

@@ -81,7 +81,6 @@ void geraArquivoIndice(char *nomeArquivoBIN, char *nomeArquivoIND){
 
     // Contador de RRN (começa no 0 e é incrementado a cada leitura ou pulo de registro)
     int ponteiroReferencia = 0;
-        printf("cabecalho->noRaiz: %d\n", cabecalho->noRaiz);
     // Tamanho total do arquivo de dados
     const unsigned int tamTotal = calculaTamanhoTotal(arquivoBIN);
     printf("Tamanho total: %d\n", tamTotal);
@@ -96,12 +95,7 @@ void geraArquivoIndice(char *nomeArquivoBIN, char *nomeArquivoIND){
         // A cada iteração, precisarei saber onde está a raiz
         fseek(arquivoIND, 1, SEEK_SET);
         fread(&cabecalho->noRaiz, sizeof(int), 1, arquivoIND);
-
-        // Se acabaram os registros, chegou ao final do arquivo
-        // if (r == NULL) {
-        //     free(r); // Libera o registro
-        //     break;
-        // }
+        //printf("cabecalho->noRaiz: %d\n", cabecalho->noRaiz);
 
         if(r->removido == '0'){ // Se não estiver removido
             
@@ -114,7 +108,7 @@ void geraArquivoIndice(char *nomeArquivoBIN, char *nomeArquivoIND){
             //printf("PR: %d\n", dados->PR);
 
             // Agora vou fazer a inserção
-            insereArquivoIndice(dados, cabecalho->noRaiz, arquivoIND);
+            insereArquivoIndice(dados, cabecalho, arquivoIND);
             free(dados->chave);
         }
 
@@ -129,18 +123,9 @@ void geraArquivoIndice(char *nomeArquivoBIN, char *nomeArquivoIND){
         ponteiroReferencia++;
     }
 
-    // Grava a árvore B no arquivo de índices (ORDEM ALFABÉTICA PARA TESTAR)
-    //gravaArvore(raiz, arquivoIND);
-
-    //imprimeArvoreB(raiz);
-
     // Grava o cabecalho no arquivo de índices
     cabecalho->status = '1';
     gravaCabecalhoIndice(cabecalho, arquivoIND); 
-
-    // Desalocando a memória da Árvore B
-    //destroiArvoreB(raiz);
-
 
     // Fecha os arquivos
     fclose(arquivoBIN);
