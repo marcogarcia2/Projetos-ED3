@@ -81,10 +81,11 @@ void geraArquivoIndice(char *nomeArquivoBIN, char *nomeArquivoIND){
 
     // Contador de RRN (começa no 0 e é incrementado a cada leitura ou pulo de registro)
     int ponteiroReferencia = 0;
-    int RRN = -1;
-    int RRNraiz = 0;
+    int RRNraiz = 666;
+    
+    cabecalho->noRaiz = RRNraiz;
+    gravaCabecalhoIndice(cabecalho, arquivoIND);
 
-    fwrite(&RRN, sizeof(int), 1, arquivoIND);
 
     // Tamanho total do arquivo de dados
     const unsigned int tamTotal = calculaTamanhoTotal(arquivoBIN);
