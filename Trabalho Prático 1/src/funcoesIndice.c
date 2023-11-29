@@ -178,6 +178,61 @@ void insereNaRaiz(DadosChave *dados, FILE *arquivoIND){
     liberaNoArvoreB(no);
 }
 
+void insereSemSplit(NoArvoreB *no, DadosChave *dados, FILE *arquivoIND, int byteInicial){
+    int flagInseriu = 0;
+
+    // Se o nó não estiver cheio, insere no nó
+    for (int i = 0; i < no->nroChavesNo; i++){ // Só entrará aqui se o nó tiver no máximo 2 chaves
+        
+        if(strcmp(dados->chave, no->C[i]) <= 0){
+
+            if(strcmp(dados->chave, no->C[i]) == 0){
+                // Achamos a chave, retornamos seu ponteiro de referência para o arquivo de dados
+                printf("Elemento repetido!"); // Não é para ocorrer!
+                break;
+            }
+
+            else{ // Ou seja, se for menor na ordem alfabética, vamos inserir na sua esquerda
+                // Fazendo um shift dos elementos para a direita
+                printf("Inserindo no meio\n");
+                printf("Chave: %s\n", dados->chave);
+
+                for(int j = no->nroChavesNo - 1; j >= i; j--){
+                    strcpy(no->C[j + 1], no->C[j]);
+                    no->PR[j+1] = no->PR[j];
+                }
+                // Inserindo a chave e o PR
+                strcpy(no->C[i], dados->chave);
+                no->PR[i] = dados->PR;
+
+                flagInseriu = 1;
+                imprimeNoArvoreB(no);
+                break;
+            }
+        }
+
+        else // Se não for menor nem igual, vou para a próxima chave!
+            continue;
+    }
+
+    // Fora do loop, precisamos saber se houve inserção (se não, inserimos no final)
+    if(flagInseriu == 0){
+        printf("Inserindo no final\n");
+        printf("Chave: %s\n", dados->chave);
+        imprimeNoArvoreB(no);
+        strcpy(no->C[no->nroChavesNo], dados->chave);
+        no->PR[no->nroChavesNo] = dados->PR;
+        flagInseriu = 1;
+    }
+
+    if(flagInseriu == 1){
+        // Incrementando o nro de chaves
+        no->nroChavesNo++;
+        fseek(arquivoIND, byteInicial, SEEK_SET);
+        gravaNoArvoreB(no, arquivoIND);
+    }
+}
+
 // Função que insere uma chave dentro do nó
 void insereRecursivamente(DadosChave *dados, FILE *arquivoIND, int RRNraiz){
     // Aqui conterá a lógica de inserção recursiva que poderá ou não ter split
@@ -186,8 +241,6 @@ void insereRecursivamente(DadosChave *dados, FILE *arquivoIND, int RRNraiz){
     // Pula para o nó desejado (o primeiro será a raiz)
     fseek(arquivoIND, TAM_PAGINA + (RRNraiz * TAM_PAGINA), SEEK_SET); // Vou pro começo do nó da "raiz"
     int byteInicial = ftell(arquivoIND);
-    int flagInseriu = 0;
-
     // Carrega o nó da raiz em memória principal
     NoArvoreB *no = criaNoArvoreB();
     leNoArvoreB(no, arquivoIND);
@@ -195,57 +248,7 @@ void insereRecursivamente(DadosChave *dados, FILE *arquivoIND, int RRNraiz){
     // Vou fazer a checagem, se consigo colocar no nó atual
     if(no->nroChavesNo < ORDEM_M - 1){ 
         //printf("Inserindo no nó\n");
-        
-        // Se o nó não estiver cheio, insere no nó
-        for (int i = 0; i < no->nroChavesNo; i++){ // Só entrará aqui se o nó tiver no máximo 2 chaves
-            
-            if(strcmp(dados->chave, no->C[i]) <= 0){
-
-                if(strcmp(dados->chave, no->C[i]) == 0){
-                    // Achamos a chave, retornamos seu ponteiro de referência para o arquivo de dados
-                    printf("Elemento repetido!"); // Não é para ocorrer!
-                    break;
-                }
-
-                else{ // Ou seja, se for menor na ordem alfabética, vamos inserir na sua esquerda
-                    // Fazendo um shift dos elementos para a direita
-                    printf("Inserindo no meio\n");
-                    printf("Chave: %s\n", dados->chave);
-
-                    for(int j = no->nroChavesNo - 1; j >= i; j--){
-                        strcpy(no->C[j + 1], no->C[j]);
-                        no->PR[j+1] = no->PR[j];
-                    }
-                    // Inserindo a chave e o PR
-                    strcpy(no->C[i], dados->chave);
-                    no->PR[i] = dados->PR;
-
-                    flagInseriu = 1;
-                    imprimeNoArvoreB(no);
-                    break;
-                }
-            }
-
-            // else // Se não for menor nem igual, vou para a próxima chave!
-            //     continue;
-        }
-
-        // Fora do loop, precisamos saber se houve inserção (se não, inserimos no final)
-        if(flagInseriu == 0){
-            printf("Inserindo no final\n");
-            printf("Chave: %s\n", dados->chave);
-            imprimeNoArvoreB(no);
-            strcpy(no->C[no->nroChavesNo], dados->chave);
-            no->PR[no->nroChavesNo] = dados->PR;
-            flagInseriu = 1;
-        }
-
-        if(flagInseriu == 1){
-            // Incrementando o nro de chaves
-            no->nroChavesNo++;
-            fseek(arquivoIND, byteInicial, SEEK_SET);
-            gravaNoArvoreB(no, arquivoIND);
-        }
+        insereSemSplit(no, dados, arquivoIND, byteInicial);
     }
 
     else{ // Se o nó estiver cheio, insere no nó e faz o split
