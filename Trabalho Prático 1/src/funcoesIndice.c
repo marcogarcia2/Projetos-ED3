@@ -201,6 +201,10 @@ void insereNaRaiz(DadosChave *dados, FILE *arquivoIND){
     liberaNoArvoreB(no);
 }
 
+int buscaBinaria(){
+
+}
+
 void insereSemSplit(NoArvoreB *no, DadosChave *dados, FILE *arquivoIND, int byteInicial){
     int flagInseriu = 0;
 
@@ -223,10 +227,12 @@ void insereSemSplit(NoArvoreB *no, DadosChave *dados, FILE *arquivoIND, int byte
                 for(int j = no->nroChavesNo - 1; j >= i; j--){
                     strcpy(no->C[j + 1], no->C[j]);
                     no->PR[j+1] = no->PR[j];
+                    no->P[j+2] = no->P[j+1];
                 }
                 // Inserindo a chave e o PR
                 strcpy(no->C[i], dados->chave);
                 no->PR[i] = dados->PR;
+                no->P[i+1] = dados->rrnDireita
 
                 flagInseriu = 1;
                 imprimeNoArvoreB(no);
@@ -253,6 +259,67 @@ void insereSemSplit(NoArvoreB *no, DadosChave *dados, FILE *arquivoIND, int byte
         no->nroChavesNo++;
         fseek(arquivoIND, byteInicial, SEEK_SET);
         gravaNoArvoreB(no, arquivoIND);
+    }
+}
+
+// Função que efetua o split
+DadosChave *splitNoArvoreB(DadosChave *dados, FILE *arquivoIND, CabecalhoIndice *cabecalho, NoArvoreB *no){
+    NoArvoreB *noIrmao = criaNoArvoreB();
+
+    noIrmao->nroChavesNo = 1;
+    noIrmao->alturaNo = no->alturaNo;
+    noIrmao->RRNdoNo = cabecalho->RRNproxNo++;
+
+    strcpy(noIrmao->C[0], no->C[2]);
+
+}
+
+DadosChave *adicionarRecursivo(DadosChave *dados, int RRN, CabecalhoIndice *cabecalho){
+    NoArvoreB *no;
+    
+    if(RRN == -1){ // Condição de parada da recursão
+        dados->rrnDireita = -1;
+        return dados;
+    } else {
+        no = criaNoArvoreB();
+        fseek(arquivoIND, TAM_PAGINA + (TAM_PAGINA * RRN), SEEK_SET);
+        leNoArvoreB(noRaiz, arquivoIND);
+    }
+
+    int pos = buscaBinaria();    
+    DadosChave *promovido = adicionarRecursivo(pos);
+
+    if(!promovido){
+        return NULL;
+    } else{
+        if(cabeNo(no)){
+            insereSemSplit(no, dados, arquivoIND, cabecalho);
+            return NULL;
+        } else{
+            return splitNoArvoreB(); // Nó novo que fica à direita (1 chave)
+        }
+    } 
+}
+
+// 3 Informações: chave e o pr, rrn no a ser inserido 
+void adicionar(DadosChave *dados, FILE *arquivoIND, CabecalhoIndice *cabecalho){
+
+    NoArvoreB *noRaiz;
+    if(cabecalho->noRaiz == -1){ // Arquivo vazio
+        noRaiz = criaNoArvoreB();
+    }else {
+        fseek(arquivoIND, TAM_PAGINA + (TAM_PAGINA * cabecalho->noRaiz), SEEK_SET);
+        leNoArvoreB(noRaiz, arquivoIND);
+    }
+
+    int RRN;
+    // RRN = Busca binária (raiz e a chave)
+    DadosChave *promovido = adicionarRecursivo(); // Passamos a posição como argumento
+
+    if(promovido){
+        if(cabeNo(noRaiz)){
+
+        }
     }
 }
 
@@ -361,9 +428,6 @@ void insereRecursivamente(DadosChave *dados, FILE *arquivoIND, CabecalhoIndice *
         }
 
         else{ // Se o nó estiver cheio, insere no nó e faz o split
-            
-
-
 
             /*
             no->nroChavesNo == 3;
@@ -468,10 +532,7 @@ void insereRecursivamente(DadosChave *dados, FILE *arquivoIND, CabecalhoIndice *
     }
 }
 
-// Função que efetua o split
-void splitNoArvore(DadosChave *dados, FILE *arquivoIND){
 
-}
 
 // Função que insere no arquivo de índices
 void insereArquivoIndice(DadosChave *dados, CabecalhoIndice *cabecalho, FILE *arquivoIND){

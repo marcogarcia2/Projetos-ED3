@@ -34,6 +34,7 @@ typedef struct _noArvoreB{
 } NoArvoreB;
 
 typedef struct _noSplit{
+    int Psplit[5];
     char Csplit[4][55];
     int PRsplit[4];
 } NoSplit;
@@ -41,6 +42,7 @@ typedef struct _noSplit{
 typedef struct _dadosChave{
     char *chave;
     int PR;
+    int rrnDireita;
 } DadosChave;
 
 // Função que cria um Cabeçalho de Árvore, inserido no início do arquivo binário de índice
