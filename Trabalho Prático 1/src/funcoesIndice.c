@@ -177,6 +177,28 @@ void resetaNo(NoArvoreB *no){
     }
 }
 
+void primeiraInsercaoNaRaiz(NoArvoreB *noRaiz, CabecalhoIndice *cabecalho, DadosChave *dados, FILE *arquivoIND) {
+    // Colocamos os valores iniciais de nó na raiz
+    noRaiz->RRNdoNo = cabecalho->RRNproxNo;
+    noRaiz->nroChavesNo = 1;
+    noRaiz->alturaNo = 1;
+    
+    // Atualizamos o cabecalho
+    cabecalho->RRNproxNo++; // Incrementamos o RRN do próximo nó (passa a ser 1)
+    cabecalho->noRaiz++; // O no da raiz passa a ser o 0 (-1 +1)
+
+    // Grava o dados na raiz, como ela está vazia, vai para o primeiro slot
+    noRaiz->P[0] = -1; // Já é -1
+    strcpy(noRaiz->C[0], dados->chave);
+    noRaiz->PR[0] = dados->PR;
+
+    printf("Gravando primeira chave: %s\n", noRaiz->C[0]);
+
+    // Grava o nó no arquivo
+    gravaCabecalhoIndice(cabecalho, arquivoIND);
+    gravaNoArvoreB(noRaiz, arquivoIND, TAM_PAGINA);
+}
+
 int buscaBinariaRecursiva(NoArvoreB *no, int inf, int sup, char *chave){
     if(inf >= sup) // Se os índices se cruzaram, é por que o elemento deverá ser comparado com esse índice
         return inf; // Retorna a posição onde a chave deveria ser inserida
@@ -193,7 +215,7 @@ int buscaBinariaRecursiva(NoArvoreB *no, int inf, int sup, char *chave){
         return meio;
     }
 
-    //return (strcmp(chave, no->C[meio]) < 0) ? buscaBinariaRecursiva(no, inf, meio - 1, chave) : buscaBinariaRecursiva(no, meio + 1, sup, chave);
+    // return (strcmp(chave, no->C[meio]) < 0) ? buscaBinariaRecursiva(no, inf, meio - 1, chave) : buscaBinariaRecursiva(no, meio + 1, sup, chave);
 }
 
 int buscaBinaria(NoArvoreB *no, char *chave){
@@ -214,15 +236,19 @@ void insereNo(NoArvoreB *no, int pos, DadosChave *dados, FILE *arquivoIND){
     // NroChavesNo, RRNdoNo, alturaNo
     // Talvez garantir que o nó não esteja cheio???
     printf("Chave: %s INSERIDA!\n", dados->chave);
+
     // Fazendo um shift dos elementos para a direita
     for(int i = no->nroChavesNo - 1; i >= pos; i--){
         strcpy(no->C[i + 1], no->C[i]);
         no->PR[i+1] = no->PR[i];
         no->P[i+2] = no->P[i+1];
     }
+
     // Inserindo a chave e o PR
     strcpy(no->C[pos], dados->chave);
     no->PR[pos] = dados->PR;
+
+    // Inserindo o ponteiro (se for um nó folha, será -1, se não será o RRN do nó à direita oriundo do split)
     no->P[pos+1] = dados->rrnDireita;
 
     // Incrementando o nro de chaves
@@ -230,12 +256,6 @@ void insereNo(NoArvoreB *no, int pos, DadosChave *dados, FILE *arquivoIND){
 
     // Gravando o nó no arquivo
     gravaNoArvoreB(no, arquivoIND, TAM_PAGINA + (TAM_PAGINA * no->RRNdoNo));
-
-    /*
-             B        C       D
-        P0 /   \ PX     \ P1    \ P2
-
-    */
 }
 
 // Função que efetua o split
@@ -243,9 +263,9 @@ DadosChave *splitNoArvoreB(DadosChave *dados, FILE *arquivoIND, CabecalhoIndice 
     
     // Criar um nó irmão
     NoArvoreB *noIrmao = criaNoArvoreB();
-    noIrmao->nroChavesNo = 1;
-    noIrmao->alturaNo = no->alturaNo;
-    noIrmao->RRNdoNo = cabecalho->RRNproxNo++;
+    noIrmao->nroChavesNo = 1; // O split deixa o nó irmão com apenas uma chave
+    noIrmao->alturaNo = no->alturaNo; // A altura do nó irmão é a mesma do nó original
+    noIrmao->RRNdoNo = cabecalho->RRNproxNo++; // O RRN do nó irmão é o próximo RRN disponível que é atualizado no cabeçalho
 
     // Iremos colocar as nossas informações em um vetor auxiliar de split, para facilitar a ordenação
     NoSplit *vetor = malloc(sizeof(NoSplit));
@@ -256,7 +276,6 @@ DadosChave *splitNoArvoreB(DadosChave *dados, FILE *arquivoIND, CabecalhoIndice 
         vetor->Psplit[i] = no->P[i];
     }
     vetor->Psplit[i] = no->P[i];
-    
 
     // Inserir a chave e o PR no vetor
     strcpy(vetor->Csplit[i], dados->chave);
@@ -282,6 +301,7 @@ DadosChave *splitNoArvoreB(DadosChave *dados, FILE *arquivoIND, CabecalhoIndice 
             }
         }
     }
+    
     printf("Vetor ordenado: ");
     for (int i = 0; i < ORDEM_M; i++) {
         printf("%s ", vetor->Csplit[i]);
@@ -383,25 +403,12 @@ void adicionar(DadosChave *dados, FILE *arquivoIND, CabecalhoIndice *cabecalho){
     
     // É sempre necessário ler a raiz, pois a recursão começa a partir dela
     NoArvoreB *noRaiz = criaNoArvoreB();
+
     if(cabecalho->noRaiz == -1){ // Arquivo vazio, criamos gravamos uma raiz inicial
-
-        noRaiz->RRNdoNo = 0;
-        noRaiz->nroChavesNo = 1;
-
-        cabecalho->noRaiz = 0;
-        cabecalho->RRNproxNo = 1;
-
-        // Grava o dados na raiz
-        noRaiz->P[0] = -1; // Já é -1
-        strcpy(noRaiz->C[0], dados->chave);
-        noRaiz->PR[0] = dados->PR;
-
-        printf("Gravando primeira chave: %s\n", noRaiz->C[0]);
-        gravaCabecalhoIndice(cabecalho, arquivoIND);            // Dá fseek sozinho
-        gravaNoArvoreB(noRaiz, arquivoIND, TAM_PAGINA);         // Passar sempre o byte inicial
-
+        primeiraInsercaoNaRaiz(noRaiz, cabecalho, dados, arquivoIND);
         return;
-    }else { // Se o arquivo não estiver vazio, precisamos ler a raiz
+    }
+    else { // Se o arquivo não estiver vazio, precisamos ler a raiz
         printf("No raiz: %d\n", cabecalho->noRaiz);
         fseek(arquivoIND, TAM_PAGINA + (TAM_PAGINA * cabecalho->noRaiz), SEEK_SET);
         leNoArvoreB(noRaiz, arquivoIND);
@@ -420,13 +427,16 @@ void adicionar(DadosChave *dados, FILE *arquivoIND, CabecalhoIndice *cabecalho){
         printf("Indo pra esquerda\n");
     }
 
-    DadosChave *promovido = adicionarRecursivo(arquivoIND, dados, noRaiz->P[pos], cabecalho); // Passamos a posição como argumento
+    // A função adicionarRecursivo retorna NULL se não houver promoção
+    DadosChave *promovido = adicionarRecursivo(arquivoIND, dados, noRaiz->P[pos], cabecalho); 
 
     // Só entrará aqui para fazer as inserções na raiz (que é o único caso em que promovido != NULL)
     if(promovido){
         printf("Promovido: %s\n", promovido->chave);
+
+        // Se o promovido subiu e cabe na raiz, basta inseri-lo sem a necessidade de split
         if(cabeNo(noRaiz)){
-            // Inserir sem split
+
             // printf("CABE!! Inserindo sem split\n");
             insereNo(noRaiz, pos, promovido, arquivoIND);
             gravaCabecalhoIndice(cabecalho, arquivoIND); /****************/
@@ -439,7 +449,7 @@ void adicionar(DadosChave *dados, FILE *arquivoIND, CabecalhoIndice *cabecalho){
 
             // Criando a chave da nova raiz
             DadosChave *chaveDaNovaRaiz = criaDadosChave();
-            puts("1");
+            //puts("1");
 
             // A função split retorna qual das chaves será promovida
             chaveDaNovaRaiz = splitNoArvoreB(dados, arquivoIND, cabecalho, noRaiz);
@@ -469,6 +479,6 @@ void adicionar(DadosChave *dados, FILE *arquivoIND, CabecalhoIndice *cabecalho){
         return;
     }
     else{ // Só para não esquecer de rever esse caso
-        printf("Não deveria entrar aqui\n");
+        printf("Nao eh insercao na raiz\n");
     }
 }
