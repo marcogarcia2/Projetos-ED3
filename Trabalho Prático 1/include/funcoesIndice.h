@@ -60,10 +60,10 @@ void leNoArvoreB(NoArvoreB *noArvB, FILE *arquivoIND);
 // Função auxiliar para debugar
 void imprimeNoArvoreB(NoArvoreB *no);
 
-// Função que toma conta da inserção no arquivo de índices
-void insereArquivoIndice(DadosChave *dados, CabecalhoIndice *cabecalho, FILE *arquivoIND);
-
 // Função que cria um DadosChave, que é usado para inserir no arquivo de índices
 DadosChave *criaDadosChave(void);
+
+// Função que adiciona um DadosChave no arquivo de índices
+void adicionar(DadosChave *dados, FILE *arquivoIND, CabecalhoIndice *cabecalho);
 
 #endif

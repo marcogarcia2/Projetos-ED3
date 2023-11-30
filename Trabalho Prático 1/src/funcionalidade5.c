@@ -107,7 +107,7 @@ void geraArquivoIndice(char *nomeArquivoBIN, char *nomeArquivoIND){
             dados->PR = ponteiroReferencia;
 
             // Agora vou fazer a inserção. Ponteiro arquivoBIN: byteOffset + TAM_REGISTRO (pois ele leu); Ponteiro arquivoIND: 5;
-            insereArquivoIndice(dados, cabecalho, arquivoIND);
+            adicionar(dados, arquivoIND, cabecalho);
             free(dados->chave);
         }
 
