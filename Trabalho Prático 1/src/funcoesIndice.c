@@ -444,7 +444,10 @@ void adicionar(DadosChave *dados, FILE *arquivoIND, CabecalhoIndice *cabecalho){
             //free(promovido);
         }
 
-        else{  // Aqui é onde ocorre o split na raiz
+        else{  // AQUI EXISTE UM ERRO! QUANDO EXISTE UM NÓ PROMOVIDO E NÃO CABE NA RAIZ
+            // OLHAR COM CALMA, TRATAR OS P[] E RRN DA NOVA RAIZ
+
+            // Aqui é onde ocorre o split na raiz
             printf("NAO CABE!! Inserindo com split\n");
 
             // Criando a chave da nova raiz
@@ -452,7 +455,7 @@ void adicionar(DadosChave *dados, FILE *arquivoIND, CabecalhoIndice *cabecalho){
             //puts("1");
 
             // A função split retorna qual das chaves será promovida
-            chaveDaNovaRaiz = splitNoArvoreB(dados, arquivoIND, cabecalho, noRaiz);
+            chaveDaNovaRaiz = splitNoArvoreB(promovido, arquivoIND, cabecalho, noRaiz);
             printf("Chave da nova raiz: %s\n", chaveDaNovaRaiz->chave);
 
             // Criando a nova raiz
@@ -469,6 +472,7 @@ void adicionar(DadosChave *dados, FILE *arquivoIND, CabecalhoIndice *cabecalho){
             novaRaiz->alturaNo = noRaiz->alturaNo + 1;
 
             cabecalho->noRaiz = novaRaiz->RRNdoNo;
+            printf("\n\nRRN DA NOVA RAIZ: %d\n\n", cabecalho->noRaiz);
             gravaNoArvoreB(novaRaiz, arquivoIND, TAM_PAGINA + (TAM_PAGINA * novaRaiz->RRNdoNo));
 
             liberaNoArvoreB(novaRaiz);
@@ -481,4 +485,5 @@ void adicionar(DadosChave *dados, FILE *arquivoIND, CabecalhoIndice *cabecalho){
     else{ // Só para não esquecer de rever esse caso
         printf("Nao eh insercao na raiz\n");
     }
+        printf("\n");
 }
