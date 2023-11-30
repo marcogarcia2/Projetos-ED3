@@ -331,6 +331,7 @@ DadosChave *adicionarRecursivo(FILE *arquivoIND, DadosChave *dados, int RRN, Cab
     } else{
         if(cabeNo(no)){
             insereNo(no, pos, dados, arquivoIND);
+
             return NULL;
         } else{
             return splitNoArvoreB(dados, arquivoIND, cabecalho, no); // Nó novo que fica à direita (1 chave)
@@ -380,6 +381,10 @@ void adicionar(DadosChave *dados, FILE *arquivoIND, CabecalhoIndice *cabecalho){
             novoNo->P[1] = novaChave->rrnDireita;
 
             cabecalho->noRaiz = novoNo->RRNdoNo;
+            gravaNoArvoreB(novoNo, arquivoIND, TAM_PAGINA + (TAM_PAGINA * novoNo->RRNdoNo));
+
+            liberaNoArvoreB(novoNo);
+            free(novaChave);
 
             gravaCabecalhoIndice(cabecalho, arquivoIND);
         }
