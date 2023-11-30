@@ -237,8 +237,10 @@ void buscaInteiro(char *nomeCampo, int valor, int tamTotal, FILE *arquivoBIN){
     if(!flag) printf("Registro inexistente.\n");
 }
 
-int calculaTamanhoTotal(FILE *arquivoBIN){
+// Essa função calcula o tamanho total e serve para dar a condição de parada na leitura do arquivod e dados
+int calculaTamanhoTotal(FILE *arquivoBIN){ 
     // Para usar a função, é necessário que esteja no início do arquivo (byte 1, depois do status (byte 0))
+    // No caso, a sua única utilização foi quando o byte de status do arquivo de dados foi lido, logo o ponteiro está no byte 1
     
     // Calculando o tamanho total do arquivo
     int ultimoRRN;
