@@ -87,22 +87,24 @@ void geraArquivoIndice(char *nomeArquivoBIN, char *nomeArquivoIND){
     printf("Tamanho total: %d\n", tamTotal);
 
     // Lê o arquivo de dados e insere na árvore B concomitantemente
-    while(byteOffset < tamTotal){ // Quando ocorre o split na raiz está dando erro (TAM_REGISTRO * 4)
+    while(byteOffset < 76 * 10){ // Quando ocorre o split na raiz está dando erro (TAM_REGISTRO * 4)
 
         // Cria e lê o registro do arquivo de dados que será lido em memória principal
         r = criaRegistro(); 
         r = leRegistro(byteOffset, r, arquivoBIN);
-        dados = criaDadosChave();
+
         printf("\n");
+
         // A cada iteração, precisarei saber onde está a raiz
-        fseek(arquivoIND, 1, SEEK_SET);
+        //fseek(arquivoIND, 1, SEEK_SET);
 
         // Leio a posição da raiz (RRNraiz) para posteriormente dar um fseek para lá
-        fread(&cabecalho->noRaiz, sizeof(int), 1, arquivoIND);
+        //fread(&cabecalho->noRaiz, sizeof(int), 1, arquivoIND);
 
         if(r->removido == '0'){ // Se não estiver removido, ocorrerá a inserção no arquivo de índices
             
             // Criando a chave (stringConcatenada) concatenando nomeTecnologiaOrigem e nomeTecnologiaDestino
+            dados = criaDadosChave();
             dados->chave = concatenaStrings(r);
             printf("Chave: %s\n", dados->chave);
 
@@ -114,13 +116,13 @@ void geraArquivoIndice(char *nomeArquivoBIN, char *nomeArquivoIND){
             // Ponteiro arquivoIND: 5 (pois ele leu os status (char) e o primeiro campo (int));
             adicionar(dados, arquivoIND, cabecalho);
 
-            // Libera a string alocada dinamicamente 
+            // Libera a chave
             free(dados->chave);
+            free(dados);
         }
 
-        // Libera o registro completo e a struct chave
+        // Libera o registro completo
         liberaRegistro(r);
-        free(dados);
         
         // Precisamos saltar até o próximo registro
         byteOffset += TAM_REGISTRO;
