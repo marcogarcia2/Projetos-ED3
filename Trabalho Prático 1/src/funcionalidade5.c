@@ -87,7 +87,7 @@ void geraArquivoIndice(char *nomeArquivoBIN, char *nomeArquivoIND){
     printf("Tamanho total: %d\n", tamTotal);
 
     // Lê o arquivo de dados e insere na árvore B concomitantemente
-    while(byteOffset < TAM_REGISTRO * 4){ // Quando ocorre o split na raiz está dando erro (TAM_REGISTRO * 4)
+    while(byteOffset < tamTotal){ // Quando ocorre o split na raiz está dando erro (TAM_REGISTRO * 4)
 
         // Cria e lê o registro do arquivo de dados que será lido em memória principal
         r = criaRegistro(); 

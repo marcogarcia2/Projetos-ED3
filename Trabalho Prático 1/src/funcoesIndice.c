@@ -237,7 +237,6 @@ void insereNo(NoArvoreB *no, int pos, DadosChave *dados, FILE *arquivoIND){
 
 }
 
-
 // Função que efetua o split
 DadosChave *splitNoArvoreB(DadosChave *dados, FILE *arquivoIND, CabecalhoIndice *cabecalho, NoArvoreB *no){
     
@@ -248,76 +247,97 @@ DadosChave *splitNoArvoreB(DadosChave *dados, FILE *arquivoIND, CabecalhoIndice 
     noIrmao->RRNdoNo = cabecalho->RRNproxNo++;
 
     // Iremos colocar as nossas informações em um vetor auxiliar de split, para facilitar a ordenação
-    NoSplit vetor;
+    NoSplit *vetor = malloc(sizeof(NoSplit));
     int i;
     for (i = 0; i < ORDEM_M - 1; i++){
-        strcpy(vetor.Csplit[i], no->C[i]);
-        vetor.PRsplit[i] = no->PR[i];
-        vetor.Psplit[i] = no->P[i];
+        strcpy(vetor->Csplit[i], no->C[i]);
+        vetor->PRsplit[i] = no->PR[i];
+        vetor->Psplit[i] = no->P[i];
     }
-    vetor.Psplit[i] = no->P[i];
+    vetor->Psplit[i] = no->P[i];
+    
 
     // Inserir a chave e o PR no vetor
-    strcpy(vetor.Csplit[i], dados->chave);
-    vetor.PRsplit[i] = dados->PR;
-    // O problema provavelmente está aqui, não tratamos esse tal dados->rrnDireita
-    vetor.Psplit[4] = dados->rrnDireita;
+    strcpy(vetor->Csplit[i], dados->chave);
+    vetor->PRsplit[i] = dados->PR;
+    vetor->Psplit[4] = dados->rrnDireita;
     
     // Ordena Bubble Sort nesse vetor auxiliar para decidir o caminho dos dados na hora de splitar
     for (int i = 0; i < ORDEM_M; i++) {
         for (int j = i + 1; j < ORDEM_M; j++) {
-            if (strcmp(vetor.Csplit[i], vetor.Csplit[j]) > 0) {
+            if (strcmp(vetor->Csplit[i], vetor->Csplit[j]) > 0) {
                 char aux[55];
-                strcpy(aux, vetor.Csplit[i]);
-                strcpy(vetor.Csplit[i], vetor.Csplit[j]);
-                strcpy(vetor.Csplit[j], aux);
+                strcpy(aux, vetor->Csplit[i]);
+                strcpy(vetor->Csplit[i], vetor->Csplit[j]);
+                strcpy(vetor->Csplit[j], aux);
 
-                int aux2 = vetor.PRsplit[i];
-                vetor.PRsplit[i] = vetor.PRsplit[j];
-                vetor.PRsplit[j] = aux2;
+                int aux2 = vetor->PRsplit[i];
+                vetor->PRsplit[i] = vetor->PRsplit[j];
+                vetor->PRsplit[j] = aux2;
 
-                aux2 = vetor.Psplit[i+1];
-                vetor.Psplit[i+1] = vetor.Psplit[j+1];
-                vetor.Psplit[j+1] = aux2;
+                aux2 = vetor->Psplit[i+1];
+                vetor->Psplit[i+1] = vetor->Psplit[j+1];
+                vetor->Psplit[j+1] = aux2;
             }
         }
     }
+    printf("Vetor ordenado: ");
+    for (int i = 0; i < ORDEM_M; i++) {
+        printf("%s ", vetor->Csplit[i]);
+    }
 
     // Atualização dos valores do nó antigo ("irmão mais velho")
-    no->P[0] = vetor.Psplit[0];
+    no->P[0] = vetor->Psplit[0];
 
-    strcpy(no->C[0], vetor.Csplit[0]);
-    no->PR[0] = vetor.PRsplit[0];
+    strcpy(no->C[0], vetor->Csplit[0]);
+    no->PR[0] = vetor->PRsplit[0];
 
-    no->P[1] = vetor.Psplit[1];
+    no->P[1] = vetor->Psplit[1];
     
-    strcpy(no->C[1], vetor.Csplit[1]);
-    no->PR[1] = vetor.PRsplit[1];
+    strcpy(no->C[1], vetor->Csplit[1]);
+    no->PR[1] = vetor->PRsplit[1];
 
-    no->P[2] = vetor.Psplit[2];
+    no->P[2] = vetor->Psplit[2];
+    
+    // Tirando o valor alocado no irmão mais novo
+    strcpy(no->C[2], "");
+    no->PR[2] = -1;
+
+    no->P[3] = -1;
 
     // Gravando o nó com os valores atualizados 
     gravaNoArvoreB(no, arquivoIND, TAM_PAGINA + (TAM_PAGINA * no->RRNdoNo));
 
     // Atualização dos valores do nó irmão
-    noIrmao->P[0] = vetor.Psplit[3];
+    noIrmao->P[0] = vetor->Psplit[3];
 
-    strcpy(noIrmao->C[0], vetor.Csplit[3]);
-    noIrmao->PR[0] = vetor.PRsplit[3];
+    strcpy(noIrmao->C[0], vetor->Csplit[3]);
+    noIrmao->PR[0] = vetor->PRsplit[3];
 
-    noIrmao->P[1] = vetor.Psplit[4];
+    noIrmao->P[1] = vetor->Psplit[4];
 
     // Gravando o nó irmão
     gravaNoArvoreB(noIrmao, arquivoIND, TAM_PAGINA + (TAM_PAGINA * noIrmao->RRNdoNo));
         
-    // Gravar nós ////////////////////////////////////////////////////////////////////
-
     // Chave promovida
     DadosChave *promovido = criaDadosChave();
 
-    strcpy(promovido->chave, vetor.Csplit[2]);
-    promovido->PR = vetor.PRsplit[2];
+    printf("Chave promovida: %s\n", vetor->Csplit[2]);
+    printf("Promovido: %s\n", promovido->chave);
+    promovido->chave = malloc(strlen(vetor->Csplit[2]) + 1); // +1 para o caractere nulo '\0'
+
+    // Verifica se a alocação foi bem-sucedida
+    if(promovido->chave == NULL) {
+        // Tratar erro de alocação aqui
+        printf("Erro de alocação\n");
+    }
+
+    strcpy(promovido->chave, vetor->Csplit[2]);
+    promovido->PR = vetor->PRsplit[2];
     promovido->rrnDireita = noIrmao->RRNdoNo; // Linha importante
+
+    // Liberar a memória alocada para o vetor
+    free(vetor);
     
     return promovido;
 }
@@ -384,8 +404,8 @@ void adicionar(DadosChave *dados, FILE *arquivoIND, CabecalhoIndice *cabecalho){
 
     // Temos um probleminha aqui. Quando for o primeiro nó, não conseguimos fazer essa comparação, pois as outras chaves estarão vazias
     int pos = buscaBinaria(noRaiz, dados->chave);
-    printf("Posicao: %d\n", pos);
-    printf("Ao lado de: %s\n", noRaiz->C[pos]);
+    // printf("Posicao: %d\n", pos);
+    // printf("Ao lado de: %s\n", noRaiz->C[pos]);
     
     if (strcmp(dados->chave, noRaiz->C[pos]) > 0) {
         printf("Indo pra direita\n");
@@ -411,24 +431,35 @@ void adicionar(DadosChave *dados, FILE *arquivoIND, CabecalhoIndice *cabecalho){
 
         else{  // Aqui é onde ocorre o split na raiz
             printf("NAO CABE!! Inserindo com split\n");
-            DadosChave *novaChave = criaDadosChave();
-            novaChave = splitNoArvoreB(dados, arquivoIND, cabecalho, noRaiz);
-            NoArvoreB *novoNo = criaNoArvoreB();
-            strcpy(novoNo->C[0], novaChave->chave);
-            novoNo->PR[0] = novaChave->PR;
 
-            novoNo->RRNdoNo = cabecalho->RRNproxNo++;
-            novoNo->P[0] = noRaiz->RRNdoNo;
-            novoNo->P[1] = novaChave->rrnDireita;
+            // Criando a chave da nova raiz
+            DadosChave *chaveDaNovaRaiz = criaDadosChave();
+            puts("1");
 
-            cabecalho->noRaiz = novoNo->RRNdoNo;
-            gravaNoArvoreB(novoNo, arquivoIND, TAM_PAGINA + (TAM_PAGINA * novoNo->RRNdoNo));
+            // A função split retorna qual das chaves será promovida
+            chaveDaNovaRaiz = splitNoArvoreB(dados, arquivoIND, cabecalho, noRaiz);
+            printf("Chave da nova raiz: %s\n", chaveDaNovaRaiz->chave);
 
-            liberaNoArvoreB(novoNo);
-            free(novaChave);
+            // Criando a nova raiz
+            NoArvoreB *novaRaiz = criaNoArvoreB();
+
+            // Atualizando os valores da nova raiz com o promovido pelo split
+            strcpy(novaRaiz->C[0], chaveDaNovaRaiz->chave);
+
+            novaRaiz->PR[0] = chaveDaNovaRaiz->PR;
+            novaRaiz->RRNdoNo = cabecalho->RRNproxNo++;
+            novaRaiz->P[0] = noRaiz->RRNdoNo;
+            novaRaiz->P[1] = chaveDaNovaRaiz->rrnDireita;
+
+            cabecalho->noRaiz = novaRaiz->RRNdoNo;
+            gravaNoArvoreB(novaRaiz, arquivoIND, TAM_PAGINA + (TAM_PAGINA * novaRaiz->RRNdoNo));
+
+            liberaNoArvoreB(novaRaiz);
+            free(chaveDaNovaRaiz);
 
             gravaCabecalhoIndice(cabecalho, arquivoIND);
         }
+        return;
     }
     else{ // Só para não esquecer de rever esse caso
         printf("Não deveria entrar aqui\n");
