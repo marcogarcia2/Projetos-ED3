@@ -236,7 +236,6 @@ void insereNo(NoArvoreB *no, int pos, DadosChave *dados, FILE *arquivoIND){
         P0 /   \ PX     \ P1    \ P2
 
     */
-
 }
 
 // Função que efetua o split
