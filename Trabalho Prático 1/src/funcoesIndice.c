@@ -413,12 +413,9 @@ void adicionar(DadosChave *dados, FILE *arquivoIND, CabecalhoIndice *cabecalho){
     // printf("Ao lado de: %s\n", noRaiz->C[pos]);
     
     // Podemos colocar isso dentro do busca binária!
-    if (strcmp(dados->chave, noRaiz->C[pos]) > 0) {
-        printf("Indo pra direita\n");
-        pos++;
-    } else{
-        printf("Indo pra esquerda\n");
-    }
+    if (strcmp(dados->chave, noRaiz->C[pos]) > 0) pos++;
+    printf("indo para o RRN %d\n", noRaiz->P[pos]);
+    
 
     DadosChave *promovido = adicionarRecursivo(arquivoIND, dados, noRaiz->P[pos], cabecalho); // Passamos a posição como argumento
 
@@ -434,7 +431,10 @@ void adicionar(DadosChave *dados, FILE *arquivoIND, CabecalhoIndice *cabecalho){
             //free(promovido);
         }
 
-        else{  // Aqui é onde ocorre o split na raiz
+        else{  // AQUI EXISTE UM ERRO! QUANDO EXISTE UM NÓ PROMOVIDO E NÃO CABE NA RAIZ
+            // OLHAR COM CALMA, TRATAR OS P[] E RRN DA NOVA RAIZ
+
+            // Aqui é onde ocorre o split na raiz
             printf("NAO CABE!! Inserindo com split\n");
 
             // Criando a chave da nova raiz
@@ -442,7 +442,7 @@ void adicionar(DadosChave *dados, FILE *arquivoIND, CabecalhoIndice *cabecalho){
             puts("1");
 
             // A função split retorna qual das chaves será promovida
-            chaveDaNovaRaiz = splitNoArvoreB(dados, arquivoIND, cabecalho, noRaiz);
+            chaveDaNovaRaiz = splitNoArvoreB(promovido, arquivoIND, cabecalho, noRaiz);
             printf("Chave da nova raiz: %s\n", chaveDaNovaRaiz->chave);
 
             // Criando a nova raiz
@@ -459,6 +459,7 @@ void adicionar(DadosChave *dados, FILE *arquivoIND, CabecalhoIndice *cabecalho){
             novaRaiz->alturaNo = noRaiz->alturaNo + 1;
 
             cabecalho->noRaiz = novaRaiz->RRNdoNo;
+            printf("\n\nRRN DA NOVA RAIZ: %d\n\n", cabecalho->noRaiz);
             gravaNoArvoreB(novaRaiz, arquivoIND, TAM_PAGINA + (TAM_PAGINA * novaRaiz->RRNdoNo));
 
             liberaNoArvoreB(novaRaiz);
@@ -469,6 +470,6 @@ void adicionar(DadosChave *dados, FILE *arquivoIND, CabecalhoIndice *cabecalho){
         return;
     }
     else{ // Só para não esquecer de rever esse caso
-        printf("Não deveria entrar aqui\n");
     }
+        printf("\n");
 }
