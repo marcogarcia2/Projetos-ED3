@@ -45,7 +45,10 @@ void recuperaDados(const char* nomeArquivoBIN){
             free(r);
             break;
         }
-        else imprimeRegistro(r);
+        else {
+            if (r->removido == '0')
+                imprimeRegistro(r);
+        }
         // Desalocando a memória
         liberaRegistro(r);
 

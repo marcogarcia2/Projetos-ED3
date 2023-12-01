@@ -87,7 +87,7 @@ void geraArquivoIndice(char *nomeArquivoBIN, char *nomeArquivoIND){
     printf("Tamanho total: %d\n", tamTotal);
 
     // Lê o arquivo de dados e insere na árvore B concomitantemente
-    while(byteOffset < tamTotal){ // Quando ocorre o split na raiz está dando erro (TAM_REGISTRO * 4)
+    while(byteOffset <= tamTotal){ // Quando ocorre o split na raiz está dando erro (TAM_REGISTRO * 4)
 
         // Cria e lê o registro do arquivo de dados que será lido em memória principal
         r = criaRegistro(); 
@@ -101,7 +101,7 @@ void geraArquivoIndice(char *nomeArquivoBIN, char *nomeArquivoIND){
         // Leio a posição da raiz (RRNraiz) para posteriormente dar um fseek para lá (nem precisa pois ele já está como -1 no começo e dps ele da fseek dentro da função adicionar)
         // fread(&cabecalho->noRaiz, sizeof(int), 1, arquivoIND);
 
-        if(r->removido == '0'){ // Se não estiver removido, ocorrerá a inserção no arquivo de índices
+        if(r->removido == '0' || strcmp(r->tecnologiaOrigem.string, "") || strcmp(r->tecnologiaDestino.string, "")){ // Se não estiver removido, ocorrerá a inserção no arquivo de índices
             
             // Criando a chave (stringConcatenada) concatenando nomeTecnologiaOrigem e nomeTecnologiaDestino
             dados = criaDadosChave();

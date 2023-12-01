@@ -179,7 +179,7 @@ void resetaNo(NoArvoreB *no){
 
 void primeiraInsercaoNaRaiz(NoArvoreB *noRaiz, CabecalhoIndice *cabecalho, DadosChave *dados, FILE *arquivoIND) {
     // Colocamos os valores iniciais de nó na raiz
-    noRaiz->RRNdoNo = cabecalho->RRNproxNo;
+    noRaiz->RRNdoNo = 0;
     noRaiz->nroChavesNo = 1;
     noRaiz->alturaNo = 1;
     
@@ -378,6 +378,8 @@ DadosChave *splitNoArvoreB(DadosChave *dados, FILE *arquivoIND, CabecalhoIndice 
     // Liberar a memória alocada para o vetor
     free(vetor);
     
+    gravaCabecalhoIndice(cabecalho, arquivoIND);
+
     return promovido;
 }
 
@@ -402,11 +404,13 @@ DadosChave *adicionarRecursivo(FILE *arquivoIND, DadosChave *dados, int RRN, Cab
     if(!promovido){
         return NULL;
     } else{
+        
         if(cabeNo(no)){
-            insereNo(no, pos, dados, arquivoIND);
+            insereNo(no, pos, promovido, arquivoIND);
             return NULL;
+
         } else{
-            return splitNoArvoreB(dados, arquivoIND, cabecalho, no); // Nó novo que fica à direita (1 chave) // Nesse caso, passamos dados ou promovido?
+            return splitNoArvoreB(promovido, arquivoIND, cabecalho, no); // Nó novo que fica à direita (1 chave) // Nesse caso, passamos dados ou promovido?
         }
     } 
 }
@@ -454,8 +458,7 @@ void adicionar(DadosChave *dados, FILE *arquivoIND, CabecalhoIndice *cabecalho){
             // printf("CABE!! Inserindo sem split\n");
             insereNo(noRaiz, pos, promovido, arquivoIND);
             gravaCabecalhoIndice(cabecalho, arquivoIND); /****************/
-            liberaNoArvoreB(noRaiz);
-            free(promovido);
+            //free(promovido);
         }
 
         else{  // AQUI EXISTE UM ERRO! QUANDO EXISTE UM NÓ PROMOVIDO E NÃO CABE NA RAIZ
@@ -489,12 +492,12 @@ void adicionar(DadosChave *dados, FILE *arquivoIND, CabecalhoIndice *cabecalho){
             printf("\n\nRRN DA NOVA RAIZ: %d\n\n", cabecalho->noRaiz);
             gravaNoArvoreB(novaRaiz, arquivoIND, TAM_PAGINA + (TAM_PAGINA * novaRaiz->RRNdoNo));
 
-            liberaNoArvoreB(novaRaiz);
             //free(chaveDaNovaRaiz);
 
             gravaCabecalhoIndice(cabecalho, arquivoIND);
         }
         //return;
+        liberaNoArvoreB(noRaiz);
     }
     else{ // Só para não esquecer de rever esse caso
         printf("Nao eh insercao na raiz\n");
