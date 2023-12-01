@@ -15,33 +15,7 @@
 
 // Funcionalidade 6
 
-/* Pensando em voz alta (TIRAR DEPOIS)
 
-A primeira coisa que preciso fazer eh:
-. Ler o que queremos procurar, se eh:
-    - chave de busca (concatenacao origem destino) (func 6) + (func 4)
-    - tecnologia de origem, destino (func 3 - busca string)
-    - (int) grupo - chamo a (func 3 - busca inteiro)
-    - (int) popularidade - chamo a (func 3 - busca inteiro)
-    - (int) peso - chamo a (func 3 - busca inteiro)
-
-Em seguida, vamos
-
-. Abrir o arquivo de dados 
-. Checar sua consistencia
-. Abrir arquivo de indices (so preciso abrir se o anterior for valido)
-
-    . Cabecalho arquivo de indices:
-        - status (Checagem no início) ###
-        - noRaiz (atualmente) - vou usar para começar minha busca (começo a partir dele)
-        - RRNproxNo (servira para a funcao de insercao, pelo que entendi) ###
-
-    . Pagina de dados (cada nó também armazena)
-        - nroChavesNo
-        - alturaNo
-        - RRNdoNo
-
-*/
 
 // Função que calcula o byte offset de uma página
 void posicionaPonteiroPorRRN(int RRN, FILE *arquivoIND){
@@ -68,7 +42,24 @@ int buscaRecursivaPelaChave(char *nomeChave, FILE *arquivoIND, int proxRRN){
     NoArvoreB *no = criaNoArvoreB();
     leNoArvoreB(no, arquivoIND);
 
-    // Vamos verificar se a chave está no nó atual
+    // int pos = buscaBinaria2(no, nomeChave);
+    
+    // if(pos >= 0){ // Significa que a chave foi encontrada
+    // printf("Posicao: %d\n", pos);
+    //     return no->PR[pos];
+    // }else{
+    //     pos = pos * (-1) - 1;
+    //     if (strcmp(nomeChave, no->C[pos]) > 0){
+    //         pos++;
+    //     }
+    //     printf("Posicao: %d\n", pos);
+    //     return buscaRecursivaPelaChave(nomeChave, arquivoIND, no->P[pos]);
+    // }
+    //if (strcmp(nomeChave, no->C[pos]) > 0) pos++;
+
+    //return buscaRecursivaPelaChave(nomeChave, arquivoIND, no->P[pos]);
+
+    //Vamos verificar se a chave está no nó atual
     for(int i = 0; i < no->nroChavesNo; i++){
         if(strcmp(nomeChave, no->C[i]) <= 0){
             if(strcmp(nomeChave, no->C[i]) == 0){

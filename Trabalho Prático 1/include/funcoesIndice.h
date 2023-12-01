@@ -66,4 +66,8 @@ DadosChave *criaDadosChave(void);
 // Função que adiciona um DadosChave no arquivo de índices
 void adicionar(DadosChave *dados, FILE *arquivoIND, CabecalhoIndice *cabecalho);
 
+// Função de busca binária que retorna o índice
+int buscaBinaria(NoArvoreB *no, char *chave);
+int buscaBinaria2(NoArvoreB *no, char *chave);
+
 #endif

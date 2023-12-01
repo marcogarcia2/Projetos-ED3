@@ -185,7 +185,7 @@ void primeiraInsercaoNaRaiz(NoArvoreB *noRaiz, CabecalhoIndice *cabecalho, Dados
     
     // Atualizamos o cabecalho
     cabecalho->RRNproxNo++; // Incrementamos o RRN do próximo nó (passa a ser 1)
-    cabecalho->noRaiz++; // O no da raiz passa a ser o 0 (-1 +1)
+    cabecalho->noRaiz = 0; // O no da raiz passa a ser o 0 (-1 +1)
 
     // Grava o dados na raiz, como ela está vazia, vai para o primeiro slot
     noRaiz->P[0] = -1; // Já é -1
@@ -211,7 +211,7 @@ int buscaBinariaRecursiva(NoArvoreB *no, int inf, int sup, char *chave){
         } else {
             return buscaBinariaRecursiva(no, meio + 1, sup, chave);
         }
-    }else{
+    } else {
         return meio;
     }
 
@@ -222,7 +222,21 @@ int buscaBinaria(NoArvoreB *no, char *chave){
     return buscaBinariaRecursiva(no, 0, no->nroChavesNo - 1, chave);
 }
 
-// 
+int buscaBinariaRecursiva2(NoArvoreB *no, int inf, int sup, char *chave){
+    if(inf >= sup)
+        return (- inf - 1); // Retorna a posição onde a chave deveria ser inserida, mas negativa para indicar que a chave não foi encontrada
+    
+    int meio = inf + (sup - inf) / 2;
+    if (strcmp(chave, no->C[meio]) == 0)
+        return meio;
+
+    return (strcmp(chave, no->C[meio]) < 0) ? buscaBinariaRecursiva2(no, inf, meio - 1, chave) : buscaBinariaRecursiva2(no, meio + 1, sup, chave);
+}
+
+int buscaBinaria2(NoArvoreB *no, char *chave){
+    return buscaBinariaRecursiva2(no, 0, no->nroChavesNo - 1, chave);
+}
+
 bool noFolha(NoArvoreB *no){
     return no->P[0] == -1;
 }
@@ -392,7 +406,7 @@ DadosChave *adicionarRecursivo(FILE *arquivoIND, DadosChave *dados, int RRN, Cab
             insereNo(no, pos, dados, arquivoIND);
             return NULL;
         } else{
-            return splitNoArvoreB(dados, arquivoIND, cabecalho, no); // Nó novo que fica à direita (1 chave)
+            return splitNoArvoreB(dados, arquivoIND, cabecalho, no); // Nó novo que fica à direita (1 chave) // Nesse caso, passamos dados ou promovido?
         }
     } 
 }
@@ -441,7 +455,7 @@ void adicionar(DadosChave *dados, FILE *arquivoIND, CabecalhoIndice *cabecalho){
             insereNo(noRaiz, pos, promovido, arquivoIND);
             gravaCabecalhoIndice(cabecalho, arquivoIND); /****************/
             liberaNoArvoreB(noRaiz);
-            //free(promovido);
+            free(promovido);
         }
 
         else{  // AQUI EXISTE UM ERRO! QUANDO EXISTE UM NÓ PROMOVIDO E NÃO CABE NA RAIZ
@@ -480,7 +494,7 @@ void adicionar(DadosChave *dados, FILE *arquivoIND, CabecalhoIndice *cabecalho){
 
             gravaCabecalhoIndice(cabecalho, arquivoIND);
         }
-        return;
+        //return;
     }
     else{ // Só para não esquecer de rever esse caso
         printf("Nao eh insercao na raiz\n");
