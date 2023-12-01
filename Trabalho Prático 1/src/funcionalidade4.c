@@ -13,23 +13,10 @@
 
 // Funcionalidade 4: imprimir o registro de um dado RRN
 
-void buscaPorRRN(char *nomeArquivoBIN, int rrn){ 
-
-    // Abrindo o arquivo binário
-    FILE *arquivoBIN = fopen(nomeArquivoBIN, "rb"); // Modo de leitura em binário
-    if (arquivoBIN == NULL){ // Se o arquivo não existir, erro
-        printf("Falha no processamento do arquivo.\n");
-        return;
-    }
-    
-    // Se ele está inconsistente, encerra-se a função
-    if(fgetc(arquivoBIN) == '0'){
-        printf("Falha no processamento do arquivo.\n");
-        fclose(arquivoBIN);
-        return;
-    }
-
+void buscaArquivoDados(FILE *arquivoBIN, int rrn){
     // Descobrindo qual é o último RRN deste arquivo
+
+    fseek(arquivoBIN, 1, SEEK_SET);
     int ultimoRRN = 0; 
     fread(&ultimoRRN, sizeof(int), 1, arquivoBIN);
     ultimoRRN--;
@@ -57,6 +44,25 @@ void buscaPorRRN(char *nomeArquivoBIN, int rrn){
     r = leRegistro(byteOffset, r, arquivoBIN);
     imprimeRegistro(r);
     liberaRegistro(r);
+}
+
+void buscaPorRRN(char *nomeArquivoBIN, int rrn){ 
+
+    // Abrindo o arquivo binário
+    FILE *arquivoBIN = fopen(nomeArquivoBIN, "rb"); // Modo de leitura em binário
+    if (arquivoBIN == NULL){ // Se o arquivo não existir, erro
+        printf("Falha no processamento do arquivo.\n");
+        return;
+    }
+    
+    // Se ele está inconsistente, encerra-se a função
+    if(fgetc(arquivoBIN) == '0'){
+        printf("Falha no processamento do arquivo.\n");
+        fclose(arquivoBIN);
+        return;
+    }
+
+    buscaArquivoDados(arquivoBIN, rrn);
 
     // Fechando o arquivo binário
     fclose(arquivoBIN);

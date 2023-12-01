@@ -15,8 +15,6 @@
 
 // Funcionalidade 6
 
-
-
 // Função que calcula o byte offset de uma página
 void posicionaPonteiroPorRRN(int RRN, FILE *arquivoIND){
     // Função que deverá ser usada com fseek com SEEK_SET
@@ -27,7 +25,7 @@ void posicionaPonteiroPorRRN(int RRN, FILE *arquivoIND){
     fseek(arquivoIND, byteOffset, SEEK_SET);
 }
 
-int buscaRecursivaPelaChave(char *nomeChave, FILE *arquivoIND, int proxRRN, char *nomeArquivoBIN){
+int buscaRecursivaPelaChave(char *nomeChave, FILE *arquivoIND, int proxRRN){
     // Retorna um inteiro que é o RRN desejado ou -1 se não achou
 
     // Condição de parada
@@ -42,57 +40,40 @@ int buscaRecursivaPelaChave(char *nomeChave, FILE *arquivoIND, int proxRRN, char
     NoArvoreB *no = criaNoArvoreB();
     leNoArvoreB(no, arquivoIND);
 
-         int pos = buscaBinaria(no, nomeChave);
+    int pos = buscaBinaria(no, nomeChave);
 
-    imprimeNoArvoreB(no);
-    printf("Posicao: %d\n", pos);
+    // imprimeNoArvoreB(no);
+
+    // printf("Posicao: %d\n", pos);
+    // printf("Chave buscada: %s\n", nomeChave);
+    // printf("Chave encontrada: %s\n", no->C[pos]);
 
     if(strcmp(nomeChave, no->C[pos]) == 0){
-        return(no->PR[pos]);
+        // printf("Registro encontrado.");
+        return no->PR[pos];
     }
     else{
-        if (strcmp(nomeChave, no->C[pos]) > 0){
-            pos++;
-        }
-        // printf("Posicao: %d\n", pos);
-        return buscaRecursivaPelaChave(nomeChave, arquivoIND, no->P[pos], nomeArquivoBIN);
+        if (strcmp(nomeChave, no->C[pos]) > 0) pos++;
+        
+        return buscaRecursivaPelaChave(nomeChave, arquivoIND, no->P[pos]);
     }
 
-    //Vamos verificar se a chave está no nó atual
-    for(int i = 0; i < no->nroChavesNo; i++){
-        if(strcmp(nomeChave, no->C[i]) <= 0){
-            if(strcmp(nomeChave, no->C[i]) == 0){
-                // Achamos a chave, retornamos seu ponteiro de referência para o arquivo de dados
-                return no->PR[i];
-            }
-            else{ // Ou seja, se for menor na ordem alfabética, vamos para a esquerda
-                return buscaRecursivaPelaChave(nomeChave, arquivoIND, no->P[i], nomeArquivoBIN);
-            }
-        }
-        else // Se não for menor nem igual, vou para a próxima chave!
-            continue;
-    }
-
-    // Se chegamos aqui, significa que a chave é maior que todas as chaves do nó atual, então passamos P[3] = P[nroChavesNo]
-    return buscaRecursivaPelaChave(nomeChave, arquivoIND, no->P[no->nroChavesNo], nomeArquivoBIN);
 }
 
-int buscaPelaChave(char *nomeChave, FILE *arquivoIND, char *nomeArquivoBIN){ // Essa funcao retorna o Pr da chave buscada
+int buscaPelaChave(char *nomeChave, FILE *arquivoIND){ // Essa funcao retorna o Pr da chave buscada
     int rrnBuscado = -1;
 
     // Logica de busca do RRN
     int rrnRaiz;
 
     // Primeiro eu coloco o ponteiro do meu arquivo na raiz (no / pagina)
-    
 
     // Leio onde está o RRN do nó da raiz
     fread(&rrnRaiz, sizeof(int), 1, arquivoIND);
     // printf("RRN da raiz: %d\n", rrnRaiz);
     
     // Estamos na raiz, agora chamaremos a recursão para tentar encontrar a chave
-    rrnBuscado = buscaRecursivaPelaChave(nomeChave, arquivoIND, rrnRaiz, nomeArquivoBIN);
-
+    rrnBuscado = buscaRecursivaPelaChave(nomeChave, arquivoIND, rrnRaiz);
 
     return rrnBuscado;
 }   
@@ -167,12 +148,13 @@ void buscaComIndice(char *nomeArquivoBIN, char *nomeArquivoIND, int n){
             scan_quote_string(valorCampo);
 
             // Guardo o valor do RRN encontrado
-            rrnBuscado = buscaPelaChave(valorCampo, arquivoIND, nomeArquivoBIN);
-            //printf("RRN buscado: %d\n", rrnBuscado);
+            rrnBuscado = buscaPelaChave(valorCampo, arquivoIND);
+
+            // printf("RRN buscado: %d\n", rrnBuscado);
 
             // Realizo a busca a partir da funcionalidade 4
             if(rrnBuscado != -1){
-                buscaPorRRN(nomeArquivoBIN, rrnBuscado);
+                buscaArquivoDados(arquivoBIN, rrnBuscado);
             }
             else{
                 printf("Registro inexistente.\n");

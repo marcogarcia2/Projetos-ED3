@@ -6,6 +6,8 @@
 #ifndef FUNCIONALIDADES_H
 #define FUNCIONALIDADES_H
 
+#include <stdio.h>
+
 // Funcionalidade 1
 void criaTabela(char *nomeArquivoCSV, char *nomeArquivoBIN);
 
@@ -17,6 +19,7 @@ void buscaPorCampo(char *nomeArquivoBIN, int N);
 
 // Funcionalidade 4
 void buscaPorRRN(char *nomeArquivoBIN, int RRN);
+void buscaArquivoDados(FILE *arquivoBIN, int rrn);
 
 // Funcionalidade 5
 void geraArquivoIndice(char *nomeArquivoBIN, char *nomeArquivoIND);

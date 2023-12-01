@@ -84,7 +84,7 @@ void geraArquivoIndice(char *nomeArquivoBIN, char *nomeArquivoIND){
 
     // Tamanho total do arquivo de dados
     const unsigned int tamTotal = calculaTamanhoTotal(arquivoBIN);
-    printf("Tamanho total: %d\n", tamTotal);
+    //("Tamanho total: %d\n", tamTotal);
 
     // Lê o arquivo de dados e insere na árvore B concomitantemente
     while(byteOffset <= tamTotal){ // Quando ocorre o split na raiz está dando erro (TAM_REGISTRO * 4)
@@ -93,7 +93,7 @@ void geraArquivoIndice(char *nomeArquivoBIN, char *nomeArquivoIND){
         r = criaRegistro(); 
         r = leRegistro(byteOffset, r, arquivoBIN);
 
-        printf("\n");
+        //printf("\n");
 
         // A cada iteração, precisarei saber onde está a raiz
         //fseek(arquivoIND, 1, SEEK_SET);
@@ -101,12 +101,12 @@ void geraArquivoIndice(char *nomeArquivoBIN, char *nomeArquivoIND){
         // Leio a posição da raiz (RRNraiz) para posteriormente dar um fseek para lá (nem precisa pois ele já está como -1 no começo e dps ele da fseek dentro da função adicionar)
         // fread(&cabecalho->noRaiz, sizeof(int), 1, arquivoIND);
 
-        if(r->removido == '0' || strcmp(r->tecnologiaOrigem.string, "") || strcmp(r->tecnologiaDestino.string, "")){ // Se não estiver removido, ocorrerá a inserção no arquivo de índices
+        if(r->removido == '0' && (strcmp(r->tecnologiaOrigem.string, "") && strcmp(r->tecnologiaDestino.string, ""))){ // Se não estiver removido, ocorrerá a inserção no arquivo de índices
             
             // Criando a chave (stringConcatenada) concatenando nomeTecnologiaOrigem e nomeTecnologiaDestino
             dados = criaDadosChave();
             dados->chave = concatenaStrings(r);
-            printf("Chave: %s\n", dados->chave);
+            //printf("Chave: %s\n", dados->chave);
 
             // Preciso guardar também o que será o PR, que é o RRN dessa chave (ponteiroReferencia)
             dados->PR = ponteiroReferencia;
@@ -133,7 +133,7 @@ void geraArquivoIndice(char *nomeArquivoBIN, char *nomeArquivoIND){
 
     // Grava o cabecalho no arquivo de índices
     cabecalho->status = '1';
-    printf("Status: %c\n", cabecalho->status);
+    //printf("Status: %c\n", cabecalho->status);
     gravaCabecalhoIndice(cabecalho, arquivoIND); 
 
     // Fecha os arquivos

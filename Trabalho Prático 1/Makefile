@@ -3,8 +3,8 @@ BIN = ./bin
 INCLUDE = ./include
 OBJ = ./obj
 SRC = ./src
-FLAGS = -Wall -Wpedantic #-Werror -march=native -O3 -fsanitize=address
-MSG = "Funcionalidade 7 início, modificações na 6 e 5 incompleta"
+FLAGS = -Wall #-Wpedantic #-Werror -march=native -O3 -fsanitize=address
+MSG = "SPLIT FUNCIONANDO CARALHO, FUNC 6 PICA E MODULARIZADA!!!"
 
 all: libed myapps
 
@@ -18,7 +18,7 @@ libed:
 	@gcc $(FLAGS) -c $(SRC)/funcionalidade4.c -I $(INCLUDE) -o $(OBJ)/funcionalidade4.o
 	@gcc $(FLAGS) -c $(SRC)/funcionalidade5.c -I $(INCLUDE) -o $(OBJ)/funcionalidade5.o
 	@gcc $(FLAGS) -c $(SRC)/funcionalidade6.c -I $(INCLUDE) -o $(OBJ)/funcionalidade6.o
-#@gcc $(FLAGS) -c $(SRC)/funcionalidade7.c -I $(INCLUDE) -o $(OBJ)/funcionalidade7.o
+	@gcc $(FLAGS) -c $(SRC)/funcionalidade7.c -I $(INCLUDE) -o $(OBJ)/funcionalidade7.o
 	@gcc $(FLAGS) -c $(SRC)/lista.c -I $(INCLUDE) -o $(OBJ)/lista.o
 
 myapps:
