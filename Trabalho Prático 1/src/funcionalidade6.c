@@ -27,7 +27,7 @@ void posicionaPonteiroPorRRN(int RRN, FILE *arquivoIND){
     fseek(arquivoIND, byteOffset, SEEK_SET);
 }
 
-int buscaRecursivaPelaChave(char *nomeChave, FILE *arquivoIND, int proxRRN){
+int buscaRecursivaPelaChave(char *nomeChave, FILE *arquivoIND, int proxRRN, char *nomeArquivoBIN){
     // Retorna um inteiro que é o RRN desejado ou -1 se não achou
 
     // Condição de parada
@@ -42,22 +42,21 @@ int buscaRecursivaPelaChave(char *nomeChave, FILE *arquivoIND, int proxRRN){
     NoArvoreB *no = criaNoArvoreB();
     leNoArvoreB(no, arquivoIND);
 
-    // int pos = buscaBinaria2(no, nomeChave);
-    
-    // if(pos >= 0){ // Significa que a chave foi encontrada
-    // printf("Posicao: %d\n", pos);
-    //     return no->PR[pos];
-    // }else{
-    //     pos = pos * (-1) - 1;
-    //     if (strcmp(nomeChave, no->C[pos]) > 0){
-    //         pos++;
-    //     }
-    //     printf("Posicao: %d\n", pos);
-    //     return buscaRecursivaPelaChave(nomeChave, arquivoIND, no->P[pos]);
-    // }
-    //if (strcmp(nomeChave, no->C[pos]) > 0) pos++;
+         int pos = buscaBinaria(no, nomeChave);
 
-    //return buscaRecursivaPelaChave(nomeChave, arquivoIND, no->P[pos]);
+    imprimeNoArvoreB(no);
+    printf("Posicao: %d\n", pos);
+
+    if(strcmp(nomeChave, no->C[pos]) == 0){
+        return(no->PR[pos]);
+    }
+    else{
+        if (strcmp(nomeChave, no->C[pos]) > 0){
+            pos++;
+        }
+        // printf("Posicao: %d\n", pos);
+        return buscaRecursivaPelaChave(nomeChave, arquivoIND, no->P[pos], nomeArquivoBIN);
+    }
 
     //Vamos verificar se a chave está no nó atual
     for(int i = 0; i < no->nroChavesNo; i++){
@@ -67,7 +66,7 @@ int buscaRecursivaPelaChave(char *nomeChave, FILE *arquivoIND, int proxRRN){
                 return no->PR[i];
             }
             else{ // Ou seja, se for menor na ordem alfabética, vamos para a esquerda
-                return buscaRecursivaPelaChave(nomeChave, arquivoIND, no->P[i]);
+                return buscaRecursivaPelaChave(nomeChave, arquivoIND, no->P[i], nomeArquivoBIN);
             }
         }
         else // Se não for menor nem igual, vou para a próxima chave!
@@ -75,10 +74,10 @@ int buscaRecursivaPelaChave(char *nomeChave, FILE *arquivoIND, int proxRRN){
     }
 
     // Se chegamos aqui, significa que a chave é maior que todas as chaves do nó atual, então passamos P[3] = P[nroChavesNo]
-    return buscaRecursivaPelaChave(nomeChave, arquivoIND, no->P[no->nroChavesNo]);
+    return buscaRecursivaPelaChave(nomeChave, arquivoIND, no->P[no->nroChavesNo], nomeArquivoBIN);
 }
 
-int buscaPelaChave(char *nomeChave, FILE *arquivoIND){ // Essa funcao retorna o Pr da chave buscada
+int buscaPelaChave(char *nomeChave, FILE *arquivoIND, char *nomeArquivoBIN){ // Essa funcao retorna o Pr da chave buscada
     int rrnBuscado = -1;
 
     // Logica de busca do RRN
@@ -92,7 +91,7 @@ int buscaPelaChave(char *nomeChave, FILE *arquivoIND){ // Essa funcao retorna o 
     // printf("RRN da raiz: %d\n", rrnRaiz);
     
     // Estamos na raiz, agora chamaremos a recursão para tentar encontrar a chave
-    rrnBuscado = buscaRecursivaPelaChave(nomeChave, arquivoIND, rrnRaiz);
+    rrnBuscado = buscaRecursivaPelaChave(nomeChave, arquivoIND, rrnRaiz, nomeArquivoBIN);
 
 
     return rrnBuscado;
@@ -168,7 +167,7 @@ void buscaComIndice(char *nomeArquivoBIN, char *nomeArquivoIND, int n){
             scan_quote_string(valorCampo);
 
             // Guardo o valor do RRN encontrado
-            rrnBuscado = buscaPelaChave(valorCampo, arquivoIND);
+            rrnBuscado = buscaPelaChave(valorCampo, arquivoIND, nomeArquivoBIN);
             //printf("RRN buscado: %d\n", rrnBuscado);
 
             // Realizo a busca a partir da funcionalidade 4
