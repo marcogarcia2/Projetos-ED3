@@ -55,10 +55,14 @@ int main (int argc, char *argv[]){
         buscaComIndice(nomeArquivoBIN, nomeArquivoIND, n);
         break;
 
+    case 7: // Funcionalidade 7
+        scanf("%s %s %d", nomeArquivoBIN, nomeArquivoIND, &n);
+        insercaoNosArquivos(nomeArquivoBIN, nomeArquivoIND, n);
+        break;
+
     default:
         break;
     }
-    
 
     return 0;
 }

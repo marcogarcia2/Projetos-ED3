@@ -24,4 +24,7 @@ void geraArquivoIndice(char *nomeArquivoBIN, char *nomeArquivoIND);
 // Funcionalidade 6
 void buscaComIndice(char *nomeArquivoBIN, char *nomeArquivoIND, int n);
 
+// Funcionalidade 7
+void insercaoNosArquivos(char *nomeArquivoBIN, char *nomeArquivoIND, int n);
+
 #endif

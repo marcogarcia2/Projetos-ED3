@@ -485,5 +485,5 @@ void adicionar(DadosChave *dados, FILE *arquivoIND, CabecalhoIndice *cabecalho){
     else{ // Só para não esquecer de rever esse caso
         printf("Nao eh insercao na raiz\n");
     }
-        printf("\n");
+        // printf("\n");
 }
