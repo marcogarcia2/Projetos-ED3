@@ -117,6 +117,7 @@ Registro *leRegistro(int byteInicial, Registro *r, FILE *arquivoBIN){
     // Detecta se existe um registro neste byteOffset
     int flag = fread(&r->removido, sizeof(char), 1, arquivoBIN);
     if (flag == 0) return NULL; // Se não leu nada, retorna nulo, pois não existem mais registros
+    
 
     // Lendo os outros campos na ordem apropriada
     fread(&r->grupo, sizeof(int), 1, arquivoBIN);
