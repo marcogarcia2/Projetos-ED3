@@ -203,7 +203,7 @@ void insercaoNosArquivos(char *nomeArquivoBIN, char *nomeArquivoIND, int n){
 
             dados->chave = (char*)malloc(sizeof(stringConcatenada));
             strcpy(dados->chave, stringConcatenada);
-            dados->PR = cabecalho->proxRRN;
+            dados->PR = cabecalho->proxRRN++;
             printf("\n\nPR: %d\n\n",dados->PR);
             dados->rrnDireita = -1;
 
@@ -224,7 +224,6 @@ void insercaoNosArquivos(char *nomeArquivoBIN, char *nomeArquivoIND, int n){
 
         // ------------------------------------------------------------------------------ //
 
-        cabecalho->proxRRN++;
         // Liberando a memória do registro
         liberaRegistro(r);
     }

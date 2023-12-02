@@ -4,7 +4,7 @@ INCLUDE = ./include
 OBJ = ./obj
 SRC = ./src
 FLAGS = -Wall #-Wpedantic #-Werror -march=native -O3 -fsanitize=address
-MSG = "Início da funcionalidade 7"
+MSG = "Aconteceu o que eu mais temia..."
 
 all: libed myapps
 
