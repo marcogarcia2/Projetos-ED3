@@ -3,11 +3,6 @@
 *   Marco Antonio Gaspar Garcia - 11833581
 */
 
-/*  
-*  Fazer uma função que lê um arquivo binário definido anteriormente no trabalho introdutório, e a
-*  partir disso criar um novo arquivo binário (de índice), que representa uma estrutura de árvore B.
-*/
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
