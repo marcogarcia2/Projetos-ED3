@@ -1,7 +1,0 @@
-1 - Mudar o nome de funcoesCriadas.c? Para deixar mais claro que tem a ver com o trabalho intro.
-ou
-2 - Adicionar as novas funções na própria funcoesCriadas.c?
-
-FILE arquivoIND é um bom nome? arquivoINDEX, arquivoINDICE
-
-a
