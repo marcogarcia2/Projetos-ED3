@@ -13,8 +13,6 @@
 #include "funcoesFornecidas.h"
 #include "funcoesIndice.h"
 
-// Funcionalidade 6
-
 // Função que calcula o byte offset de uma página
 void posicionaPonteiroPorRRN(int RRN, FILE *arquivoIND){
     // Função que deverá ser usada com fseek com SEEK_SET
@@ -25,10 +23,13 @@ void posicionaPonteiroPorRRN(int RRN, FILE *arquivoIND){
     fseek(arquivoIND, byteOffset, SEEK_SET);
 }
 
+// Função recursiva que busca a chave em um arquivo de índices
 int buscaRecursivaPelaChave(char *nomeChave, FILE *arquivoIND, int proxRRN){
-    // Retorna um inteiro que é o RRN desejado ou -1 se não achou
 
-    // Condição de parada
+    // Retorna um inteiro que é o RRN desejado ou -1 se não achou
+    // *** Percorremos o arquivo de índices recursivamente ***
+
+    // Condição de parada: Não existe uma sub-árvore
     if(proxRRN == -1){
         return -1;
     }
@@ -36,22 +37,20 @@ int buscaRecursivaPelaChave(char *nomeChave, FILE *arquivoIND, int proxRRN){
     // Posicionando o ponteiro do arquivo no início do RRN
     posicionaPonteiroPorRRN(proxRRN, arquivoIND);
     
-    // Logica de busca do RRN
+    // Criando e lendo o nó
     NoArvoreB *no = criaNoArvoreB();
     leNoArvoreB(no, arquivoIND);
 
+    // Fazemos uma busca binária nas chaves do nó para encontrar o RRN da sub-árvore
     int pos = buscaBinaria(no, nomeChave);
 
-    // imprimeNoArvoreB(no);
-
-    // printf("Posicao: %d\n", pos);
-    // printf("Chave buscada: %s\n", nomeChave);
-    // printf("Chave encontrada: %s\n", no->C[pos]);
-
+    // Se a chave da posição "pos" for igual a buscada, encontramos
     if(strcmp(nomeChave, no->C[pos]) == 0){
-        // printf("Registro encontrado.");
+
         return no->PR[pos];
     }
+
+    // Senão, buscamos na sub-árvore correta
     else{
         if (strcmp(nomeChave, no->C[pos]) > 0) pos++;
         
@@ -60,24 +59,25 @@ int buscaRecursivaPelaChave(char *nomeChave, FILE *arquivoIND, int proxRRN){
 
 }
 
-int buscaPelaChave(char *nomeChave, FILE *arquivoIND){ // Essa funcao retorna o Pr da chave buscada
+// Função que chama a recursão para buscar a chave em um arquivo de índices e retorna seu RRN no arquivo de dados (PR)
+int buscaPelaChave(char *nomeChave, FILE *arquivoIND){ 
+
     int rrnBuscado = -1;
 
-    // Logica de busca do RRN
-    int rrnRaiz;
-
-    // Primeiro eu coloco o ponteiro do meu arquivo na raiz (no / pagina)
-
-    // Leio onde está o RRN do nó da raiz
-    fread(&rrnRaiz, sizeof(int), 1, arquivoIND);
-    // printf("RRN da raiz: %d\n", rrnRaiz);
+    // Lendo o cabeçalho do arquivo de índices
+    CabecalhoIndice *cabIndice = criaCabecalhoIndice();
+    leCabecalhoIndice(cabIndice, arquivoIND);
     
-    // Estamos na raiz, agora chamaremos a recursão para tentar encontrar a chave
-    rrnBuscado = buscaRecursivaPelaChave(nomeChave, arquivoIND, rrnRaiz);
+    // Chamaremos a recursão a partir da raiz para buscar pela chave
+    rrnBuscado = buscaRecursivaPelaChave(nomeChave, arquivoIND, cabIndice->noRaiz);
+
+    // Liberando a memória alocada para o cabeçalho
+    free(cabIndice);
 
     return rrnBuscado;
 }   
 
+// Funcionalidade 6: busca um campo no arquivo de dados ou busca uma chave em um arquivo de índices
 void buscaComIndice(char *nomeArquivoBIN, char *nomeArquivoIND, int n){
 
     // Abrindo o arquivo binário
@@ -101,7 +101,6 @@ void buscaComIndice(char *nomeArquivoBIN, char *nomeArquivoIND, int n){
         return;
     }
 
-    // Preciso checar a consistencia tambem? Vou checar por via das duvidas
     // Se o arquivo está inconsistente, encerra-se a função
     if(fgetc(arquivoIND) == '0'){
         printf("Falha no processamento do arquivo.\n");
@@ -118,8 +117,6 @@ void buscaComIndice(char *nomeArquivoBIN, char *nomeArquivoIND, int n){
     int ultimoRRN;
     fread(&ultimoRRN, sizeof(int), 1, arquivoBIN); 
     ultimoRRN--;
-
-    // Calculando o tamanho total do arquivo
     const unsigned int tamTotal = 13 + (TAM_REGISTRO * ultimoRRN);
 
     for(int i = 0; i < n; i++){
@@ -127,17 +124,13 @@ void buscaComIndice(char *nomeArquivoBIN, char *nomeArquivoIND, int n){
         // Leitura do nome do campo
         scanf("%s", nomeCampo);
 
-        // Pula o cabeçalho do arquivo de dados
-        fseek(arquivoBIN, 13, SEEK_SET);
-        fseek(arquivoIND, 1, SEEK_SET);
-
         /* O tratamento será diferente para buscarmos uma string ou um inteiro */
 
         // Se o campo for string: nomeTecnologiaOrigem ou nomeTecnologiaDestino
         if(!strcmp(nomeCampo, "nomeTecnologiaOrigem") || !strcmp(nomeCampo, "nomeTecnologiaDestino")){
             
             // Leitura da entrada entre aspas e chamada da função de busca
-            scan_quote_string(valorCampo); 
+            scan_quote_string(valorCampo);
             buscaString(nomeCampo, valorCampo, tamTotal, arquivoBIN);
         }
 
@@ -150,12 +143,11 @@ void buscaComIndice(char *nomeArquivoBIN, char *nomeArquivoIND, int n){
             // Guardo o valor do RRN encontrado
             rrnBuscado = buscaPelaChave(valorCampo, arquivoIND);
 
-            // printf("RRN buscado: %d\n", rrnBuscado);
-
-            // Realizo a busca a partir da funcionalidade 4
+            // Com o valor do RRN em mãos, realizamos a busca a partir da funcionalidade 4
             if(rrnBuscado != -1){
                 buscaArquivoDados(arquivoBIN, rrnBuscado);
             }
+            // Se a função retornou -1, significa que a chave não foi encontrada
             else{
                 printf("Registro inexistente.\n");
             }
@@ -167,11 +159,9 @@ void buscaComIndice(char *nomeArquivoBIN, char *nomeArquivoIND, int n){
             scanf("%d", &valorCampoint);
             buscaInteiro(nomeCampo, valorCampoint, tamTotal, arquivoBIN);
         }
-
-        // Volto para o início do arquivo de dados
-        //fseek(arquivoBIN, 0, SEEK_SET);
     }
 
+    // Fechando ambos os arquivos
     fclose(arquivoBIN);
     fclose(arquivoIND);
 }

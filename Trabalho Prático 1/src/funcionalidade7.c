@@ -92,7 +92,7 @@ void insereArquivoIndice(DadosChave *dados, FILE *arquivoIND, CabecalhoIndice *c
     adicionar(dados, arquivoIND, cabIndice);
 }
 
-// Funcionalidade 7
+// Funcionalidade 7: Inserir registros no arquivo de dados e sua chave no arquivo de índices
 void insercaoNosArquivos(char *nomeArquivoBIN, char *nomeArquivoIND, int n){
 
     // Abrindo o arquivo binário
@@ -131,9 +131,11 @@ void insercaoNosArquivos(char *nomeArquivoBIN, char *nomeArquivoIND, int n){
     CabecalhoIndice *cabIndice = criaCabecalhoIndice();
     leCabecalhoIndice(cabIndice, arquivoIND); 
 
-    // Alterando o status para '0' 
+    // Alterando o status para '0' e gravando os cabeçalhos (inconsistentes)
     cabecalho->status = '0';
     cabIndice->status = '0';
+    gravaCabecalho(cabecalho, arquivoBIN);
+    gravaCabecalhoIndice(cabIndice, arquivoIND);
     
     // Listas para guardar o número de tecnologias
     Lista *ListaNroTecnologias = criaLista();

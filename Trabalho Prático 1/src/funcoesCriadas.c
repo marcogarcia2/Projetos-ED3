@@ -164,12 +164,16 @@ char *concatenaStrings(Registro *r){
 
 void buscaString(char *nomeCampo, char *tecnologia, int tamTotal, FILE *arquivoBIN){
 
-    // Guarda o byte inicial
     Registro *r;
+
+    // Flag que indica se o registro foi encontrado
     int flag = 0;
+
+    // Pulando o cabeçalho
+    fseek(arquivoBIN, 13, SEEK_SET);
     unsigned long byteOffset = ftell(arquivoBIN);
 
-    while(byteOffset < tamTotal){
+    while(byteOffset <= tamTotal){
 
         // Crio meu registro
         r = criaRegistro();
@@ -180,24 +184,26 @@ void buscaString(char *nomeCampo, char *tecnologia, int tamTotal, FILE *arquivoB
         if(r->removido == '0'){
             if(!strcmp(nomeCampo, "nomeTecnologiaOrigem")){
                 if(!strcmp(r->tecnologiaOrigem.string, tecnologia)){
+                    // Encontrou o valor buscado
                     imprimeRegistro(r);
-                    // Print se está removido
-                    // printf("Removido: %c\n", r->removido);
                     flag = 1;
                 }
             }
 
             else if(!strcmp(nomeCampo, "nomeTecnologiaDestino")){
                 if(!strcmp(r->tecnologiaDestino.string, tecnologia)){
+                    // Encontrou o valor buscado
                     imprimeRegistro(r);
                     flag = 1;
                 }
             }
         }
 
+        // Liberando a memória alocada para o registro
         liberaRegistro(r);
+
+        // Atualizando o byteOffset
         byteOffset += TAM_REGISTRO;
-        
     }
 
     // Caso depois de rodar todo o while e não encontrar nenhum (flag = 0)
@@ -206,12 +212,16 @@ void buscaString(char *nomeCampo, char *tecnologia, int tamTotal, FILE *arquivoB
 
 void buscaInteiro(char *nomeCampo, int valor, int tamTotal, FILE *arquivoBIN){
 
-    // Guarda o byte inicial
     Registro *r;
+
+    // Flag que indica se o registro foi encontrado
     int flag = 0;
+
+    // Pulando o cabeçalho
+    fseek(arquivoBIN, 13, SEEK_SET);
     unsigned long byteOffset = ftell(arquivoBIN);
 
-    while(byteOffset < tamTotal){
+    while(byteOffset <= tamTotal){
         if(fgetc(arquivoBIN) == '0'){ // Se não estiver removido
 
             // Crio meu registro
@@ -222,6 +232,7 @@ void buscaInteiro(char *nomeCampo, int valor, int tamTotal, FILE *arquivoBIN){
 
             if(!strcmp(nomeCampo, "grupo")){
                 if(r->grupo == valor){
+                    // Encontrou o valor buscado
                     imprimeRegistro(r);
                     flag = 1;
                 }
@@ -229,6 +240,7 @@ void buscaInteiro(char *nomeCampo, int valor, int tamTotal, FILE *arquivoBIN){
 
             else if(!strcmp(nomeCampo, "popularidade")){
                 if(r->popularidade == valor){
+                    // Encontrou o valor buscado
                     imprimeRegistro(r);
                     flag = 1;
                 }
@@ -236,12 +248,16 @@ void buscaInteiro(char *nomeCampo, int valor, int tamTotal, FILE *arquivoBIN){
 
             else if(!strcmp(nomeCampo, "peso")){
                 if(r->peso == valor){
+                    // Encontrou o valor buscado
                     imprimeRegistro(r);
                     flag = 1;
                 }
             }
 
+            // Liberando a memória alocada para o registro
             liberaRegistro(r);
+
+            // Atualizando o byteOffset
             byteOffset += TAM_REGISTRO;
         }
     }
@@ -250,7 +266,7 @@ void buscaInteiro(char *nomeCampo, int valor, int tamTotal, FILE *arquivoBIN){
     if(!flag) printf("Registro inexistente.\n");
 }
 
-// Essa função calcula o tamanho total e serve para dar a condição de parada na leitura do arquivod e dados
+// Essa função calcula o tamanho total e serve para dar a condição de parada na leitura do arquivo de dados
 int calculaTamanhoTotal(FILE *arquivoBIN){ 
     // Para usar a função, é necessário que esteja no início do arquivo (byte 1, depois do status (byte 0))
     // No caso, a sua única utilização foi quando o byte de status do arquivo de dados foi lido, logo o ponteiro está no byte 1
