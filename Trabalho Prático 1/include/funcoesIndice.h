@@ -18,31 +18,34 @@
 
 // Estrutura do Cabeçalho do Arquivo de Índice da Árvore-B
 typedef struct _cab_indice{
-    char status;
-    int noRaiz;
-    int RRNproxNo;
+    char status; // '0' para inconsistente e '1' para consistente
+    int noRaiz; // RRN do nó raiz
+    int RRNproxNo; // RRN do próximo nó a ser inserido
 } CabecalhoIndice;
 
+// Estrutura do Nó da Árvore-B
 typedef struct _noArvoreB{
-    int nroChavesNo;
-    int alturaNo;
-    int RRNdoNo;
+    int nroChavesNo; // Número de chaves armazenadas no nó
+    int alturaNo; // Altura do nó na árvore
+    int RRNdoNo; // RRN do nó
 
     int P[4]; // Ponteiros para uma subárvore
     char C[3][55]; // Chaves de busca, sempre ordenadas C1 < C2 < C3
-    int PR[3]; // Ponteiros para o registro associado a Ci no arquivos de dados
+    int PR[3]; // Ponteiros para o registro associado a C[i] no arquivos de dados
 } NoArvoreB;
 
+// Estrutura auxiliar para dividir um nó
 typedef struct _noSplit{
-    int Psplit[5];
-    char Csplit[4][55];
-    int PRsplit[4];
+    int Psplit[5]; // Ponteiros para uma subárvore
+    char Csplit[4][55]; // Chaves de busca, sempre ordenadas C1 < C2 < C3
+    int PRsplit[4]; // Ponteiros para o registro associado a C[i] no arquivos de dados
 } NoSplit;
 
+// Estrutura auxiliar para inserir um nó
 typedef struct _dadosChave{
-    char *chave;
-    int PR;
-    int rrnDireita;
+    char *chave; // Chave de busca
+    int PR; // Ponteiro para o registro associado a chave no arquivo de dados
+    int rrnDireita; // RRN da subárvore à direita da chave
 } DadosChave;
 
 // Função que cria um Cabeçalho de Árvore, inserido no início do arquivo binário de índice
@@ -71,6 +74,5 @@ void adicionar(DadosChave *dados, FILE *arquivoIND, CabecalhoIndice *cabecalho);
 
 // Função de busca binária que retorna o índice
 int buscaBinaria(NoArvoreB *no, char *chave);
-int buscaBinaria2(NoArvoreB *no, char *chave);
 
 #endif

@@ -37,10 +37,13 @@ void imprimeRegistro(const Registro *r);
 // Funcao que concatena as strings nomeTecnologiaOrigem e nomeTecnologiaDestino de um registro
 char *concatenaStrings(Registro *r);
 
+// Função que busca uma string no arquivo de dados
 void buscaString(char *nomeCampo, char *tecnologia, int tamTotal, FILE *arquivoBIN);
 
+// Função que busca um inteiro no arquivo de dados
 void buscaInteiro(char *nomeCampo, int valor, int tamTotal, FILE *arquivoBIN);
 
+// Função que calcula o tamanho total do arquivo de dados
 int calculaTamanhoTotal(FILE *arquivoBIN);
 
 #endif

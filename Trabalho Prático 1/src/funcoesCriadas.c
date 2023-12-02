@@ -152,6 +152,7 @@ void imprimeRegistro(const Registro *r){
     (r->peso != -1) ? printf("%d\n", r->peso) : printf("NULO\n");
 }
 
+// Função que concatena as strings de tecnologiaOrigem e tecnologiaDestino
 char *concatenaStrings(Registro *r){
     // Concatena as strings de tecnologiaOrigem e tecnologiaDestino
     // Retorna a string concatenada
@@ -162,6 +163,7 @@ char *concatenaStrings(Registro *r){
     return stringConcatenada;
 }
 
+// Função que busca uma string no arquivo de dados
 void buscaString(char *nomeCampo, char *tecnologia, int tamTotal, FILE *arquivoBIN){
 
     Registro *r;
@@ -210,6 +212,7 @@ void buscaString(char *nomeCampo, char *tecnologia, int tamTotal, FILE *arquivoB
     if(!flag) printf("Registro inexistente.\n");
 }
 
+// Função que busca um inteiro no arquivo de dados
 void buscaInteiro(char *nomeCampo, int valor, int tamTotal, FILE *arquivoBIN){
 
     Registro *r;
