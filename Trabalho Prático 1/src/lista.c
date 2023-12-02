@@ -92,7 +92,7 @@ int getTamanho(const Lista *L){
 // Função que adiciona elementos ao fim de uma lista
 void adicionaLista(Lista *L, char *string, int tamString) {
 
-    if (!strcmp(string, "")) return;
+    if (!strcmp(string, "") || tamString <= 0) return;
 
     No *p = criaNo(string, tamString);
 

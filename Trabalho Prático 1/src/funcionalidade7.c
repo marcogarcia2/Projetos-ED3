@@ -14,8 +14,6 @@
 #include "funcoesIndice.h"
 #include "lista.h"
 
-// PROBLEMA: ESTA GRAVANDO NULO NO BINARIO QUANDO NAO DEVERIA GRAVAR NADA (SLA PQ)
-
 // Função que lê o arquivo dados e guarda o número de tecnologias e pares de tecnologias
 void contagemTecnologiasEPares(Lista *ListaNroTecnologias, Lista *ListaPares, FILE *arquivoBIN){
 
@@ -37,6 +35,7 @@ void contagemTecnologiasEPares(Lista *ListaNroTecnologias, Lista *ListaPares, FI
         }
 
         else {
+            // Se o registro não está removido, adicionamos as tecnologias às listas
             if (r->removido == '0'){
 
                 adicionaLista(ListaNroTecnologias, r->tecnologiaOrigem.string, r->tecnologiaOrigem.tamanho);
@@ -45,6 +44,7 @@ void contagemTecnologiasEPares(Lista *ListaNroTecnologias, Lista *ListaPares, FI
                 if(strcmp(r->tecnologiaOrigem.string, "") != 0 && strcmp(r->tecnologiaDestino.string, "") != 0){
                     char *stringConcatenada = concatenaStrings(r); //TESTAR
                     adicionaLista(ListaPares, stringConcatenada, r->tecnologiaOrigem.tamanho + r->tecnologiaDestino.tamanho); // Se precisar colocar um +1
+                    free(stringConcatenada);
                 }
             }
         }
@@ -52,44 +52,49 @@ void contagemTecnologiasEPares(Lista *ListaNroTecnologias, Lista *ListaPares, FI
         // Desalocando a memória
         liberaRegistro(r);
 
-        // Precisamos saltar até o próximo registro
+        // Precisamos saltando até o próximo registro
         byteOffset += TAM_REGISTRO;
     }
-
-    // printf("Numero de tecnologias: %d\n", getTamanho(ListaNroTecnologias));
-    // printf("Numero de pares de tecnologias: %d\n", getTamanho(ListaPares));
-
 }
 
+// Função que recebe cinco strings e preenche um registro
 void preencherRegistro(Registro *r, char *nomeTecnologiaOrigem, char *grupo, char *popularidade, char *nomeTecnologiaDestino, char *peso) {
 
+    // Aqui verificamos se o campo é nulo e atribuímos o valor adequado
+
+    // Tecnologia Origem
     r->tecnologiaOrigem.tamanho = (strcmp(nomeTecnologiaOrigem, "NULO") != 0) ? strlen(nomeTecnologiaOrigem) : 0;
     r->tecnologiaOrigem.string = malloc(r->tecnologiaOrigem.tamanho + 1);
     strcpy(r->tecnologiaOrigem.string, (r->tecnologiaOrigem.tamanho != 0) ? nomeTecnologiaOrigem : "");
 
+    // Grupo
     r->grupo = (strcmp(grupo, "NULO") == 0) ? -1 : atoi(grupo);
 
+    // Popularidade
     r->popularidade = (strcmp(popularidade, "NULO") == 0) ? -1 : atoi(popularidade);
 
+    // Tecnologia Destino
     r->tecnologiaDestino.tamanho = (strcmp(nomeTecnologiaDestino, "NULO") != 0) ? strlen(nomeTecnologiaDestino) : 0;
     r->tecnologiaDestino.string = malloc(r->tecnologiaDestino.tamanho + 1);
     strcpy(r->tecnologiaDestino.string, (r->tecnologiaDestino.tamanho != 0) ? nomeTecnologiaDestino : "");
 
+    // Peso
     r->peso = (strcmp(peso, "NULO") == 0) ? -1 : atoi(peso);
-
 }
 
+// Chamando a função de gravação de um registro no arquivo de dados
 void insereArquivoDados(Registro *r, FILE *arquivoBIN, Cabecalho *cabecalho){
     gravaRegistro(r, arquivoBIN);
 }
 
+// Chamando a função que insere no arquivo de índices
 void insereArquivoIndice(DadosChave *dados, FILE *arquivoIND, CabecalhoIndice *cabIndice){
     adicionar(dados, arquivoIND, cabIndice);
 }
 
 // Funcionalidade 7
 void insercaoNosArquivos(char *nomeArquivoBIN, char *nomeArquivoIND, int n){
-    // Serão inseridos registros nessa ordem nomeTecnologiaOrigem grupo popularidade nomeTecnologiaDestino peso
+
     // Abrindo o arquivo binário
     FILE *arquivoBIN = fopen(nomeArquivoBIN, "rb+"); // Modo de leitura em binário
     if (arquivoBIN == NULL){ // Se o arquivo não existir, erro
@@ -122,93 +127,77 @@ void insercaoNosArquivos(char *nomeArquivoBIN, char *nomeArquivoIND, int n){
     Cabecalho *cabecalho = criaCabecalho();
     leCabecalho(cabecalho, arquivoBIN); 
 
-    // Temos as informações do cabecalho do arquivo de índices
+    // Lendo as informações do cabecalho do arquivo de índices
     CabecalhoIndice *cabIndice = criaCabecalhoIndice();
-    leCabecalhoIndice(cabIndice, arquivoIND); // Nao temos essa funcao ainda
-
-    // printf("RRN da raiz: %d\n", cabIndice->noRaiz);
+    leCabecalhoIndice(cabIndice, arquivoIND); 
 
     // Alterando o status para '0' 
     cabecalho->status = '0';
     cabIndice->status = '0';
-
-    // Gravando o cabeçalho no início de cada arquivo
-    gravaCabecalho(cabecalho, arquivoBIN);
-    gravaCabecalhoIndice(cabIndice, arquivoIND);
     
-    // Variáveis que nos auxiliarão na análise do arquivo
+    // Listas para guardar o número de tecnologias
     Lista *ListaNroTecnologias = criaLista();
     Lista *ListaPares = criaLista();
 
+    // Lendo o arquivo de dados e guardando o número de tecnologias e pares de tecnologias
     contagemTecnologiasEPares(ListaNroTecnologias, ListaPares, arquivoBIN);
-    //int byteAtual = ftell(arquivoBIN);
 
     // Criando um loop que irá ler as "n" linhas do teclado
     for (int k = 0; k < n; k++) {
-        fseek(arquivoBIN, 0, SEEK_END);
+
+        // Posicionando o ponteiro no final do arquivo
+        if(k == 0)
+            fseek(arquivoBIN, 0, SEEK_END);
         
+        // Lendo as entradas do teclado
         char nomeTecnologiaOrigem[100], grupo[10], popularidade[10], nomeTecnologiaDestino[100], peso[10];
         scanf("%*c"); // Lendo o \n
         scanf("%[^,], %[^,], %[^,], %[^,], %[^\n]", nomeTecnologiaOrigem, grupo, popularidade, nomeTecnologiaDestino, peso);
-
-        //Printando a entrada para testar
-        // printf("Tamanho da string tecnologiaOrigem: %d\n", strlen(nomeTecnologiaOrigem));
-        // printf("%s\n", nomeTecnologiaOrigem);
-        // printf("%s\n", grupo);
-        // printf("%s\n", popularidade);
-        // printf("Tamanho da string tecnologiaDestino: %d\n", strlen(nomeTecnologiaDestino));
-        // printf("%s\n", nomeTecnologiaDestino);
-        // printf("%s\n", peso);
-
+       
+        // Criando um registro e preenchendo-o com as entradas
         Registro *r = criaRegistro();
         preencherRegistro(r, nomeTecnologiaOrigem, grupo, popularidade, nomeTecnologiaDestino, peso);
-        
-        // Printando os tamanhos das strings para testar
-        // printf("Tamanho da string tecnologiaOrigem FINAL: %d\n", r->tecnologiaOrigem.tamanho);
-        // printf("Tamanho da string tecnologiaDestino FINAL: %d\n", r->tecnologiaDestino.tamanho);
 
-        // -------------------- INSERÇÃO NO ARQUIVO DE DADOS --------------------------- //
-
+        // Agora que temos um registro preenchido, vamos gravá-lo no arquivo de dados
         insereArquivoDados(r, arquivoBIN, cabecalho);
         
+        // Contabilizando as tecnologias
         adicionaLista(ListaNroTecnologias, r->tecnologiaOrigem.string, r->tecnologiaOrigem.tamanho);        
         adicionaLista(ListaNroTecnologias, r->tecnologiaDestino.string, r->tecnologiaDestino.tamanho);
 
-        DadosChave *dados = criaDadosChave();
 
-        // Adiciona na lista de pares a string concatenada
+        // Se ambas NÃO forem nulas, adicionamos o par na lista de pares e no arquivo de índices
         if(strcmp(r->tecnologiaOrigem.string, "") != 0 && strcmp(r->tecnologiaDestino.string, "") != 0){
-            // Só adiciono na lista se nenhuma for nula
+            
+            // Criando um dado para inserção no arquivo de índices
+            DadosChave *dados = criaDadosChave();
             dados->chave = concatenaStrings(r);
-            adicionaLista(ListaPares, dados->chave, r->tecnologiaOrigem.tamanho + r->tecnologiaDestino.tamanho); // Se precisar colocar um +1
-            dados->PR = cabecalho->proxRRN; // Pois o RRN do nó foi incrementado anteriormente
+            dados->PR = cabecalho->proxRRN;
 
+            // Contabilizando o par de tecnologias lista de pares
+           adicionaLista(ListaPares, dados->chave, r->tecnologiaOrigem.tamanho + r->tecnologiaDestino.tamanho); // Se precisar colocar um +1
+
+            // Inserindo no arquivo de índices
             insereArquivoIndice(dados, arquivoIND, cabIndice);
+
+            // Liberando a memória alocada para a chave
+            free(dados->chave);
+            free(dados);
         }
 
-        // ------------------------------------------------------------------------------ //
-
-        // -------------------- INSERÇÃO NO ARQUIVO DE INDICES -------------------------- //
-        
+        // Atualizando o cabeçalho do arquivo de dados
         cabecalho->proxRRN++;
-        
 
-        // ------------------------------------------------------------------------------ //
-
-        gravaCabecalho(cabecalho, arquivoBIN);
-        gravaCabecalhoIndice(cabIndice, arquivoIND);
         // Liberando a memória do registro
         liberaRegistro(r);
     }
-
-    // printf("Numero de tecnologias: %d\n", getTamanho(ListaNroTecnologias));
-    // printf("Numero de pares de tecnologias: %d\n", getTamanho(ListaPares));
 
     // Alterando o status para '1' antes de fechar os binários
     cabecalho->status = '1';
     cabIndice->status = '1';
 
-    cabecalho->nroTecnologias = getTamanho(ListaNroTecnologias); // Acochambramento
+    // Atualizando o número de tecnologias e pares de tecnologias
+    cabecalho->nroTecnologias = getTamanho(ListaNroTecnologias);
     cabecalho->nroParesTecnologias = getTamanho(ListaPares);
 
     // Finalmente, gravando o cabeçalho no início de cada arquivo
