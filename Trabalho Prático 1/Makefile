@@ -4,7 +4,7 @@ INCLUDE = ./include
 OBJ = ./obj
 SRC = ./src
 FLAGS = -Wall #-Wpedantic #-Werror -march=native -O3 -fsanitize=address
-MSG = "SPLIT FUNCIONANDO CARALHO, FUNC 6 PICA E MODULARIZADA!!!"
+MSG = "Início da funcionalidade 7"
 
 all: libed myapps
 

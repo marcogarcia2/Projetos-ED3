@@ -25,6 +25,19 @@ Cabecalho *criaCabecalho(void){
     return c;
 }
 
+// Função que le cabeçalho do arquivo de dados
+void leCabecalho(Cabecalho *c, FILE *arquivoBIN){
+
+    // Voltando ao início do arquivo
+    fseek(arquivoBIN, 0, SEEK_SET);
+
+    // Lendo os valores adequadamente
+    fread(&c->status, sizeof(char), 1, arquivoBIN);
+    fread(&c->proxRRN, sizeof(int), 1, arquivoBIN);
+    fread(&c->nroTecnologias, sizeof(int), 1, arquivoBIN);
+    fread(&c->nroParesTecnologias, sizeof(int), 1, arquivoBIN);
+}
+
 // Gravando o cabecalho nos 13 bytes iniciais
 void gravaCabecalho(Cabecalho *c, FILE *arquivoBIN){
 
@@ -104,7 +117,6 @@ Registro *leRegistro(int byteInicial, Registro *r, FILE *arquivoBIN){
     // Detecta se existe um registro neste byteOffset
     int flag = fread(&r->removido, sizeof(char), 1, arquivoBIN);
     if (flag == 0) return NULL; // Se não leu nada, retorna nulo, pois não existem mais registros
-    
 
     // Lendo os outros campos na ordem apropriada
     fread(&r->grupo, sizeof(int), 1, arquivoBIN);

@@ -48,6 +48,9 @@ typedef struct _dadosChave{
 // Função que cria um Cabeçalho de Árvore, inserido no início do arquivo binário de índice
 CabecalhoIndice *criaCabecalhoIndice(void);
 
+// Função que lê um cabeçalho do arquivo de índices e grava em um CabecalhoIndice
+void leCabecalhoIndice(CabecalhoIndice *cabIndice, FILE *arquivoIND);
+
 // Função que grava um cabeçalho de árvore no arquivo de índices
 void gravaCabecalhoIndice(CabecalhoIndice *c, FILE *arquivoIND);
 

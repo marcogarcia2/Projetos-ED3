@@ -16,6 +16,9 @@ Cabecalho *criaCabecalho(void);
 // Função que grava o Cabeçalho nos 13 bytes iniciais
 void gravaCabecalho(Cabecalho *c, FILE *arquivoBIN);
 
+// Função que lê o Cabeçalho do arquivo de dados
+void leCabecalho(Cabecalho *c, FILE *arquivoBIN);
+
 // Função que cria um Registro
 Registro *criaRegistro(void);
 

@@ -19,6 +19,18 @@ CabecalhoIndice *criaCabecalhoIndice(void){
     return cabIndice;
 }
 
+void leCabecalhoIndice(CabecalhoIndice *cabIndice, FILE *arquivoIND){
+
+    // Voltando ao início do arquivo
+    fseek(arquivoIND, 0, SEEK_SET);
+
+    // Lendo os valores adequadamente
+    fread(&cabIndice->status, sizeof(char), 1, arquivoIND);
+    fread(&cabIndice->noRaiz, sizeof(int), 1, arquivoIND);
+    fread(&cabIndice->RRNproxNo, sizeof(int), 1, arquivoIND);
+
+}
+
 // Função que grava o Cabeçalho de Árvore no início do arquivo
 void gravaCabecalhoIndice(CabecalhoIndice *cabIndice, FILE *arquivoIND){
 
@@ -215,21 +227,6 @@ int buscaBinaria(NoArvoreB *no, char *chave){
     return buscaBinariaRecursiva(no, 0, no->nroChavesNo - 1, chave);
 }
 
-int buscaBinariaRecursiva2(NoArvoreB *no, int inf, int sup, char *chave){
-    if(inf >= sup)
-        return (- inf - 1); // Retorna a posição onde a chave deveria ser inserida, mas negativa para indicar que a chave não foi encontrada
-    
-    int meio = inf + (sup - inf) / 2;
-    if (strcmp(chave, no->C[meio]) == 0)
-        return meio;
-
-    return (strcmp(chave, no->C[meio]) < 0) ? buscaBinariaRecursiva2(no, inf, meio - 1, chave) : buscaBinariaRecursiva2(no, meio + 1, sup, chave);
-}
-
-int buscaBinaria2(NoArvoreB *no, char *chave){
-    return buscaBinariaRecursiva2(no, 0, no->nroChavesNo - 1, chave);
-}
-
 bool noFolha(NoArvoreB *no){
     return no->P[0] == -1;
 }
@@ -240,9 +237,6 @@ bool cabeNo(NoArvoreB *no){
 
 // Função que insere uma chave em um nó
 void insereNo(NoArvoreB *no, int pos, DadosChave *dados, FILE *arquivoIND){
-    // NroChavesNo, RRNdoNo, alturaNo
-    // Talvez garantir que o nó não esteja cheio???
-    //printf("Chave: %s INSERIDA!\n", dados->chave);
 
     // Fazendo um shift dos elementos para a direita
     for(int i = no->nroChavesNo - 1; i >= pos; i--){
@@ -431,12 +425,7 @@ void adicionar(DadosChave *dados, FILE *arquivoIND, CabecalhoIndice *cabecalho){
     // printf("Ao lado de: %s\n", noRaiz->C[pos]);
     
     // Podemos colocar isso dentro do busca binária!
-    if (strcmp(dados->chave, noRaiz->C[pos]) > 0) {
-        // printf("Indo pra direita\n");
-        pos++;
-    } else{
-        // printf("Indo pra esquerda\n");
-    }
+    if (strcmp(dados->chave, noRaiz->C[pos]) > 0) pos++;
 
     // A função adicionarRecursivo retorna NULL se não houver promoção
     DadosChave *promovido = adicionarRecursivo(arquivoIND, dados, noRaiz->P[pos], cabecalho); 
@@ -492,8 +481,4 @@ void adicionar(DadosChave *dados, FILE *arquivoIND, CabecalhoIndice *cabecalho){
         //return;
         liberaNoArvoreB(noRaiz);
     }
-    else{ // Só para não esquecer de rever esse caso
-        // printf("Nao eh insercao na raiz\n");
-    }
-        // printf("\n");
 }
