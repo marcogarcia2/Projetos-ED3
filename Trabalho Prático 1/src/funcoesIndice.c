@@ -406,7 +406,6 @@ void adicionar(DadosChave *dados, FILE *arquivoIND, CabecalhoIndice *cabecalho){
         if(cabeNo(noRaiz)){
 
             insereNo(noRaiz, pos, promovido, arquivoIND);
-            gravaCabecalhoIndice(cabecalho, arquivoIND); 
         }
 
         else{  
@@ -435,7 +434,6 @@ void adicionar(DadosChave *dados, FILE *arquivoIND, CabecalhoIndice *cabecalho){
 
             // Gravando a nova raiz
             gravaNoArvoreB(novaRaiz, arquivoIND, TAM_PAGINA + (TAM_PAGINA * novaRaiz->RRNdoNo));
-            gravaCabecalhoIndice(cabecalho, arquivoIND);
 
             free(chaveDaNovaRaiz->chave);
             free(chaveDaNovaRaiz);
