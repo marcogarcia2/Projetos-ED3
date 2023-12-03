@@ -333,6 +333,7 @@ DadosChave *splitNoArvoreB(DadosChave *dados, FILE *arquivoIND, CabecalhoIndice 
 
     // Liberar a memória alocada para o vetor
     free(vetor);
+    liberaNoArvoreB(noIrmao);
     
     gravaCabecalhoIndice(cabecalho, arquivoIND);
 
@@ -364,6 +365,7 @@ DadosChave *adicionarRecursivo(FILE *arquivoIND, DadosChave *dados, int RRN, Cab
     } else{
         if(cabeNo(no)){ // Se houver promoção e couber no nó, basta inserir
             insereNo(no, pos, promovido, arquivoIND);
+            liberaNoArvoreB(no);
             return NULL;
 
         } else{ // Se houver promoção e não couber no nó, é necessário fazer o split
@@ -380,6 +382,7 @@ void adicionar(DadosChave *dados, FILE *arquivoIND, CabecalhoIndice *cabecalho){
 
     if(cabecalho->noRaiz == -1){ // Arquivo vazio, criamos gravamos uma raiz inicial
         primeiraInsercaoNaRaiz(noRaiz, cabecalho, dados, arquivoIND);
+        liberaNoArvoreB(noRaiz);
         return;
     }
     else { // Se o arquivo não estiver vazio, precisamos ler a raiz
@@ -397,14 +400,13 @@ void adicionar(DadosChave *dados, FILE *arquivoIND, CabecalhoIndice *cabecalho){
     DadosChave *promovido = adicionarRecursivo(arquivoIND, dados, noRaiz->P[pos], cabecalho); 
 
     // Só entrará aqui para fazer as inserções na raiz (que é o único caso em que promovido != NULL)
-    if(promovido){ 
+    if(promovido){
 
         // Se o promovido subiu e cabe na raiz, basta inseri-lo sem a necessidade de split
         if(cabeNo(noRaiz)){
 
             insereNo(noRaiz, pos, promovido, arquivoIND);
             gravaCabecalhoIndice(cabecalho, arquivoIND); 
-            //free(promovido);
         }
 
         else{  
@@ -433,12 +435,12 @@ void adicionar(DadosChave *dados, FILE *arquivoIND, CabecalhoIndice *cabecalho){
 
             // Gravando a nova raiz
             gravaNoArvoreB(novaRaiz, arquivoIND, TAM_PAGINA + (TAM_PAGINA * novaRaiz->RRNdoNo));
-
-            //free(chaveDaNovaRaiz);
-
             gravaCabecalhoIndice(cabecalho, arquivoIND);
-        }
 
+            free(chaveDaNovaRaiz->chave);
+            free(chaveDaNovaRaiz);
+        }
+        
         liberaNoArvoreB(noRaiz);
     }
 }

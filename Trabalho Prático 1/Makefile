@@ -3,8 +3,8 @@ BIN = ./bin
 INCLUDE = ./include
 OBJ = ./obj
 SRC = ./src
-FLAGS = -Wall #-Wpedantic #-Werror -march=native -O3 -fsanitize=address
-MSG = "Comentando: Funcionalidade 5, funcoesIndice e funcoesCriadas .c e .h"
+FLAGS = -Wall -Wpedantic -Werror -march=native -O3 -fsanitize=address
+MSG = "Ajustes finais"
 
 all: libed myapps
 
