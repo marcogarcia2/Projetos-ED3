@@ -135,8 +135,6 @@ void adicionaAresta(Grafo *grafo, Aresta *novaAresta, int posOrigem, int posDest
     grafo->vertices[posOrigem].numArestas++;
     grafo->vertices[posDestino].grau++;
     grafo->vertices[posDestino].grauEntrada++;
-
-    printf("Aresta %s adicionada ao vértice %s na posição [%d]\n", novaAresta->tecDestino, grafo->vertices[posOrigem].tecnologia, posOrigem);
 }
 
 
@@ -241,9 +239,6 @@ void insereGrafo(Grafo *grafo, Registro *r){
         int posOrigem = buscaBinariaGrafo(grafo, r->tecnologiaOrigem.string);
         int posDestino = buscaBinariaGrafo(grafo, r->tecnologiaDestino.string);
 
-        printf("grafo->vertices[posOrigem] = %s\n", grafo->vertices[posOrigem].tecnologia);
-        printf("grafo->vertices[posDestino] = %s\n", grafo->vertices[posDestino].tecnologia);
-
         // Caso o vértice de origem NÃO exista no grafo:
         if(strcmp(grafo->vertices[posOrigem].tecnologia, r->tecnologiaOrigem.string) != 0){
 
@@ -255,7 +250,6 @@ void insereGrafo(Grafo *grafo, Registro *r){
 
             // inserimos o vértice no vetor, na posição correta
             adicionaVertice(grafo, vertOrigem, posOrigem);
-            printf("Vértice Criado: %s [%d]\n", r->tecnologiaOrigem.string, posOrigem);
         }
 
         // Caso o vértice de destino NÃO exista no grafo:
@@ -269,7 +263,6 @@ void insereGrafo(Grafo *grafo, Registro *r){
 
             // inserimos o vértice no vetor, na posição correta
             adicionaVertice(grafo, vertDestino, posDestino);
-            printf("Vértice Criado: %s [%d]\n", r->tecnologiaDestino.string, posDestino);
         }
         
         // Criando uma nova aresta
