@@ -61,15 +61,15 @@ void geraGrafo(char *nomeArquivoBIN){
         // Insere o registro no grafo
         insereGrafo(grafo, r);
 
+        liberaRegistro(r);
+
+
         byteOffset += TAM_REGISTRO;
     }
 
 
     // nomeTecnologia, grupo, grauEntrada, grauSaida, grau, nomeTecnologiaDestino, peso
     imprimeGrafo(grafo);
-
-
-
     destroiGrafo(grafo);
 
     fclose(arquivoBIN);

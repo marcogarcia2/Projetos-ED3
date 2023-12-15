@@ -235,9 +235,8 @@ void insereGrafo(Grafo *grafo, Registro *r){
     // Se o grafo não estiver vazio, temos mais alguns casos
     else{
 
-        // Verificando se as tecnologias já estão no grafo
+        // Verificando se a tecOrigem já está no grafo
         int posOrigem = buscaBinariaGrafo(grafo, r->tecnologiaOrigem.string);
-        int posDestino = buscaBinariaGrafo(grafo, r->tecnologiaDestino.string);
 
         // Caso o vértice de origem NÃO exista no grafo:
         if(strcmp(grafo->vertices[posOrigem].tecnologia, r->tecnologiaOrigem.string) != 0){
@@ -252,6 +251,9 @@ void insereGrafo(Grafo *grafo, Registro *r){
             adicionaVertice(grafo, vertOrigem, posOrigem);
         }
 
+        // Verificando se tecDestino já está no grafo
+        int posDestino = buscaBinariaGrafo(grafo, r->tecnologiaDestino.string);
+
         // Caso o vértice de destino NÃO exista no grafo:
         if(strcmp(grafo->vertices[posDestino].tecnologia, r->tecnologiaDestino.string) != 0){
             
@@ -264,10 +266,13 @@ void insereGrafo(Grafo *grafo, Registro *r){
             // inserimos o vértice no vetor, na posição correta
             adicionaVertice(grafo, vertDestino, posDestino);
         }
+
+        // Verificando se a tecOrigem já está no grafo
+        posOrigem = buscaBinariaGrafo(grafo, r->tecnologiaOrigem.string);
         
         // Criando uma nova aresta
         Aresta *a = criaAresta(r->tecnologiaDestino.string, r->peso);
-        adicionaAresta(grafo, a, posOrigem, posDestino);    
+        adicionaAresta(grafo, a, posOrigem, posDestino); 
     }
 }
 
