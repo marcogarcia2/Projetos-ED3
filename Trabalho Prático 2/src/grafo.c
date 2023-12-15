@@ -241,8 +241,14 @@ void insereGrafo(Grafo *grafo, Registro *r){
         int posOrigem = buscaBinariaGrafo(grafo, r->tecnologiaOrigem.string);
         int posDestino = buscaBinariaGrafo(grafo, r->tecnologiaDestino.string);
 
+        printf("grafo->vertices[posOrigem] = %s\n", grafo->vertices[posOrigem].tecnologia);
+        printf("grafo->vertices[posDestino] = %s\n", grafo->vertices[posDestino].tecnologia);
+
         // Caso o vértice de origem NÃO exista no grafo:
         if(strcmp(grafo->vertices[posOrigem].tecnologia, r->tecnologiaOrigem.string) != 0){
+
+            // Corrigindo a Posição
+            if(strcmp(r->tecnologiaOrigem.string, grafo->vertices[posOrigem].tecnologia) > 0) posOrigem++;
 
             // Criando um novo vértice
             Vertice *vertOrigem = criaVertice(r->tecnologiaOrigem.string, r->grupo); // VERIFICAR ISSO AQUI
@@ -254,6 +260,9 @@ void insereGrafo(Grafo *grafo, Registro *r){
 
         // Caso o vértice de destino NÃO exista no grafo:
         if(strcmp(grafo->vertices[posDestino].tecnologia, r->tecnologiaDestino.string) != 0){
+            
+            // Corrigindo a Posição
+            if(strcmp(r->tecnologiaDestino.string, grafo->vertices[posDestino].tecnologia) > 0) posDestino++;
 
             // Criando um novo vértice
             Vertice *vertDestino = criaVertice(r->tecnologiaDestino.string, r->grupo); // VERIFICAR ISSO AQUI
