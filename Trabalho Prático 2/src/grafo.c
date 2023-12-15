@@ -52,7 +52,7 @@ Vertice *criaVertice(char *tecnologia, int grupo){
     v->grauEntrada = 0;
     v->grauSaida = 0;
     v->arestaInicial = NULL;
-
+    
     return v;
 }
 
@@ -65,62 +65,6 @@ Grafo *criaGrafo(void){
     G->numVertices = 0;
     
     return G;
-}
-
-void bubbleSort(Grafo *grafo){
-
-    // Variável auxiliar
-    Vertice aux;
-    bool flag = false;
-
-    // Percorre o vetor de vértices
-    for (int i = 0; i < grafo->numVertices; i++){
-
-        // Percorre o vetor de vértices
-        for (int j = 0; j < grafo->numVertices - 1 - i; j++){
-
-            // Se o vértice j vier depois do vértice j+1 na ordem alfabética, trocamos
-            if (strcmp(grafo->vertices[j].tecnologia, grafo->vertices[j+1].tecnologia) > 0){
-                aux = grafo->vertices[j];
-                grafo->vertices[j] = grafo->vertices[j+1];
-                grafo->vertices[j+1] = aux;
-                flag = true;
-            }
-        }
-
-        if (!flag) break;
-    }
-}
-
-void insertionSort(Grafo *grafo) {
-
-    // Variável auxiliar
-    Vertice aux;
-    int j;
-
-    // Percorre o vetor de vértices
-    for (int i = 1; i < grafo->numVertices; i++) {
-        aux = grafo->vertices[i];
-        j = i - 1;
-
-        // Move os elementos do vetor[0..i-1], que são maiores que a chave, para uma posição à frente de sua posição atual
-        while (j >= 0 && strcmp(grafo->vertices[j].tecnologia, aux.tecnologia) > 0) {
-            grafo->vertices[j + 1] = grafo->vertices[j];
-            j = j - 1;
-        }
-        grafo->vertices[j + 1] = aux;
-    }
-}
-
-int escaneiaGrafo(Grafo *grafo, char *tec){
-
-    int i;
-
-    for (i = 0; i < grafo->numVertices; i++)
-        if (!strcmp(grafo->vertices[i].tecnologia, tec))
-            return i;
-
-    return -1;
 }
 
 int buscaBinariaGrafoRecursiva(Grafo *grafo, int inf, int sup, char *chave){
@@ -141,16 +85,19 @@ int buscaBinariaGrafo(Grafo *grafo, char *chave){
 }
 
 // Função que adiciona uma aresta a um vértice
+/*
 void adicionaAresta(Grafo *grafo, Aresta *novaAresta, int posOrigem, int posDestino){
-
     // Adicionando a aresta
+    int i = 0;
     while(1) {
-        
+        printf("iteracao %d\n", i++);
+    
         Aresta *arestaAtual = grafo->vertices[posOrigem].arestaInicial;
 
         // Se a aresta já existe, não precisamos adicionar // (PRECISA?)
-        if (!strcmp(novaAresta->tecDestino, arestaAtual->tecDestino)) return;
-
+        if (!strcmp(novaAresta->tecDestino, arestaAtual->tecDestino)) {
+            return;
+        }
         // Enquanto isso aqui der < 0, significa que estamos caminhando
         // No momento que der > 0, significa que encontramos o lugar para inserir
         else if (arestaAtual->prox != NULL || strcmp(novaAresta->tecDestino, arestaAtual->tecDestino) < 0){
@@ -169,6 +116,30 @@ void adicionaAresta(Grafo *grafo, Aresta *novaAresta, int posOrigem, int posDest
     grafo->vertices[posDestino].grau++;
     grafo->vertices[posDestino].grauEntrada++;
 }
+
+*/
+
+//
+void adicionaAresta(Grafo *grafo, Aresta *novaAresta, int posOrigem, int posDestino){
+    // Adicionando a aresta
+    Aresta **p = &(grafo->vertices[posOrigem].arestaInicial);
+    while (*p != NULL && strcmp(novaAresta->tecDestino, (*p)->tecDestino) > 0) {
+        p = &(*p)->prox;
+    }
+    novaAresta->prox = *p;
+    *p = novaAresta;
+
+    // Atualizando os atributos do vértice
+    grafo->vertices[posOrigem].grau++;
+    grafo->vertices[posOrigem].grauSaida++;
+    grafo->vertices[posOrigem].numArestas++;
+    grafo->vertices[posDestino].grau++;
+    grafo->vertices[posDestino].grauEntrada++;
+
+    printf("Aresta %s adicionada ao vértice %s na posição [%d]\n", novaAresta->tecDestino, grafo->vertices[posOrigem].tecnologia, posOrigem);
+}
+
+
 
 // Função que procura o local correto de um grafo para inserir o novo vértice
 int procuraGrafo(Grafo *grafo, char *tecnologia){
@@ -189,7 +160,7 @@ void adicionaVertice(Grafo *grafo, Vertice *v, int local){
 
     // Realocando memória para o novo vértice
     Vertice* temp = realloc(grafo->vertices, (grafo->numVertices + 1) * sizeof(Vertice));
-    
+   
     if(temp == NULL) {
         // Falha na realocação de memória
         return;
@@ -199,9 +170,9 @@ void adicionaVertice(Grafo *grafo, Vertice *v, int local){
     grafo->numVertices++;
 
     // Shiftando os vértices para a direita
-    for (int i = grafo->numVertices - 1; i > local; i--)
+    for (int i = grafo->numVertices - 1; i > local; i--){
         grafo->vertices[i] = grafo->vertices[i-1];
-
+    }
     // Inserindo o novo vértice
     grafo->vertices[local] = *v;
 }
@@ -265,31 +236,33 @@ void insereGrafo(Grafo *grafo, Registro *r){
 
     // Se o grafo não estiver vazio, temos mais alguns casos
     else{
+
         // Verificando se as tecnologias já estão no grafo
         int posOrigem = buscaBinariaGrafo(grafo, r->tecnologiaOrigem.string);
         int posDestino = buscaBinariaGrafo(grafo, r->tecnologiaDestino.string);
-        
-        // Caso o vértice de destino NÃO exista no grafo:
-        if(strcmp(grafo->vertices[posDestino].tecnologia, r->tecnologiaDestino.string) != 0){
-
-            // Criando um novo vértice
-            Vertice *v = criaVertice(r->tecnologiaDestino.string, r->grupo); // VERIFICAR ISSO AQUI
-
-            // inserimos o vértice no vetor, na posição correta
-            adicionaVertice(grafo, v, posDestino);
-        }
 
         // Caso o vértice de origem NÃO exista no grafo:
         if(strcmp(grafo->vertices[posOrigem].tecnologia, r->tecnologiaOrigem.string) != 0){
 
             // Criando um novo vértice
-            Vertice *v = criaVertice(r->tecnologiaOrigem.string, r->grupo); // VERIFICAR ISSO AQUI
+            Vertice *vertOrigem = criaVertice(r->tecnologiaOrigem.string, r->grupo); // VERIFICAR ISSO AQUI
 
             // inserimos o vértice no vetor, na posição correta
-            adicionaVertice(grafo, v, posOrigem);
+            adicionaVertice(grafo, vertOrigem, posOrigem);
+            printf("Vértice Criado: %s [%d]\n", r->tecnologiaOrigem.string, posOrigem);
+        }
+
+        // Caso o vértice de destino NÃO exista no grafo:
+        if(strcmp(grafo->vertices[posDestino].tecnologia, r->tecnologiaDestino.string) != 0){
+
+            // Criando um novo vértice
+            Vertice *vertDestino = criaVertice(r->tecnologiaDestino.string, r->grupo); // VERIFICAR ISSO AQUI
+
+            // inserimos o vértice no vetor, na posição correta
+            adicionaVertice(grafo, vertDestino, posDestino);
+            printf("Vértice Criado: %s [%d]\n", r->tecnologiaDestino.string, posDestino);
         }
         
-
         // Criando uma nova aresta
         Aresta *a = criaAresta(r->tecnologiaDestino.string, r->peso);
         adicionaAresta(grafo, a, posOrigem, posDestino);    
@@ -305,17 +278,18 @@ void imprimeGrafo(Grafo *grafo){
         // Percorrendo o vetor de vértices
         for (int i = 0; i < grafo->numVertices; i++){
     
-            // Imprimindo os atributos do vértice
-            printf("%s, %d, %d, %d, %d, ", grafo->vertices[i].tecnologia, grafo->vertices[i].grupo, grafo->vertices[i].grauEntrada, grafo->vertices[i].grauSaida, grafo->vertices[i].grau);
     
             // Percorrendo a lista de arestas
             Aresta *a = grafo->vertices[i].arestaInicial;
+
             while (a != NULL){
-                printf("%s, %d", a->tecDestino, a->peso);
+                // Imprimindo os atributos do vértice
+                printf("%s %d %d %d %d ", grafo->vertices[i].tecnologia, grafo->vertices[i].grupo, grafo->vertices[i].grauEntrada, grafo->vertices[i].grauSaida, grafo->vertices[i].grau);
+                printf("%s %d", a->tecDestino, a->peso);
+                printf("\n");
                 a = a->prox;
             }
     
-            printf("\n");
         }
 }
 
@@ -344,27 +318,3 @@ void destroiGrafo(Grafo *grafo){
     free(grafo->vertices);
     free(grafo);
 }
-
-
-// void destroiGrafo(Grafo *grafo){
-
-//     // Percorrendo o vetor de vértices
-//     for (int i = 0; i < grafo->numVertices; i++){
-
-//         // Percorrendo a lista de arestas
-//         Aresta *a = grafo->vertices[i].arestaInicial;
-//         while (a != NULL){
-//             Aresta *aux = a;
-//             a = a->prox;
-//             free(aux);
-//         }
-//     }
-
-//     // Liberando o vetor de vértices
-//     free(grafo->vertices);
-
-//     // Liberando o grafo
-//     free(grafo);
-// }
-
-
