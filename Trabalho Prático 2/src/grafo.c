@@ -188,17 +188,22 @@ void adicionaVertice(Grafo *grafo, Vertice *v, int local){
     // Local é a posição no vetor em que o vértice deve ser inserido
 
     // Realocando memória para o novo vértice
-    grafo->vertices = (Vertice*) realloc(grafo->vertices, (grafo->numVertices + 1) * sizeof(Vertice));
+    Vertice* temp = realloc(grafo->vertices, (grafo->numVertices + 1) * sizeof(Vertice));
+    
+    if(temp == NULL) {
+        // Falha na realocação de memória
+        return;
+    }
+
+    grafo->vertices = temp;
     grafo->numVertices++;
 
     // Shiftando os vértices para a direita
-    for (int i = grafo->numVertices; i > local+1; i--)
+    for (int i = grafo->numVertices - 1; i > local; i--)
         grafo->vertices[i] = grafo->vertices[i-1];
 
     // Inserindo o novo vértice
     grafo->vertices[local] = *v;
-
-
 }
 
 // Função que insere um registro em um grafo vazio
@@ -253,11 +258,13 @@ void insereGrafo(Grafo *grafo, Registro *r){
     // Se não for, vamos inserir no vértice correspondente.
 
     // Se o grafo estiver vazio, precisamos criar um vértice novo
-    if (grafo->numVertices == 0) insereGrafoVazio(r, grafo);
+    if (grafo->numVertices == 0) {
+        insereGrafoVazio(r, grafo);
+    }
+    
 
     // Se o grafo não estiver vazio, temos mais alguns casos
     else{
-        
         // Verificando se as tecnologias já estão no grafo
         int posOrigem = buscaBinariaGrafo(grafo, r->tecnologiaOrigem.string);
         int posDestino = buscaBinariaGrafo(grafo, r->tecnologiaDestino.string);
@@ -281,6 +288,7 @@ void insereGrafo(Grafo *grafo, Registro *r){
             // inserimos o vértice no vetor, na posição correta
             adicionaVertice(grafo, v, posOrigem);
         }
+        
 
         // Criando uma nova aresta
         Aresta *a = criaAresta(r->tecnologiaDestino.string, r->peso);
