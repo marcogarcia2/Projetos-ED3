@@ -64,7 +64,9 @@ void geraGrafo(char *nomeArquivoBIN){
         byteOffset += TAM_REGISTRO;
     }
 
-    imprimeGrafo();
+
+    // nomeTecnologia, grupo, grauEntrada, grauSaida, grau, nomeTecnologiaDestino, peso
+    imprimeGrafo(grafo);
 
 
 
