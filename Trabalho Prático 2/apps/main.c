@@ -60,6 +60,11 @@ int main (int argc, char *argv[]){
         insercaoNosArquivos(nomeArquivoBIN, nomeArquivoIND, n);
         break;
 
+    case 8: // Funcionalidade 8
+        scanf("%s", nomeArquivoBIN);
+        geraGrafo(nomeArquivoBIN);
+        break;
+
     default:
         break;
     }

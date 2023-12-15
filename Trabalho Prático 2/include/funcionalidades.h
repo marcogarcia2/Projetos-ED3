@@ -30,4 +30,7 @@ void buscaComIndice(char *nomeArquivoBIN, char *nomeArquivoIND, int n);
 // Funcionalidade 7
 void insercaoNosArquivos(char *nomeArquivoBIN, char *nomeArquivoIND, int n);
 
+// Funcionalidade 8
+void geraGrafo(char *nomeArquivoBIN);
+
 #endif
