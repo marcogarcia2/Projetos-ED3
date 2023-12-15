@@ -4,7 +4,7 @@ INCLUDE = ./include
 OBJ = ./obj
 SRC = ./src
 FLAGS = -Wall -Wpedantic -Werror -march=native -O3 -fsanitize=address
-MSG = "Busca binária implementada"
+MSG = "Insere Grafo Esquematicamente implementado"
 
 all: libed myapps
 
@@ -19,7 +19,9 @@ libed:
 	@gcc $(FLAGS) -c $(SRC)/funcionalidade5.c -I $(INCLUDE) -o $(OBJ)/funcionalidade5.o
 	@gcc $(FLAGS) -c $(SRC)/funcionalidade6.c -I $(INCLUDE) -o $(OBJ)/funcionalidade6.o
 	@gcc $(FLAGS) -c $(SRC)/funcionalidade7.c -I $(INCLUDE) -o $(OBJ)/funcionalidade7.o
+	@gcc $(FLAGS) -c $(SRC)/funcionalidade8.c -I $(INCLUDE) -o $(OBJ)/funcionalidade8.o
 	@gcc $(FLAGS) -c $(SRC)/lista.c -I $(INCLUDE) -o $(OBJ)/lista.o
+	@gcc $(FLAGS) -c $(SRC)/grafo.c -I $(INCLUDE) -o $(OBJ)/grafo.o
 
 myapps:
 	@gcc $(FLAGS) $(APPS)/main.c $(OBJ)/*.o -I $(INCLUDE) -o $(BIN)/main

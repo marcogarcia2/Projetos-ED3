@@ -18,21 +18,21 @@
 void geraGrafo(char *nomeArquivoBIN){ 
 
     // Abrindo o arquivo binário
-    FILE *ArquivoBIN = fopen(nomeArquivoBIN, "rb");
-    if (ArquivoBIN == NULL){
+    FILE *arquivoBIN = fopen(nomeArquivoBIN, "rb");
+    if (arquivoBIN == NULL){
         printf("Falha no processamento do arquivo.\n");
         return;
     }
 
     // Lê o cabeçalho do arquivo binário
     Cabecalho *cabecalho = criaCabecalho();
-    leCabecalhoBin(ArquivoBIN, cabecalho);
+    leCabecalho(cabecalho, arquivoBIN);
 
     // Verifica se o arquivo está consistente
     if (cabecalho->status == '0'){
         printf("Falha no processamento do arquivo.\n");
         free(cabecalho);
-        fclose(ArquivoBIN);
+        fclose(arquivoBIN);
         return;
     }
 
@@ -49,7 +49,7 @@ void geraGrafo(char *nomeArquivoBIN){
         
         // Lendo o registro
         r = criaRegistro();
-        r = leRegistro(byteOffset, r, ArquivoBIN);
+        r = leRegistro(byteOffset, r, arquivoBIN);
 
         // Verifica se o registro foi removido
         if (r->removido == '1'){
@@ -64,11 +64,12 @@ void geraGrafo(char *nomeArquivoBIN){
         byteOffset += TAM_REGISTRO;
     }
 
-    
-
-    //destroiGrafo(grafo);
+    imprimeGrafo();
 
 
-    fclose(ArquivoBIN);
+
+    destroiGrafo(grafo);
+
+    fclose(arquivoBIN);
     free(cabecalho);
 }

@@ -17,8 +17,10 @@ typedef struct _aresta Aresta;
 Grafo *criaGrafo(void);
 
 // Função que adiciona um registro todo a um grafo
-void insereGrafo(Registro *r, Grafo *grafo);
+void insereGrafo(Grafo *grafo, Registro *r);
 
+// Função que destrói um grafo
+void destroiGrafo(Grafo *grafo);
 
 
 #endif

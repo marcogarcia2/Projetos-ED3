@@ -16,11 +16,9 @@ typedef struct _aresta{
     struct _aresta *prox;
 } Aresta;
 
-// AZURE .NET C# JAVA PYTHON PHP JAVASCRIPT RUBY GO C++ C SWIFT
-// .NET   C#
-// JAVA
+// 
 typedef struct _vertice{
-    char tecOrigem[30];
+    char tecnologia[30];
     int grupo;
     int grau, grauEntrada, grauSaida;
     Aresta *arestaInicial;
@@ -34,22 +32,22 @@ typedef struct _grafo{
 } Grafo;
 
 // Função que cria uma aresta
-Aresta *criaAresta(void){
+Aresta *criaAresta(char *tecDestino, int peso){
     
     Aresta *a = (Aresta*) malloc(sizeof(Aresta));
-    a->tecDestino[0] = '\0';
-    a->peso = -1;
+    strcpy(a->tecDestino, tecDestino);
+    a->peso = peso;
     a->prox = NULL;
 
     return a;
 }
 
 // Função que cria um vértice
-Vertice *criaVertice(void){
+Vertice *criaVertice(char *tecnologia, int grupo){
 
     Vertice *v = (Vertice*) malloc(sizeof(Vertice));
-    v->tecOrigem[0] = '\0';
-    v->grupo = -1;
+    strcpy(v->tecnologia, tecnologia);
+    v->grupo = grupo;
     v->grau = 0;
     v->grauEntrada = 0;
     v->grauSaida = 0;
@@ -82,7 +80,7 @@ void bubbleSort(Grafo *grafo){
         for (int j = 0; j < grafo->numVertices - 1 - i; j++){
 
             // Se o vértice j vier depois do vértice j+1 na ordem alfabética, trocamos
-            if (strcmp(grafo->vertices[j].tecOrigem, grafo->vertices[j+1].tecOrigem) > 0){
+            if (strcmp(grafo->vertices[j].tecnologia, grafo->vertices[j+1].tecnologia) > 0){
                 aux = grafo->vertices[j];
                 grafo->vertices[j] = grafo->vertices[j+1];
                 grafo->vertices[j+1] = aux;
@@ -106,7 +104,7 @@ void insertionSort(Grafo *grafo) {
         j = i - 1;
 
         // Move os elementos do vetor[0..i-1], que são maiores que a chave, para uma posição à frente de sua posição atual
-        while (j >= 0 && strcmp(grafo->vertices[j].tecOrigem, aux.tecOrigem) > 0) {
+        while (j >= 0 && strcmp(grafo->vertices[j].tecnologia, aux.tecnologia) > 0) {
             grafo->vertices[j + 1] = grafo->vertices[j];
             j = j - 1;
         }
@@ -119,7 +117,7 @@ int escaneiaGrafo(Grafo *grafo, char *tec){
     int i;
 
     for (i = 0; i < grafo->numVertices; i++)
-        if (!strcmp(grafo->vertices[i].tecOrigem, tec))
+        if (!strcmp(grafo->vertices[i].tecnologia, tec))
             return i;
 
     return -1;
@@ -128,32 +126,89 @@ int escaneiaGrafo(Grafo *grafo, char *tec){
 int buscaBinariaGrafoRecursiva(Grafo *grafo, int inf, int sup, char *chave){
     // Critério de parada é quando inf é igual, busca em vetor unitario ou parametros inf e sup invalidos
     if(inf >= sup)
-        return (inf == sup && !strcmp(chave, grafo->vertices[inf].tecOrigem)) ? inf: -1; // -1 é um codigo de erro que indica que nao achou, ou que inf e sup foram passados errados inicialmente 
+        return inf;
     
     int meio = inf + (sup - inf) / 2;
-    if (!strcmp(chave, grafo->vertices[meio].tecOrigem))
+    if (!strcmp(chave, grafo->vertices[meio].tecnologia))
         return meio;
 
     // Busca recursivamente na metade inferior ou superior
-    return (strcmp(chave, grafo->vertices[meio].tecOrigem) < 0) ? busca_binaria_recursiva(grafo, inf, meio - 1, chave) : busca_binaria_recursiva(grafo, meio + 1, sup, chave);
+    return (strcmp(chave, grafo->vertices[meio].tecnologia) < 0) ? buscaBinariaGrafoRecursiva(grafo, inf, meio - 1, chave) : buscaBinariaGrafoRecursiva(grafo, meio + 1, sup, chave);
 }
 
 int buscaBinariaGrafo(Grafo *grafo, char *chave){
     return buscaBinariaGrafoRecursiva(grafo, 0, grafo->numVertices - 1, chave);
 }
 
+// Função que adiciona uma aresta a um vértice
+void adicionaAresta(Grafo *grafo, Aresta *novaAresta, int posOrigem, int posDestino){
+
+    // Adicionando a aresta
+    while(1) {
+        
+        Aresta *arestaAtual = grafo->vertices[posOrigem].arestaInicial;
+
+        // Se a aresta já existe, não precisamos adicionar // (PRECISA?)
+        if (!strcmp(novaAresta->tecDestino, arestaAtual->tecDestino)) return;
+
+        // Enquanto isso aqui der < 0, significa que estamos caminhando
+        // No momento que der > 0, significa que encontramos o lugar para inserir
+        else if (arestaAtual->prox != NULL || strcmp(novaAresta->tecDestino, arestaAtual->tecDestino) < 0){
+            novaAresta->prox = arestaAtual->prox;
+            arestaAtual->prox = novaAresta;
+            break;
+        }
+
+        arestaAtual = arestaAtual->prox;
+    }
+
+    // Atualizando os atributos do vértice
+    grafo->vertices[posOrigem].grau++;
+    grafo->vertices[posOrigem].grauSaida++;
+    grafo->vertices[posOrigem].numArestas++;
+    grafo->vertices[posDestino].grau++;
+    grafo->vertices[posDestino].grauEntrada++;
+}
+
+// Função que procura o local correto de um grafo para inserir o novo vértice
+int procuraGrafo(Grafo *grafo, char *tecnologia){
+    /////////////////////////// CONFERIRRRRR
+    int i = 0;
+
+    for(i = 0; i < grafo->numVertices; i++)
+        if(strcmp(grafo->vertices[i].tecnologia, tecnologia) > 0)
+            break;
+
+    return i;
+}
+
+// Função que adiciona um vértice a um grafo
+void adicionaVertice(Grafo *grafo, Vertice *v, int local){
+
+    // Local é a posição no vetor em que o vértice deve ser inserido
+
+    // Realocando memória para o novo vértice
+    grafo->vertices = (Vertice*) realloc(grafo->vertices, (grafo->numVertices + 1) * sizeof(Vertice));
+    grafo->numVertices++;
+
+    // Shiftando os vértices para a direita
+    for (int i = grafo->numVertices; i > local+1; i--)
+        grafo->vertices[i] = grafo->vertices[i-1];
+
+    // Inserindo o novo vértice
+    grafo->vertices[local] = *v;
+
+
+}
+
 // Função que insere um registro em um grafo vazio
-insereGrafoVazio(Registro *r, Grafo *grafo){
+void insereGrafoVazio(Registro *r, Grafo *grafo){
 
     // Quando o grafo está vazio, iremos inserir dois novos vértices
-    grafo->vertices = (Vertice*) calloc(2, sizeof(Vertice));
+    grafo->vertices = (Vertice*) malloc(2 * sizeof(Vertice));
 
     // Criando um novo vértice
-    Vertice *v1 = criaVertice();
-
-    // Copiando os valores necessários do registro para o vértice
-    strcpy(v1->tecOrigem, r->tecnologiaOrigem.string);
-    v1->grupo = r->grupo;
+    Vertice *v1 = criaVertice(r->tecnologiaOrigem.string, r->grupo);
 
     // Atribuindo o vértice ao grafo
     grafo->vertices[0] = *v1;
@@ -162,36 +217,35 @@ insereGrafoVazio(Registro *r, Grafo *grafo){
     // Antes de adicionar a aresta, precisamos criar um novo vértice, o da tecDestino
 
     // Verificando se a string não é nula
-    if (!strcmp(r->tecnologiaDestino.string, "")) return;
+    if (!strcmp(r->tecnologiaDestino.string, "") || !strcmp(r->tecnologiaDestino.string, r->tecnologiaOrigem.string)) return;
 
-    Vertice *v2 = criaVertice();
-    strcpy(v2->tecOrigem, r->tecnologiaDestino.string);
-    v2->grupo = r->grupo; // ???????????????????????????????/
+    Vertice *v2 = criaVertice(r->tecnologiaDestino.string, r->grupo); // VERIFICAR ISSO AQUI
     
     grafo->vertices[1] = *v2;
     grafo->numVertices++;
 
-    // Entretanto, v2 pode vir antes de v1 na ordem alfabética, ordenemos (existe essa palavra?)
-    insertionSort(grafo);
 
-    // Aresta
-    Aresta *a = criaAresta();
-    strcpy(a->tecDestino, r->tecnologiaDestino.string);
-    a->peso = r->peso;
+    // Criando a aresta
+    Aresta *aresta = criaAresta(r->tecnologiaDestino.string, r->peso);
 
     // Atualizando na mão os atributos
-    grafo->vertices[0].arestaInicial = a;
+    grafo->vertices[0].arestaInicial = aresta;
     grafo->vertices[0].numArestas++;
-
-
     grafo->vertices[0].grau++;
     grafo->vertices[0].grauSaida++;
     grafo->vertices[1].grau++;
     grafo->vertices[1].grauEntrada++;
+
+    // Entretanto, v2 pode vir antes de v1 na ordem alfabética, ordenemos (existe essa palavra?)
+    if(strcmp(grafo->vertices[0].tecnologia, grafo->vertices[1].tecnologia) > 0){
+        Vertice aux = grafo->vertices[0];
+        grafo->vertices[0] = grafo->vertices[1];
+        grafo->vertices[1] = aux;
+    }
 }
 
 // Função que adiciona um registro todo a um grafo
-void insereGrafo(Registro *r, Grafo *grafo){
+void insereGrafo(Grafo *grafo, Registro *r){
 
     // Se tecnologiaOrigem for nula, não inserimos nada
     if (!strcmp(r->tecnologiaOrigem.string, "")) return;
@@ -204,41 +258,82 @@ void insereGrafo(Registro *r, Grafo *grafo){
     // Se o grafo não estiver vazio, temos mais alguns casos
     else{
         
-        // Verificando se a tecnologiaOrigem já está no grafo
-        int posOrigem = escaneiaGrafo(grafo, r->tecnologiaOrigem.string);
-        int posDestino = escaneiaGrafo(grafo, r->tecnologiaDestino.string);
+        // Verificando se as tecnologias já estão no grafo
+        int posOrigem = buscaBinariaGrafo(grafo, r->tecnologiaOrigem.string);
+        int posDestino = buscaBinariaGrafo(grafo, r->tecnologiaDestino.string);
         
-        // Caso 1: a tecnologiaOrigem já está no grafo
-        if (posOrigem != -1){
-            // Não é necessário criar um novo vértice para a origem
-            // Talvez seja necessário criar um para a tecDestino
+        // Caso o vértice de destino NÃO exista no grafo:
+        if(strcmp(grafo->vertices[posDestino].tecnologia, r->tecnologiaDestino.string) != 0){
 
+            // Criando um novo vértice
+            Vertice *v = criaVertice(r->tecnologiaDestino.string, r->grupo); // VERIFICAR ISSO AQUI
 
-            // Caso 1.1: a tecnologiaDestino já está no grafo
-            if (posDestino != -1){
-                
-                // Criamos direto a Aresta entre elas
-                Aresta *a = criaAresta();
-                strcpy(a->tecDestino, r->tecnologiaDestino.string);
-
-
-            }
-
-
-            // Caso 2: a tecnologiaOrigem não está no grafo
-        } else{
-
-            
+            // inserimos o vértice no vetor, na posição correta
+            adicionaVertice(grafo, v, posDestino);
         }
 
+        // Caso o vértice de origem NÃO exista no grafo:
+        if(strcmp(grafo->vertices[posOrigem].tecnologia, r->tecnologiaOrigem.string) != 0){
 
+            // Criando um novo vértice
+            Vertice *v = criaVertice(r->tecnologiaOrigem.string, r->grupo); // VERIFICAR ISSO AQUI
 
+            // inserimos o vértice no vetor, na posição correta
+            adicionaVertice(grafo, v, posOrigem);
+        }
 
+        // Criando uma nova aresta
+        Aresta *a = criaAresta(r->tecnologiaDestino.string, r->peso);
+        adicionaAresta(grafo, a, posOrigem, posDestino);    
+    }
+}
 
+// Função que destrói vértice
+void destroiVertice(Vertice *v){
 
-
+    Aresta *aux1 = v->arestaInicial;
+    Aresta *aux2 = NULL;
+    
+    while(aux1 != NULL){
+        aux2 = aux1;
+        aux1 = aux1->prox;
+        free(aux2);
     }
 
+    //free(v);
 }
+
+// Função que destrói um grafo
+void destroiGrafo(Grafo *grafo){
+
+    for (int i = 0; i < grafo->numVertices; i++){
+        destroiVertice(&grafo->vertices[i]);
+    }
+
+    free(grafo->vertices);
+    free(grafo);
+}
+
+
+// void destroiGrafo(Grafo *grafo){
+
+//     // Percorrendo o vetor de vértices
+//     for (int i = 0; i < grafo->numVertices; i++){
+
+//         // Percorrendo a lista de arestas
+//         Aresta *a = grafo->vertices[i].arestaInicial;
+//         while (a != NULL){
+//             Aresta *aux = a;
+//             a = a->prox;
+//             free(aux);
+//         }
+//     }
+
+//     // Liberando o vetor de vértices
+//     free(grafo->vertices);
+
+//     // Liberando o grafo
+//     free(grafo);
+// }
 
 
