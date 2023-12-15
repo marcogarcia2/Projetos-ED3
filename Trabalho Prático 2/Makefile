@@ -4,7 +4,7 @@ INCLUDE = ./include
 OBJ = ./obj
 SRC = ./src
 FLAGS = -Wall -Wpedantic -Werror -march=native -O3 -fsanitize=address
-MSG = "Insere Grafo Esquematicamente implementado"
+MSG = "Imprime Grafo implementado"
 
 all: libed myapps
 

@@ -288,6 +288,29 @@ void insereGrafo(Grafo *grafo, Registro *r){
     }
 }
 
+// Função que imprime um grafo (nome tecnologia origem, grupo, grauEntrada, grauSaida, grau, nome tec destino e peso dele)
+/* nomeTecnologia do elemento i, grupo do elemento i, grau de entrada do 
+elemento  i,  grau  de  saída  do  elemento  i,  grau  do  elemento  i, 
+nomeTecnologia do elemento j e peso do elemento j.*/
+void imprimeGrafo(Grafo *grafo){
+    
+        // Percorrendo o vetor de vértices
+        for (int i = 0; i < grafo->numVertices; i++){
+    
+            // Imprimindo os atributos do vértice
+            printf("%s, %d, %d, %d, %d, ", grafo->vertices[i].tecnologia, grafo->vertices[i].grupo, grafo->vertices[i].grauEntrada, grafo->vertices[i].grauSaida, grafo->vertices[i].grau);
+    
+            // Percorrendo a lista de arestas
+            Aresta *a = grafo->vertices[i].arestaInicial;
+            while (a != NULL){
+                printf("%s, %d", a->tecDestino, a->peso);
+                a = a->prox;
+            }
+    
+            printf("\n");
+        }
+}
+
 // Função que destrói vértice
 void destroiVertice(Vertice *v){
 
