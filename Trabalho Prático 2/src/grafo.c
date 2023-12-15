@@ -9,19 +9,22 @@
 #include <string.h>
 #include <stdbool.h>
 
+//
 typedef struct _aresta{
     char tecDestino[30];
     int peso;
     struct _aresta *prox;
 } Aresta;
 
-// AZURE .NET
+// AZURE .NET C# JAVA PYTHON PHP JAVASCRIPT RUBY GO C++ C SWIFT
+// .NET   C#
+// JAVA
 typedef struct _vertice{
     char tecOrigem[30];
     int grupo;
     int grau, grauEntrada, grauSaida;
-    Aresta *arestas;
-    //unsigned int numArestas;
+    Aresta *arestaInicial;
+    unsigned int numArestas;
 } Vertice;
 
 // Um grafo é composto de vértices
@@ -91,6 +94,37 @@ void bubbleSort(Grafo *grafo){
     }
 }
 
+void insertionSort(Grafo *grafo) {
+
+    // Variável auxiliar
+    Vertice aux;
+    int j;
+
+    // Percorre o vetor de vértices
+    for (int i = 1; i < grafo->numVertices; i++) {
+        aux = grafo->vertices[i];
+        j = i - 1;
+
+        // Move os elementos do vetor[0..i-1], que são maiores que a chave, para uma posição à frente de sua posição atual
+        while (j >= 0 && strcmp(grafo->vertices[j].tecOrigem, aux.tecOrigem) > 0) {
+            grafo->vertices[j + 1] = grafo->vertices[j];
+            j = j - 1;
+        }
+        grafo->vertices[j + 1] = aux;
+    }
+}
+
+int escaneiaGrafo(Grafo *grafo, char *tec){
+
+    int i;
+
+    for (i = 0; i < grafo->numVertices; i++)
+        if (!strcmp(grafo->vertices[i].tecOrigem, tec))
+            return i;
+
+    return -1;
+}
+
 // Função que insere um registro em um grafo vazio
 insereGrafoVazio(Registro *r, Grafo *grafo){
 
@@ -108,7 +142,11 @@ insereGrafoVazio(Registro *r, Grafo *grafo){
     grafo->vertices[0] = *v1;
     grafo->numVertices++;
 
-    // Antes de adicionar a aresta, precisamos criar um novo vértice, da tecDestino
+    // Antes de adicionar a aresta, precisamos criar um novo vértice, o da tecDestino
+
+    // Verificando se a string não é nula
+    if (!strcmp(r->tecnologiaDestino.string, "")) return;
+
     Vertice *v2 = criaVertice();
     strcpy(v2->tecOrigem, r->tecnologiaDestino.string);
     v2->grupo = r->grupo; // ???????????????????????????????/
@@ -117,11 +155,22 @@ insereGrafoVazio(Registro *r, Grafo *grafo){
     grafo->numVertices++;
 
     // Entretanto, v2 pode vir antes de v1 na ordem alfabética, ordenemos (existe essa palavra?)
-    bubbleSort(grafo);
+    insertionSort(grafo);
+
+    // Aresta
+    Aresta *a = criaAresta();
+    strcpy(a->tecDestino, r->tecnologiaDestino.string);
+    a->peso = r->peso;
+
+    // Atualizando na mão os atributos
+    grafo->vertices[0].arestaInicial = a;
+    grafo->vertices[0].numArestas++;
 
 
-    // Criando a aresta
-
+    grafo->vertices[0].grau++;
+    grafo->vertices[0].grauSaida++;
+    grafo->vertices[1].grau++;
+    grafo->vertices[1].grauEntrada++;
 }
 
 // Função que adiciona um registro todo a um grafo
@@ -134,6 +183,44 @@ void insereGrafo(Registro *r, Grafo *grafo){
 
     // Se o grafo estiver vazio, precisamos criar um vértice novo
     if (grafo->numVertices == 0) insereGrafoVazio(r, grafo);
+
+    // Se o grafo não estiver vazio, temos mais alguns casos
+    else{
+        
+        // Verificando se a tecnologiaOrigem já está no grafo
+        int posOrigem = escaneiaGrafo(grafo, r->tecnologiaOrigem.string);
+        int posDestino = escaneiaGrafo(grafo, r->tecnologiaDestino.string);
+        
+        // Caso 1: a tecnologiaOrigem já está no grafo
+        if (posOrigem != -1){
+            // Não é necessário criar um novo vértice para a origem
+            // Talvez seja necessário criar um para a tecDestino
+
+
+            // Caso 1.1: a tecnologiaDestino já está no grafo
+            if (posDestino != -1){
+                
+                // Criamos direto a Aresta entre elas
+                Aresta *a = criaAresta();
+                strcpy(a->tecDestino, r->tecnologiaDestino.string);
+
+
+            }
+
+
+            // Caso 2: a tecnologiaOrigem não está no grafo
+        } else{
+
+            
+        }
+
+
+
+
+
+
+
+    }
 
 }
 
