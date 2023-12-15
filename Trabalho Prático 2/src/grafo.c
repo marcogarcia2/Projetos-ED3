@@ -120,8 +120,11 @@ void adicionaAresta(Grafo *grafo, Aresta *novaAresta, int posOrigem, int posDest
 */
 
 //
-void adicionaAresta(Grafo *grafo, Aresta *novaAresta, int posOrigem, int posDestino){
+void adicionaAresta(Grafo *grafo, Aresta *novaAresta, int grupo, int posOrigem, int posDestino){
     // Adicionando a aresta
+
+    grafo->vertices[posOrigem].grupo = grupo;
+
     Aresta **p = &(grafo->vertices[posOrigem].arestaInicial);
     while (*p != NULL && strcmp(novaAresta->tecDestino, (*p)->tecDestino) > 0) {
         p = &(*p)->prox;
@@ -262,18 +265,18 @@ void insereGrafo(Grafo *grafo, Registro *r){
             if(strcmp(r->tecnologiaDestino.string, grafo->vertices[posDestino].tecnologia) > 0) posDestino++;
 
             // Criando um novo vértice
-            Vertice *vertDestino = criaVertice(r->tecnologiaDestino.string, r->grupo); // VERIFICAR ISSO AQUI
+            Vertice *vertDestino = criaVertice(r->tecnologiaDestino.string, -2);
 
             // inserimos o vértice no vetor, na posição correta
             adicionaVertice(grafo, vertDestino, posDestino);
         }
 
-        // Verificando se a tecOrigem já está no grafo
+        // Atualizando posOrigem
         posOrigem = buscaBinariaGrafo(grafo, r->tecnologiaOrigem.string);
         
         // Criando uma nova aresta
         Aresta *a = criaAresta(r->tecnologiaDestino.string, r->peso);
-        adicionaAresta(grafo, a, posOrigem, posDestino); 
+        adicionaAresta(grafo, a, r->grupo, posOrigem, posDestino); 
     }
 }
 
