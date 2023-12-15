@@ -237,22 +237,20 @@ elemento  i,  grau  de  saída  do  elemento  i,  grau  do  elemento  i,
 nomeTecnologia do elemento j e peso do elemento j.*/
 void imprimeGrafo(Grafo *grafo){
     
-        // Percorrendo o vetor de vértices
-        for (int i = 0; i < grafo->numVertices; i++){
-    
-    
-            // Percorrendo a lista de arestas
-            Aresta *a = grafo->vertices[i].arestaInicial;
+    // Percorrendo o vetor de vértices
+    for (int i = 0; i < grafo->numVertices; i++){
 
-            while (a != NULL){
-                // Imprimindo os atributos do vértice
-                printf("%s %d %d %d %d ", grafo->vertices[i].tecnologia, grafo->vertices[i].grupo, grafo->vertices[i].grauEntrada, grafo->vertices[i].grauSaida, grafo->vertices[i].grau);
-                printf("%s %d", a->tecDestino, a->peso);
-                printf("\n");
-                a = a->prox;
-            }
-    
+        // Percorrendo a lista de arestas
+        Aresta *a = grafo->vertices[i].arestaInicial;
+
+        while (a != NULL){
+            // Imprimindo os atributos do vértice
+            printf("%s %d %d %d %d ", grafo->vertices[i].tecnologia, grafo->vertices[i].grupo, grafo->vertices[i].grauEntrada, grafo->vertices[i].grauSaida, grafo->vertices[i].grau);
+            printf("%s %d", a->tecDestino, a->peso);
+            printf("\n");
+            a = a->prox;
         }
+    }
 }
 
 // Função que destrói vértice
