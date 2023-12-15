@@ -53,7 +53,7 @@ Vertice *criaVertice(void){
     v->grau = 0;
     v->grauEntrada = 0;
     v->grauSaida = 0;
-    v->arestas = NULL;
+    v->arestaInicial = NULL;
 
     return v;
 }
@@ -123,6 +123,23 @@ int escaneiaGrafo(Grafo *grafo, char *tec){
             return i;
 
     return -1;
+}
+
+int buscaBinariaGrafoRecursiva(Grafo *grafo, int inf, int sup, char *chave){
+    // Critério de parada é quando inf é igual, busca em vetor unitario ou parametros inf e sup invalidos
+    if(inf >= sup)
+        return (inf == sup && !strcmp(chave, grafo->vertices[inf].tecOrigem)) ? inf: -1; // -1 é um codigo de erro que indica que nao achou, ou que inf e sup foram passados errados inicialmente 
+    
+    int meio = inf + (sup - inf) / 2;
+    if (!strcmp(chave, grafo->vertices[meio].tecOrigem))
+        return meio;
+
+    // Busca recursivamente na metade inferior ou superior
+    return (strcmp(chave, grafo->vertices[meio].tecOrigem) < 0) ? busca_binaria_recursiva(grafo, inf, meio - 1, chave) : busca_binaria_recursiva(grafo, meio + 1, sup, chave);
+}
+
+int buscaBinariaGrafo(Grafo *grafo, char *chave){
+    return buscaBinariaGrafoRecursiva(grafo, 0, grafo->numVertices - 1, chave);
 }
 
 // Função que insere um registro em um grafo vazio

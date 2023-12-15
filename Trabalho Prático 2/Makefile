@@ -4,7 +4,7 @@ INCLUDE = ./include
 OBJ = ./obj
 SRC = ./src
 FLAGS = -Wall -Wpedantic -Werror -march=native -O3 -fsanitize=address
-MSG = "Retocando o código"
+MSG = "Busca binária implementada"
 
 all: libed myapps
 
