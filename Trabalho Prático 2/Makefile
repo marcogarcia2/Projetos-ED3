@@ -3,7 +3,7 @@ BIN = ./bin
 INCLUDE = ./include
 OBJ = ./obj
 SRC = ./src
-FLAGS = -Wall -Wpedantic -Werror -march=native -O3 -fsanitize=address
+FLAGS = -Wall -Wpedantic -Werror #-march=native -O3 -fsanitize=address
 MSG = "Imprime Grafo implementado"
 
 all: libed myapps

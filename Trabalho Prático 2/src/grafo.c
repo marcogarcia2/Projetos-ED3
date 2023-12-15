@@ -222,8 +222,9 @@ void insereGrafoVazio(Registro *r, Grafo *grafo){
 void insereGrafo(Grafo *grafo, Registro *r){
 
     // Se tecnologiaOrigem for nula, não inserimos nada
-    if (!strcmp(r->tecnologiaOrigem.string, "")) return;
-
+    if (!strcmp(r->tecnologiaOrigem.string, "") || !strcmp(r->tecnologiaDestino.string, "")) 
+        return;
+   
     // Se não for, vamos inserir no vértice correspondente.
 
     // Se o grafo estiver vazio, precisamos criar um vértice novo
