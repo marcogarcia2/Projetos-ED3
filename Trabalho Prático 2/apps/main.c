@@ -70,6 +70,11 @@ int main (int argc, char *argv[]){
         geraGrafoTransposto(nomeArquivoBIN);
         break;
 
+    case 10: // Funcionalidade 10
+        scanf("%s %d", nomeArquivoBIN, &n);
+        listaTecnologias(nomeArquivoBIN, n);
+        break;
+
     default:
         break;
     }

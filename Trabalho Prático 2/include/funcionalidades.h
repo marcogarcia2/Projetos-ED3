@@ -36,4 +36,7 @@ void geraGrafo(char *nomeArquivoBIN);
 // Funcionalidade 9
 void geraGrafoTransposto(char *nomeArquivoBIN);
 
+// Funcionalidade 10
+void listaTecnologias(char *nomeArquivoBIN, int n);
+
 #endif

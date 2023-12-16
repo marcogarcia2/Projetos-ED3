@@ -9,27 +9,7 @@
 #include <string.h>
 #include <stdbool.h>
 
-// Estrutura que define uma aresta de um grafo
-typedef struct _aresta{
-    char tecDestino[30];
-    int peso;
-    struct _aresta *prox;
-} Aresta;
 
-// Estrutura que define um vértice de um grafo
-typedef struct _vertice{
-    char tecnologia[30];
-    int grupo;
-    int grau, grauEntrada, grauSaida;
-    Aresta *arestaInicial;
-    unsigned int numArestas;
-} Vertice;
-
-// Estrutura que define um grafo
-typedef struct _grafo{
-    Vertice *vertices;
-    unsigned int numVertices;
-} Grafo;
 
 // Função que cria uma aresta
 Aresta *criaAresta(char *tecDestino, int peso){
