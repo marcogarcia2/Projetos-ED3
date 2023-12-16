@@ -7,34 +7,39 @@
 #define FUNCIONALIDADES_H
 
 #include <stdio.h>
+#include "grafo.h"
 
-// Funcionalidade 1
-void criaTabela(char *nomeArquivoCSV, char *nomeArquivoBIN);
+// // Funcionalidade 1
+// void criaTabela(char *nomeArquivoCSV, char *nomeArquivoBIN);
 
-// Funcionalidade 2
-void recuperaDados(const char* nomeArquivoBIN);
+// // Funcionalidade 2
+// void recuperaDados(const char* nomeArquivoBIN);
 
-// Funcionalidade 3
-void buscaPorCampo(char *nomeArquivoBIN, int N);
+// // Funcionalidade 3
+// void buscaPorCampo(char *nomeArquivoBIN, int N);
 
-// Funcionalidade 4
-void buscaPorRRN(char *nomeArquivoBIN, int RRN);
-void buscaArquivoDados(FILE *arquivoBIN, int rrn);
+// // Funcionalidade 4
+// void buscaPorRRN(char *nomeArquivoBIN, int RRN);
+// void buscaArquivoDados(FILE *arquivoBIN, int rrn);
 
-// Funcionalidade 5
-void geraArquivoIndice(char *nomeArquivoBIN, char *nomeArquivoIND);
+// // Funcionalidade 5
+// void geraArquivoIndice(char *nomeArquivoBIN, char *nomeArquivoIND);
 
-// Funcionalidade 6
-void buscaComIndice(char *nomeArquivoBIN, char *nomeArquivoIND, int n);
+// // Funcionalidade 6
+// void buscaComIndice(char *nomeArquivoBIN, char *nomeArquivoIND, int n);
 
-// Funcionalidade 7
-void insercaoNosArquivos(char *nomeArquivoBIN, char *nomeArquivoIND, int n);
+// // Funcionalidade 7
+// void insercaoNosArquivos(char *nomeArquivoBIN, char *nomeArquivoIND, int n);
+
+// Funcionalidade auxiliar para todas as abaixo
+Grafo *gerarGrafo(char *nomeArquivoBIN); 
+// -------------------------------------------- //
 
 // Funcionalidade 8
-void geraGrafo(char *nomeArquivoBIN);
+void exibeGrafo(char *nomeArquivoBIN);
 
 // Funcionalidade 9
-void geraGrafoTransposto(char *nomeArquivoBIN);
+void exibeGrafoTransposto(char *nomeArquivoBIN);
 
 // Funcionalidade 10
 void listaTecnologias(char *nomeArquivoBIN, int n);

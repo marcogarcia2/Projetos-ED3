@@ -9,7 +9,7 @@
 #include <string.h>
 #include <stdbool.h>
 
-
+// <----------------------- FUNÇÕES DE CRIAÇÃO -----------------------> //
 
 // Função que cria uma aresta
 Aresta *criaAresta(char *tecDestino, int peso){
@@ -46,6 +46,9 @@ Grafo *criaGrafo(void){
     
     return G;
 }
+
+
+// <----------------------- FUNÇÕES DE INSERÇÃO -----------------------> //
 
 // Busca binária no vetor de vértices
 int buscaBinariaGrafoRecursiva(Grafo *grafo, int inf, int sup, char *chave){
@@ -211,10 +214,7 @@ void insereGrafo(Grafo *grafo, Registro *r){
     }
 }
 
-// Função que imprime um grafo (nome tecnologia origem, grupo, grauEntrada, grauSaida, grau, nome tec destino e peso dele)
-/* nomeTecnologia do elemento i, grupo do elemento i, grau de entrada do 
-elemento  i,  grau  de  saída  do  elemento  i,  grau  do  elemento  i, 
-nomeTecnologia do elemento j e peso do elemento j.*/
+// Função que imprime um grafo 
 void imprimeGrafo(Grafo *grafo){
     
     // Percorrendo o vetor de vértices
@@ -231,7 +231,7 @@ void imprimeGrafo(Grafo *grafo){
             a = a->prox;
         }
     }
-
+    //(nome tecnologia origem, grupo, grauEntrada, grauSaida, grau, nome tec destino e peso dele)
     //printf("numVertices: %d\n", grafo->numVertices);
 }
 
@@ -271,6 +271,9 @@ Grafo *transpor(Grafo *grafo){
 
     return grafoTransposto;
 }
+
+
+// <----------------------- FUNÇÕES DE DESTRUIÇÃO -----------------------> //
 
 // Função que destrói vértice
 void destroiVertice(Vertice *v){
