@@ -3,8 +3,8 @@ BIN = ./bin
 INCLUDE = ./include
 OBJ = ./obj
 SRC = ./src
-FLAGS = -Wall -Wpedantic -Werror #-march=native -O3 -fsanitize=address
-MSG = "Comentários + Funcionalidade 8 implementada"
+FLAGS = -Wall -Wpedantic -Werror -march=native -O3 -fsanitize=address
+MSG = "Funcionalidade 9 quase pronta"
 
 all: libed myapps
 
@@ -20,6 +20,7 @@ libed:
 	@gcc $(FLAGS) -c $(SRC)/funcionalidade6.c -I $(INCLUDE) -o $(OBJ)/funcionalidade6.o
 	@gcc $(FLAGS) -c $(SRC)/funcionalidade7.c -I $(INCLUDE) -o $(OBJ)/funcionalidade7.o
 	@gcc $(FLAGS) -c $(SRC)/funcionalidade8.c -I $(INCLUDE) -o $(OBJ)/funcionalidade8.o
+	@gcc $(FLAGS) -c $(SRC)/funcionalidade9.c -I $(INCLUDE) -o $(OBJ)/funcionalidade9.o
 	@gcc $(FLAGS) -c $(SRC)/lista.c -I $(INCLUDE) -o $(OBJ)/lista.o
 	@gcc $(FLAGS) -c $(SRC)/grafo.c -I $(INCLUDE) -o $(OBJ)/grafo.o
 

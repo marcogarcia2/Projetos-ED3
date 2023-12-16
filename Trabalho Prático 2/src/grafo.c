@@ -251,6 +251,45 @@ void imprimeGrafo(Grafo *grafo){
             a = a->prox;
         }
     }
+
+    //printf("numVertices: %d\n", grafo->numVertices);
+}
+
+// Função que transpõe um grafo // NAO ESTA FUNCIONANDO PARA O GRUPO
+Grafo *transpor(Grafo *grafo){
+
+    Grafo *grafoTransposto = criaGrafo();
+
+    // Alocando o espaço para o novo grafo
+    grafoTransposto->numVertices = grafo->numVertices;
+    grafoTransposto->vertices = (Vertice*) malloc(grafo->numVertices * sizeof(Vertice));
+
+    // Percorrendo o vetor de vértices e adicionando os vértices
+    for(int i = 0; i < grafoTransposto->numVertices; i++){
+
+        grafoTransposto->vertices[i] = *criaVertice(grafo->vertices[i].tecnologia, grafo->vertices[i].grupo);
+    }
+
+    // Agora que todos os vértices foram adicionados, vamos inserir as arestas de forma inversa
+
+    for(int i = 0; i < grafoTransposto->numVertices; i++){
+            
+        // Percorrendo a lista de arestas
+        Aresta *a = grafo->vertices[i].arestaInicial;
+
+        while (a != NULL){
+            
+            // Criando uma nova aresta
+            Aresta *novaAresta = criaAresta(grafo->vertices[i].tecnologia, a->peso);
+
+            // Adicionando a aresta no grafo transposto
+            adicionaAresta(grafoTransposto, novaAresta, grafo->vertices[i].grupo, buscaBinariaGrafo(grafoTransposto, a->tecDestino), buscaBinariaGrafo(grafoTransposto, grafo->vertices[i].tecnologia));
+
+            a = a->prox;
+        }
+    }
+
+    return grafoTransposto;
 }
 
 // Função que destrói vértice

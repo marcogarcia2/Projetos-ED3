@@ -13,9 +13,9 @@
 #include "funcoesFornecidas.h"
 #include "grafo.h"
 
-// Funcionalidade 8: gera um Grafo a partir de um arquivo binário
+// Funcionalidade 9: gera um Grafo Transposto a partir de um arquivo binário
 
-void geraGrafo(char *nomeArquivoBIN){ 
+void geraGrafoTransposto(char *nomeArquivoBIN){ 
 
     // Abrindo o arquivo binário
     FILE *arquivoBIN = fopen(nomeArquivoBIN, "rb");
@@ -67,9 +67,14 @@ void geraGrafo(char *nomeArquivoBIN){
         byteOffset += TAM_REGISTRO;
     }
 
+    // Até aqui, igual a funcionalidade 8.
+    // Agora que temos o grafo, vamos transpô-lo.
+    Grafo *grafoTransposto = transpor(grafo);
+
     // nomeTecnologia, grupo, grauEntrada, grauSaida, grau, nomeTecnologiaDestino, peso
-    imprimeGrafo(grafo);
+    imprimeGrafo(grafoTransposto);
     destroiGrafo(grafo);
+    destroiGrafo(grafoTransposto);
 
     fclose(arquivoBIN);
     free(cabecalho);

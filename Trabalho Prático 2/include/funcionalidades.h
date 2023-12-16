@@ -33,4 +33,7 @@ void insercaoNosArquivos(char *nomeArquivoBIN, char *nomeArquivoIND, int n);
 // Funcionalidade 8
 void geraGrafo(char *nomeArquivoBIN);
 
+// Funcionalidade 9
+void geraGrafoTransposto(char *nomeArquivoBIN);
+
 #endif

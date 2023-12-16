@@ -19,6 +19,9 @@ Grafo *criaGrafo(void);
 // Função que adiciona um registro todo a um grafo
 void insereGrafo(Grafo *grafo, Registro *r);
 
+// Função que transpõe um grafo
+Grafo *transpor(Grafo *grafo);
+
 // Função que imprime um grafo
 void imprimeGrafo(Grafo *grafo);
 
