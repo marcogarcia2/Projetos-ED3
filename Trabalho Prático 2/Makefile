@@ -4,7 +4,7 @@ INCLUDE = ./include
 OBJ = ./obj
 SRC = ./src
 FLAGS = -Wall -Wpedantic -Werror #-march=native -O3 -fsanitize=address
-MSG = "Imprime Grafo implementado"
+MSG = "Comentários + Funcionalidade 8 implementada"
 
 all: libed myapps
 
@@ -33,7 +33,7 @@ commit:
 	git push origin main
 
 run:
-	$(BIN)/main
+	@$(BIN)/main
 
 clean:
 	rm $(BIN)/* $(OBJ)/*
