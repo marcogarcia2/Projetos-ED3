@@ -64,7 +64,10 @@ void kosaraju(char *nomeArquivoBIN){
 
     // Obtendo o grafo referente ao arquivo binário e seu transposto
     Grafo *grafo = gerarGrafo(nomeArquivoBIN);
-    if (grafo == NULL) return;
+    if (grafo == NULL) {
+        printf("Falha na execução da funcionalidade.");
+        return;
+    }
     Grafo *grafoTransposto = transpor(grafo);
 
     // Inicializando o vetor de vértices visitados -> todos iniciam falsos
@@ -72,7 +75,7 @@ void kosaraju(char *nomeArquivoBIN){
 
     // Inicializando a pilha que irá guardar a ordem de visita dos vértices
     int *pilha = (int*) calloc(grafo->numVertices, sizeof(int));
-    int topo = -1;
+    int topo = -1; 
 
     // Realizando a DFS (busca em profundidade) no grafo original
     for (int i = 0; i < grafo->numVertices; i++) {
@@ -104,12 +107,12 @@ void kosaraju(char *nomeArquivoBIN){
 
     // Imprimir se o grafo é fortemente conexo e o número de componentes
     if (numComponentes == 1)
-        printf("Sim, o grafo e fortemente conexo e possui 1 componente.");
+        printf("Sim, o grafo é fortemente conexo e possui 1 componente.");
     
     else 
-        printf("Nao, o grafo nao e fortemente conexo e possui %d componentes.", numComponentes);
+        printf("Não, o grafo não é fortemente conexo e possui %d componentes.", numComponentes);
     
-
+    
     // Liberando a memória
     destroiGrafo(grafo);
     destroiGrafo(grafoTransposto);

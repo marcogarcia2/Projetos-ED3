@@ -234,7 +234,7 @@ void imprimeGrafo(Grafo *grafo){
     //printf("numVertices: %d\n", grafo->numVertices);
 }
 
-// Função que transpõe um grafo // NAO ESTA FUNCIONANDO PARA O GRUPO
+// Função que retorna o grafo transposto ao de entrada
 Grafo *transpor(Grafo *grafo){
 
     Grafo *grafoTransposto = criaGrafo();

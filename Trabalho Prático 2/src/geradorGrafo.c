@@ -20,7 +20,7 @@ Grafo *gerarGrafo(char *nomeArquivoBIN){
     // Abrindo o arquivo binário
     FILE *arquivoBIN = fopen(nomeArquivoBIN, "rb");
     if (arquivoBIN == NULL){
-        printf("Falha no processamento do arquivo.\n");
+        printf("Falha na execução da funcionalidade.\n");
         return NULL;
     }
 
@@ -30,7 +30,7 @@ Grafo *gerarGrafo(char *nomeArquivoBIN){
 
     // Verifica se o arquivo está consistente
     if (cabecalho->status == '0'){
-        printf("Falha no processamento do arquivo.\n");
+        printf("Falha na execução da funcionalidade.\n");
         free(cabecalho);
         fclose(arquivoBIN);
         return NULL;
