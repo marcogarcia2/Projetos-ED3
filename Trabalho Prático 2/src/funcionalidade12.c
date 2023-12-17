@@ -23,8 +23,11 @@ void dijkstra(char *nomeArquivoBIN, int n){
     Grafo *grafo = gerarGrafo(nomeArquivoBIN);
 
     // Se o grafo for nulo, encerramos a função
-    if (grafo == NULL) return;
-    
+    if (grafo == NULL) {
+        printf("Falha na execução da funcionalidade.");
+        return;
+    }
+
     // Variáveis auxiliares
     char nomeTecnologiaOrigem[30], nomeTecnologiaDestino[30];
     int *distancia = (int*) malloc(grafo->numVertices * sizeof(int));
