@@ -251,6 +251,9 @@ Grafo *transpor(Grafo *grafo){
     }
 
     // Agora que todos os vértices foram adicionados, vamos inserir as arestas de forma inversa
+    // Antes: No vértice tecOrigem, adicionávamos uma aresta para tecDestino
+    // Agora: No vértice atual, pegamos as tecnologias das arestas e criamos uma aresta desssas tecnologias para o vértice atual da iteração
+    // .:. o grupo é o mesmo da tecDestino (das arestas) 
 
     for(int i = 0; i < grafoTransposto->numVertices; i++){
             
@@ -259,11 +262,13 @@ Grafo *transpor(Grafo *grafo){
 
         while (a != NULL){
             
+            int posDestino = buscaBinariaGrafo(grafoTransposto, a->tecDestino);
+
             // Criando uma nova aresta
             Aresta *novaAresta = criaAresta(grafo->vertices[i].tecnologia, a->peso);
 
             // Adicionando a aresta no grafo transposto
-            adicionaAresta(grafoTransposto, novaAresta, grafo->vertices[i].grupo, buscaBinariaGrafo(grafoTransposto, a->tecDestino), buscaBinariaGrafo(grafoTransposto, grafo->vertices[i].tecnologia));
+            adicionaAresta(grafoTransposto, novaAresta, grafo->vertices[posDestino].grupo, posDestino, i);
 
             a = a->prox;
         }
