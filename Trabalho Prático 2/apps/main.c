@@ -75,6 +75,11 @@ int main (int argc, char *argv[]){
         listaTecnologias(nomeArquivoBIN, n);
         break;
 
+    case 11: // Funcionalidade 10
+        scanf("%s", nomeArquivoBIN);
+        kosaraju(nomeArquivoBIN);
+        break;
+
     default:
         break;
     }

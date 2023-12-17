@@ -44,4 +44,7 @@ void exibeGrafoTransposto(char *nomeArquivoBIN);
 // Funcionalidade 10
 void listaTecnologias(char *nomeArquivoBIN, int n);
 
+// Funcionalidade 11
+void kosaraju(char *nomeArquivoBIN);
+
 #endif
