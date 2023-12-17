@@ -51,7 +51,10 @@ void listaTecnologias(char *nomeArquivoBIN, int n){
     // Obtendo o grafo referente ao arquivo binário
     Grafo *grafo = gerarGrafo(nomeArquivoBIN);
 
-    if (grafo == NULL) return;
+    if (grafo == NULL) {
+        printf("Falha na execução da funcionalidade.\n");    
+        return;
+    }
 
     // Tomemos o grafo transposto
     Grafo *grafoTransposto = transpor(grafo);
