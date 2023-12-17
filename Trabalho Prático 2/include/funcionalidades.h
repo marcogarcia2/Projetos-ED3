@@ -47,4 +47,7 @@ void listaTecnologias(char *nomeArquivoBIN, int n);
 // Funcionalidade 11
 void kosaraju(char *nomeArquivoBIN);
 
+// Funcionalidade 12
+void dijkstra(char *nomeArquivoBIN, int n);
+
 #endif

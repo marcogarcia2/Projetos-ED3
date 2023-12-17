@@ -80,6 +80,11 @@ int main (int argc, char *argv[]){
         kosaraju(nomeArquivoBIN);
         break;
 
+    case 12: // Funcionalidade 10
+        scanf("%s %d", nomeArquivoBIN, &n);
+        dijkstra(nomeArquivoBIN, n);
+        break;
+
     default:
         break;
     }

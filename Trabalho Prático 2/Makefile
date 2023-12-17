@@ -4,7 +4,7 @@ INCLUDE = ./include
 OBJ = ./obj
 SRC = ./src
 FLAGS = -Wall -Wpedantic -Werror #-march=native -O3 -fsanitize=address
-MSG = "Funcionalidade 11 aparentemente funcionando"
+MSG = "Funcionalidade 12 aparentemente funcionando"
 
 all: libed myapps
 
@@ -16,6 +16,7 @@ libed:
 	@gcc $(FLAGS) -c $(SRC)/funcionalidade9.c -I $(INCLUDE) -o $(OBJ)/funcionalidade9.o
 	@gcc $(FLAGS) -c $(SRC)/funcionalidade10.c -I $(INCLUDE) -o $(OBJ)/funcionalidade10.o
 	@gcc $(FLAGS) -c $(SRC)/funcionalidade11.c -I $(INCLUDE) -o $(OBJ)/funcionalidade11.o
+	@gcc $(FLAGS) -c $(SRC)/funcionalidade12.c -I $(INCLUDE) -o $(OBJ)/funcionalidade12.o
 	@gcc $(FLAGS) -c $(SRC)/grafo.c -I $(INCLUDE) -o $(OBJ)/grafo.o
 
 myapps:
