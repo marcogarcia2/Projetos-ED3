@@ -19,12 +19,13 @@ void exibeGrafo(char *nomeArquivoBIN){
     // Lendo o arquivo binário e gerando o grafo
     Grafo *grafo = gerarGrafo(nomeArquivoBIN);
 
-    if (grafo != NULL){
+    // Se o grafo for nulo, encerramos a função
+    if (grafo == NULL) return;
 
-        // Imprimindo o grafo
-        imprimeGrafo(grafo);
+    // Imprimindo o grafo
+    imprimeGrafo(grafo);
 
-        // Liberando a memória
-        destroiGrafo(grafo);
-    }
+    // Liberando a memória
+    destroiGrafo(grafo);
+    
 }

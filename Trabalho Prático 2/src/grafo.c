@@ -258,19 +258,19 @@ Grafo *transpor(Grafo *grafo){
     for(int i = 0; i < grafoTransposto->numVertices; i++){
             
         // Percorrendo a lista de arestas
-        Aresta *a = grafo->vertices[i].arestaInicial;
+        Aresta *arestaAtual = grafo->vertices[i].arestaInicial;
 
-        while (a != NULL){
+        while (arestaAtual != NULL){
             
-            int posDestino = buscaBinariaGrafo(grafoTransposto, a->tecDestino);
+            int posDestino = buscaBinariaGrafo(grafoTransposto, arestaAtual->tecDestino);
 
             // Criando uma nova aresta
-            Aresta *novaAresta = criaAresta(grafo->vertices[i].tecnologia, a->peso);
+            Aresta *novaAresta = criaAresta(grafo->vertices[i].tecnologia, arestaAtual->peso);
 
             // Adicionando a aresta no grafo transposto
             adicionaAresta(grafoTransposto, novaAresta, grafo->vertices[posDestino].grupo, posDestino, i);
 
-            a = a->prox;
+            arestaAtual = arestaAtual->prox;
         }
     }
 
