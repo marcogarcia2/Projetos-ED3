@@ -15,7 +15,7 @@
 #include "funcoesFornecidas.h"
 #include "grafo.h"
 
-// Funcionalidade 12: encontra o caminho mais curto entre a Origem e o Destino
+// Funcionalidade 12: encontra o caminho mais curto entre a Origem e o Destino (algoritmo guloso)
 
 void dijkstra(char *nomeArquivoBIN, int n){ 
 
@@ -24,7 +24,6 @@ void dijkstra(char *nomeArquivoBIN, int n){
 
     // Se o grafo for nulo, encerramos a função
     if (grafo == NULL) return;
-
     
     // Variáveis auxiliares
     char nomeTecnologiaOrigem[30], nomeTecnologiaDestino[30];
@@ -40,31 +39,51 @@ void dijkstra(char *nomeArquivoBIN, int n){
         // Encontrando a posição de origem e destino no vetor de vértices
         int posOrigem = buscaBinariaGrafo(grafo, nomeTecnologiaOrigem);
         int posDestino = buscaBinariaGrafo(grafo, nomeTecnologiaDestino);
+        
+        // Caso as tecnologias não existam no grafo
+        if (strcmp(grafo->vertices[posOrigem].tecnologia, nomeTecnologiaOrigem) != 0 
+        || strcmp(grafo->vertices[posDestino].tecnologia, nomeTecnologiaDestino) != 0) {
+            printf("%s %s: CAMINHO INEXISTENTE.\n", nomeTecnologiaOrigem, nomeTecnologiaDestino);
+            continue;
+        }
 
+        // Inicialmente, todas as distâncias são definidas como infinito, e nenhum vértice foi visitado
         for(int i = 0; i < grafo->numVertices; i++){
             distancia[i] = INT_MAX;
             visitado[i] = false;
         }
+
+        // Marca o ponto de origem como tendo distância 0
         distancia[posOrigem] = 0;
 
-        // Encontrar o caminho mais curto
-        for (int count = 0; count < grafo->numVertices - 1; count++) {
-            int u = -1;
-            for (int v = 0; v < grafo->numVertices; v++) {
-                if (!visitado[v] && (u == -1 || distancia[v] < distancia[u])) {
+        // Algoritmo de Dijkstra
+        for (int contador = 0; contador < grafo->numVertices - 1; contador++) {
+
+            // Encontra o vértice com a menor distância entre os vértices ainda não visitados
+            int u = -1; 
+            for (int v = 0; v < grafo->numVertices; v++) { 
+                if (!visitado[v] && (u == -1 || distancia[v] < distancia[u])) { 
                     u = v;
                 }
             }
 
+            // Marca o vértice encontrado como visitado
             visitado[u] = true;
 
-            for (Aresta *aresta = grafo->vertices[u].arestaInicial; aresta != NULL; aresta = aresta->prox) {
-                int v = buscaBinariaGrafo(grafo, aresta->tecDestino);
-                int peso = aresta->peso;
+            // Atualiza as distâncias dos vértices adjacentes ao vértice encontrado
+            Aresta *arestaAtual = grafo->vertices[u].arestaInicial;
+            while(arestaAtual != NULL){
+                
+                // Encontra a posição do vértice de destino da aresta atual
+                int v = buscaBinariaGrafo(grafo, arestaAtual->tecDestino);
+                int peso = arestaAtual->peso;
 
+                // Se o vértice de destino ainda não foi visitado e a distância atual é maior que a distância do vértice atual + o peso da aresta atual, atualizamos a distância
                 if (!visitado[v] && distancia[u] != INT_MAX && distancia[u] + peso < distancia[v]) {
                     distancia[v] = distancia[u] + peso;
                 }
+
+                arestaAtual = arestaAtual->prox;
             }
         }
 
@@ -77,5 +96,6 @@ void dijkstra(char *nomeArquivoBIN, int n){
 
     // Liberando a memória
     destroiGrafo(grafo);
-    
+    free(distancia);
+    free(visitado);
 }

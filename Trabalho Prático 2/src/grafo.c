@@ -168,50 +168,49 @@ void insereGrafo(Grafo *grafo, Registro *r){
     // Se o grafo estiver vazio, precisamos criar um vértice novo
     if (grafo->numVertices == 0) {
         insereGrafoVazio(r, grafo);
+        return;
     }
 
     // Se o grafo não estiver vazio, temos mais alguns casos
-    else{
+    
+    // Verificando se a tecOrigem já está no grafo
+    int posOrigem = buscaBinariaGrafo(grafo, r->tecnologiaOrigem.string);
 
-        // Verificando se a tecOrigem já está no grafo
-        int posOrigem = buscaBinariaGrafo(grafo, r->tecnologiaOrigem.string);
+    // Caso o vértice de origem NÃO exista no grafo:
+    if(strcmp(grafo->vertices[posOrigem].tecnologia, r->tecnologiaOrigem.string) != 0){
 
-        // Caso o vértice de origem NÃO exista no grafo:
-        if(strcmp(grafo->vertices[posOrigem].tecnologia, r->tecnologiaOrigem.string) != 0){
+        // Corrigindo a Posição
+        if(strcmp(r->tecnologiaOrigem.string, grafo->vertices[posOrigem].tecnologia) > 0) posOrigem++;
 
-            // Corrigindo a Posição
-            if(strcmp(r->tecnologiaOrigem.string, grafo->vertices[posOrigem].tecnologia) > 0) posOrigem++;
+        // Criando um novo vértice
+        Vertice *vertOrigem = criaVertice(r->tecnologiaOrigem.string, r->grupo); // VERIFICAR ISSO AQUI
 
-            // Criando um novo vértice
-            Vertice *vertOrigem = criaVertice(r->tecnologiaOrigem.string, r->grupo); // VERIFICAR ISSO AQUI
-
-            // inserimos o vértice no vetor, na posição correta
-            adicionaVertice(grafo, vertOrigem, posOrigem);
-        }
-
-        // Verificando se tecDestino já está no grafo
-        int posDestino = buscaBinariaGrafo(grafo, r->tecnologiaDestino.string);
-
-        // Caso o vértice de destino NÃO exista no grafo:
-        if(strcmp(grafo->vertices[posDestino].tecnologia, r->tecnologiaDestino.string) != 0){
-            
-            // Corrigindo a Posição
-            if(strcmp(r->tecnologiaDestino.string, grafo->vertices[posDestino].tecnologia) > 0) posDestino++;
-
-            // Criando um novo vértice
-            Vertice *vertDestino = criaVertice(r->tecnologiaDestino.string, -2);
-
-            // inserimos o vértice no vetor, na posição correta
-            adicionaVertice(grafo, vertDestino, posDestino);
-        }
-
-        // Atualizando posOrigem
-        posOrigem = buscaBinariaGrafo(grafo, r->tecnologiaOrigem.string);
-        
-        // Criando uma nova aresta
-        Aresta *a = criaAresta(r->tecnologiaDestino.string, r->peso);
-        adicionaAresta(grafo, a, r->grupo, posOrigem, posDestino); 
+        // inserimos o vértice no vetor, na posição correta
+        adicionaVertice(grafo, vertOrigem, posOrigem);
     }
+
+    // Verificando se tecDestino já está no grafo
+    int posDestino = buscaBinariaGrafo(grafo, r->tecnologiaDestino.string);
+
+    // Caso o vértice de destino NÃO exista no grafo:
+    if(strcmp(grafo->vertices[posDestino].tecnologia, r->tecnologiaDestino.string) != 0){
+        
+        // Corrigindo a Posição
+        if(strcmp(r->tecnologiaDestino.string, grafo->vertices[posDestino].tecnologia) > 0) posDestino++;
+
+        // Criando um novo vértice
+        Vertice *vertDestino = criaVertice(r->tecnologiaDestino.string, -2);
+
+        // inserimos o vértice no vetor, na posição correta
+        adicionaVertice(grafo, vertDestino, posDestino);
+    }
+
+    // Atualizando posOrigem
+    posOrigem = buscaBinariaGrafo(grafo, r->tecnologiaOrigem.string);
+    
+    // Criando uma nova aresta
+    Aresta *a = criaAresta(r->tecnologiaDestino.string, r->peso);
+    adicionaAresta(grafo, a, r->grupo, posOrigem, posDestino); 
 }
 
 // Função que imprime um grafo 

@@ -19,7 +19,7 @@ void buscaTecnologia(Grafo *grafoTransposto, char *nomeTecnologiaDestino){
     // Calculando a posição desejada no grafo
     int posDestino = buscaBinariaGrafo(grafoTransposto, nomeTecnologiaDestino);
 
-    // O vértice não existe no grafo
+    // Caso o vértice não exista no grafo
     if(strcmp(grafoTransposto->vertices[posDestino].tecnologia, nomeTecnologiaDestino) != 0){
         printf("Registro inexistente.\n");
         return;

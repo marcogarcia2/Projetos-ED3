@@ -21,8 +21,11 @@ void exibeGrafoTransposto(char *nomeArquivoBIN){
     Grafo *grafo = gerarGrafo(nomeArquivoBIN);
     
     // Se o grafo for nulo, encerramos a função
-    if (grafo == NULL) return;
-
+    if (grafo == NULL) {
+        printf("Falha na execução da funcionalidade.");
+        return;
+    }
+    
     // Transpondo o grafo
     Grafo *grafoTransposto = transpor(grafo);
     imprimeGrafo(grafoTransposto);
