@@ -1,4 +1,4 @@
-# Trabalho Prático II
+# Trabalho Prático: Arquivos, Índices e Grafos
 Projetos da Disciplina: SCC0607 - Estrutura de Dados III
 
 ## :hammer: Funcionalidades do projeto
